@@ -1095,7 +1095,8 @@ window.sendLiveMessage=(name,text)=>push(ref(db,'liveChat'),{name,text,ts:Date.n
 
 
 
-/* ============ FCM + الإشعارات (نسخة محسّنة) ============ */
+
+/* ============ FCM + الإشعارات (نسخة v3) ============ */
 const FCM_VAPID_KEY = "BGY4e-68lamnZ9Aee8PYzAbC72o4JEDXAWEenRrmFBFUwEljR8n2oM8sJaabeTSipb60xPNRUWEzk_RBdoMEW_A";
 const FIREBASE_CFG = {
   apiKey: "AIzaSyCSTvrlV-0RM9LnxWNBhvR-E_jIWE1x6Wk",
@@ -1107,159 +1108,176 @@ const FIREBASE_CFG = {
 };
 
 let fcmRegistered = false;
+let firebaseReady = false;
+
+// استنى Firebase Ready event
+window.addEventListener('firebase-ready', () => {
+  firebaseReady = true;
+  console.log('✅ Firebase جاهز — نسجّل FCM');
+  tryRegisterFCM();
+});
+
+// كمان نتحقق كل 300ms لمدة 30 ثانية (احتياطي)
+let attempts = 0;
+const checkFirebase = setInterval(() => {
+  attempts++;
+  if(window.__fb && window.__db){
+    firebaseReady = true;
+    clearInterval(checkFirebase);
+    console.log('✅ لقينا Firebase بعد', attempts, 'محاولة');
+    tryRegisterFCM();
+  }
+  if(attempts > 100){
+    clearInterval(checkFirebase);
+    console.warn('⚠️ Firebase ما حمّل بعد 30 ثانية');
+  }
+}, 300);
+
+async function tryRegisterFCM(){
+  const userName = localStorage.getItem('liveChatUser');
+  const hasPerm = 'Notification' in window && Notification.permission === 'granted';
+
+  if(!userName || !hasPerm){
+    console.log('ℹ️ ما في اسم أو إذن — ننتظر');
+    return;
+  }
+  if(fcmRegistered) return;
+
+  await registerFCMToken();
+}
 
 async function registerFCMToken(){
   if(fcmRegistered){
-    console.log('ℹ️ FCM already registered');
-    return;
-  }
-
-  console.log('🚀 بدء تسجيل FCM...');
-
-  if(!('serviceWorker' in navigator)){
-    console.error('❌ Service Worker غير مدعوم');
-    return;
-  }
-  if(!('Notification' in window)){
-    console.error('❌ الإشعارات غير مدعومة');
-    return;
-  }
-  if(Notification.permission !== 'granted'){
-    console.warn('⚠️ الإذن لسا مو granted:', Notification.permission);
+    console.log('ℹ️ FCM مسجّل مسبقاً');
     return;
   }
 
   const userName = localStorage.getItem('liveChatUser');
   if(!userName){
-    console.warn('⚠️ ما في اسم مستخدم');
+    console.log('⚠️ ما في اسم مستخدم');
     return;
   }
 
-  try {
-    console.log('📦 نستورد firebase...');
-    const modApp = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
-    const modMsg = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js');
+  console.log('🚀 بدء تسجيل FCM لـ:', userName);
 
-    console.log('🔥 نهيّئ Firebase...');
-    let app;
-    try {
-      app = modApp.getApp('fcm-app');
-      console.log('ℹ️ Firebase instance موجود');
-    } catch(e) {
-      app = modApp.initializeApp(FIREBASE_CFG, 'fcm-app');
-      console.log('✅ Firebase instance جديد');
+  try {
+    // نحصل على التوكن
+    let token = localStorage.getItem('fcmToken');
+    
+    if(!token){
+      console.log('🔑 نطلب FCM token...');
+      const modApp = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+      const modMsg = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js');
+      
+      let app;
+      try { app = modApp.getApp('fcm-app'); }
+      catch(e) { app = modApp.initializeApp(FIREBASE_CFG, 'fcm-app'); }
+      
+      const messaging = modMsg.getMessaging(app);
+      const reg = await navigator.serviceWorker.ready;
+      token = await modMsg.getToken(messaging, {
+        vapidKey: FCM_VAPID_KEY,
+        serviceWorkerRegistration: reg
+      });
+      
+      if(!token){
+        console.error('❌ ما وصل token');
+        return;
+      }
+      
+      console.log('✅ FCM Token:', token.substring(0, 30) + '...');
+      localStorage.setItem('fcmToken', token);
+    } else {
+      console.log('ℹ️ نستعمل التوكن المحفوظ');
     }
 
-    const messaging = modMsg.getMessaging(app);
+    // ⚠️ الأهم: نحفظ بقاعدة البيانات
+    if(!window.__fb || !window.__db){
+      console.error('❌ window.__fb أو window.__db مو موجودين!');
+      console.log('   window.__fb:', typeof window.__fb);
+      console.log('   window.__db:', typeof window.__db);
+      return;
+    }
 
-    console.log('🔑 نطلب FCM token...');
-    const reg = await navigator.serviceWorker.ready;
-    const token = await modMsg.getToken(messaging, {
-      vapidKey: FCM_VAPID_KEY,
-      serviceWorkerRegistration: reg
+    const ref = window.__fb.ref;
+    const set = window.__fb.set;
+    
+    const userKey = userName.replace(/\s+/g, '_');
+    await set(ref(window.__db, 'fcmTokens/' + userKey), {
+      token: token,
+      name: userName,
+      updatedAt: Date.now()
     });
 
-    if(!token){
-      console.error('❌ ما وصل token من FCM');
-      return;
-    }
-
-    console.log('✅ FCM Token:', token.substring(0, 30) + '...');
-    localStorage.setItem('fcmToken', token);
-    localStorage.setItem('fcmTokenUser', userName);
-
-    // احفظ التوكن بقاعدة البيانات
-    if(window.__db && window.__fb){
-      const ref = window.__fb.ref;
-      const set = window.__fb.set;
-      await set(ref(window.__db, 'fcmTokens/' + userName.replace(/\s+/g, '_')), {
-        token: token,
-        name: userName,
-        updatedAt: Date.now()
-      });
-      console.log('✅ التوكن محفوظ بقاعدة البيانات لـ:', userName);
-    } else {
-      console.warn('⚠️ ما لقينا window.__fb — بنحاول مرة تانية بعد ثانية');
-      setTimeout(registerFCMToken, 2000);
-      return;
-    }
+    console.log('✅✅ التوكن محفوظ بقاعدة البيانات لـ:', userName);
+    console.log('   مسار:', 'fcmTokens/' + userKey);
 
     fcmRegistered = true;
 
     // رسالة لما التطبيق مفتوح
-    modMsg.onMessage(messaging, payload => {
-      console.log('📩 رسالة new:', payload);
-      if(Notification.permission === 'granted'){
-        const t = (payload.notification && payload.notification.title) || '💬 رسالة جديدة';
-        const b = (payload.notification && payload.notification.body) || '';
-        new Notification(t, { body: b, icon: './icons/icon-192x192.png', dir: 'rtl' });
-      }
-    });
+    if(window.__msg){
+      window.__msg.onMessage(window.__messaging || window.__msg, payload => {
+        console.log('📩 رسالة جديدة:', payload);
+      });
+    }
 
   } catch(e){
     console.error('❌ FCM error:', e);
     console.error('   message:', e.message);
-    console.error('   code:', e.code);
   }
 }
 
-// ═══ الطريقة الجديدة: نطلب الإذن، وبعدها نسجّل ═══
-async function askPermissionAndRegister(){
-  console.log('🔔 طلب إذن الإشعارات...');
-
+// طلب الإذن
+async function askPermission(){
   if(Notification.permission === 'granted'){
-    console.log('✅ الإذن موجود مسبقاً');
-    registerFCMToken();
+    console.log('✅ الإذن موجود');
+    tryRegisterFCM();
     return;
   }
-
   if(Notification.permission === 'denied'){
-    console.warn('❌ المستخدم رفض الإشعارات سابقاً');
+    console.log('❌ الإذن مرفوض');
     return;
   }
-
+  
   try {
     const perm = await Notification.requestPermission();
-    console.log('📋 نتيجة الطلب:', perm);
+    console.log('📋 نتيجة:', perm);
     if(perm === 'granted'){
-      console.log('✅ المستخدم وافق على الإشعارات');
-      // انتظر ثانية باشي Firebase يخلص التحميل
-      setTimeout(registerFCMToken, 500);
+      console.log('✅ قبل الإشعارات');
+      tryRegisterFCM();
     }
   } catch(e){
-    console.error('❌ خطأ في طلب الإذن:', e);
+    console.error('خطأ في طلب الإذن:', e);
   }
 }
 
-// أول ما يختار المستخدم اسمو
-document.addEventListener('click', function pickName(e){
+// لما يختار اسم
+document.addEventListener('click', (e) => {
   if(e.target.closest('[data-name]')){
-    console.log('👤 اختار المستخدم اسم:', e.target.closest('[data-name]').dataset.name);
-    // انتظر شوي باشي الاسم ينحفظ
-    setTimeout(askPermissionAndRegister, 300);
+    setTimeout(askPermission, 500);
   }
 });
 
-// إذا المستخدم عندو اسم محفوظ + الإذن معطى = سجّل مباشرة
+// عند التحميل
 window.addEventListener('load', () => {
   setTimeout(() => {
     const hasUser = localStorage.getItem('liveChatUser');
     const hasPerm = 'Notification' in window && Notification.permission === 'granted';
     if(hasUser && hasPerm){
-      console.log('🔄 المستخدم عندو اسم + إذن — نسجّل FCM');
-      registerFCMToken();
+      console.log('🔄 عندنا اسم + إذن — نسجّل');
+      tryRegisterFCM();
     }
-  }, 2000);
+  }, 1500);
 });
 
-// زر يدوي للتسجيل
+// زر يدوي
 window.forceRegisterFCM = registerFCMToken;
 
-// سجّل الـ SW
+// SW
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js').then(() => {
-    console.log('✅ SW registered');
-  }).catch(err => console.error('❌ SW error:', err));
+  navigator.serviceWorker.register('./sw.js')
+    .then(() => console.log('✅ SW registered'))
+    .catch(err => console.error('❌ SW error:', err));
 }
 
 </script>

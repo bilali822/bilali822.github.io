@@ -1514,5 +1514,59 @@ console.log('✅ listeners جاهزة');
   </div>
 </div>
 
+
+<!-- ONESIGNAL_V1 -->
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "5cb36278-e565-48ad-b4ce-b5816e38c726",
+      allowLocalhostAsSecureOrigin: true,
+      notifyButton: { enable: false },
+      promptOptions: {
+        slidedown: {
+          prompts: [{
+            type: "push",
+            autoPrompt: true,
+            text: {
+              actionMessage: "بدك يوصلك خبر لما حدا يكتب بالشات؟",
+              acceptButton: "✅ اسمح",
+              cancelButton: "لأ شكراً"
+            },
+            delay: { pageViews: 1, timeDelay: 3 }
+          }]
+        }
+      }
+    });
+    
+    // اربط المستخدم باسمه
+    const userName = localStorage.getItem('liveChatUser');
+    if(userName){
+      try {
+        await OneSignal.login(userName.replace(/\s+/g, '_'));
+        await OneSignal.User.addTag('name', userName);
+        console.log('✅ OneSignal: سجّلنا', userName);
+      } catch(e) {
+        console.warn('OneSignal login error:', e);
+      }
+    }
+    
+    // كل ما يغيّر الاسم
+    window.addEventListener('userNameChanged', async () => {
+      const newName = localStorage.getItem('liveChatUser');
+      if(newName){
+        try {
+          await OneSignal.login(newName.replace(/\s+/g, '_'));
+          await OneSignal.User.addTag('name', newName);
+          console.log('✅ OneSignal: حدّثنا الاسم إلى', newName);
+        } catch(e) {}
+      }
+    });
+    
+    console.log('✅ OneSignal جاهز');
+  });
+</script>
+
 </body>
 </html>

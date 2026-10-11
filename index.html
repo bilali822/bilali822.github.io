@@ -487,15 +487,9 @@
 
 <footer>© 2025 الصف العاشر — مدرسة الرسالة الإسلامية — طرابلس<br>كل الاحترام للأساتذة 💜</footer>
 
-
-
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, update, runTransaction, push, set }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-console.log('📦 نبلّش تحميل Firebase...');
+import { getDatabase, ref, onValue, update, runTransaction, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCSTvrlV-0RM9LnxWNBhvR-E_jIWE1x6Wk",
@@ -506,104 +500,786 @@ const firebaseConfig = {
   messagingSenderId: "581594259710",
   appId: "1:581594259710:web:32193312221b518b5c85af"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// عرّف كل الدوال على window
-window.__db = db;
-window.__fb = {
-  ref,
-  onValue,
-  update,
-  runTransaction,
-  push,
-  set,
-  serverTimestamp: () => Date.now()
+window.STUDENTS = [
+  {id:'najjar',name:'محمد نجار',emoji:'🧠',title:'الوحيد يللي فتح الكتاب'},
+  {id:'awwad',name:'محمد عوض',emoji:'😴',title:'أسطورة النسيان'},
+  {id:'mini',name:'آدم ميني',emoji:'🎮',title:'بطل الموبايل'},
+  {id:'bilali',name:'محمد بيلالي',emoji:'🍔',title:'ملك الاستراحة'},
+  {id:'ghazi',name:'غازي نشابة',emoji:'👑',title:'الزعيم'}
+];
+window.COUNTERS = [
+  {id:'c1',label:'"بس هالمرة بسمحلكم"',emoji:'🙄'},
+  {id:'c2',label:'الجرس رن بدري',emoji:'🔔'},
+  {id:'c3',label:'نسيتم الوظيفة',emoji:'📚'},
+  {id:'c4',label:'انفجر الصف ضحك',emoji:'🤣'},
+  {id:'c5',label:'"بس شو الوظيفة؟"',emoji:'❓'},
+  {id:'c6',label:'دخل وطلع المعلّم',emoji:'🚪'},
+  {id:'c7',label:'"عن جد؟"',emoji:'😮'},
+  {id:'c8',label:'طلب فتح الشباك',emoji:'🪟'},
+  {id:'c9',label:'طار الموبايل',emoji:'📱'},
+  {id:'c10',label:'حكى أيام زمان',emoji:'👴'}
+];
+
+/* التنقل */
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+  b.classList.add('active');
+  document.getElementById(b.dataset.tab).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}));
+
+/* التصويتات */
+const MEDALS=['🥇','🥈','🥉'];
+window.renderBoard = function(){
+  const v = window.__votesCache||{};
+  const sorted=[...window.STUDENTS].sort((a,b)=>(v[b.id]||0)-(v[a.id]||0));
+  const max=Math.max(...window.STUDENTS.map(s=>v[s.id]||0));
+  document.getElementById('board').innerHTML=sorted.map((s,i)=>{
+    const top=(v[s.id]||0)===max&&max>0;
+    const rank=top?(MEDALS[i]||'🎖️'):(i+1)+'.';
+    return `<div class="rank ${top?'top':''}">
+      <span class="medal">${rank}</span>
+      <div class="info"><div class="nm">${s.emoji} ${s.name}</div><div class="tt">${top&&i===0?'👑 كسول الأسبوع':s.title}</div></div>
+      <span class="v">${v[s.id]||0}</span>
+      <button class="voteBtn" data-v="${s.id}">صوّت</button></div>`;
+  }).join('');
+};
+document.getElementById('board').addEventListener('click',e=>{
+  const b=e.target.closest('[data-v]'); if(!b) return;
+  if(window.voteFor) window.voteFor(b.dataset.v);
+});
+
+/* العدادات */
+window.renderCounters = function(){
+  const c=window.__countersCache||{};
+  document.getElementById('countersBox').innerHTML=window.COUNTERS.map(x=>`
+    <div class="counter"><span class="lb">${x.emoji} ${x.label}</span><span class="n">${c[x.id]||0}</span><button class="plus" data-p="${x.id}">+</button></div>`).join('');
+};
+document.getElementById('countersBox').addEventListener('click',e=>{
+  const b=e.target.closest('[data-p]'); if(!b) return;
+  if(window.incCounter) window.incCounter(b.dataset.p);
+});
+
+/* المنشورات */
+const POSTS=[
+  {id:'p1',student:'awwad',text:'نسيت شنتتي بالباص 😭',time:'قبل ساعتين'},
+  {id:'p2',student:'najjar',text:'خلصت الوظيفة! بس الرياضيات 😴',time:'قبل 4 ساعات'},
+  {id:'p3',student:'mini',text:'أعلى سكور بالمدرسة 😎',time:'قبل 5 ساعات'},
+  {id:'p4',student:'bilali',text:'الساندويشة أحلى من الدرس 😂',time:'قبل 6 ساعات'},
+  {id:'p5',student:'ghazi',text:'فهمت شي بالفيزيك 👑',time:'أمس'},
+  {id:'p6',student:'najjar',text:'مين فهم أستاذ وسيم؟ 😂',time:'أمس'}
+];
+window.renderPosts = function(){
+  const l=window.__likesCache||{};
+  document.getElementById('postsBox').innerHTML=POSTS.map(p=>{
+    const st=window.STUDENTS.find(s=>s.id===p.student);
+    const cnt=l[p.id]||0;
+    const liked=localStorage.getItem('liked_'+p.id)==='1';
+    return `<div class="post">
+      <div class="ph"><span class="av">${st.emoji}</span><div><div class="pn">${st.name}</div><div class="pt">${p.time}</div></div></div>
+      <div class="pc">${p.text}</div>
+      <button class="likeBtn ${liked?'liked':''}" data-l="${p.id}">${liked?'❤️':'🤍'} ${cnt}</button></div>`;
+  }).join('');
+};
+document.getElementById('postsBox').addEventListener('click',e=>{
+  const b=e.target.closest('[data-l]'); if(!b) return;
+  if(window.toggleLike) window.toggleLike(b.dataset.l);
+});
+
+
+/* ============ الشات الحي - النسخة المحسّنة ============ */
+const AVATARS = {
+  'محمد نجار': '🧠',
+  'محمد عوض': '😴',
+  'آدم ميني': '🎮',
+  'محمد بيلالي': '🍔',
+  'غازي نشابة': '👑'
 };
 
-console.log('✅ Firebase جاهز! window.__fb معرّف');
-window.dispatchEvent(new Event('firebase-ready'));
+function getAvatar(name){
+  return AVATARS[name] || '👤';
+}
 
-/* ═══════════════ التصويتات ═══════════════ */
-const votesRef = ref(db, 'votes');
-onValue(votesRef, (snap) => {
-  window.__votesCache = snap.val() || {};
-  if(window.STUDENTS){
-    window.STUDENTS.forEach(s => {
-      if(typeof window.__votesCache[s.id] !== 'number') window.__votesCache[s.id] = 0;
-    });
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function relTime(ts){
+  if(!ts) return '';
+  const diff = Math.floor((Date.now() - ts) / 1000);
+  if(diff < 30) return 'هلق';
+  if(diff < 60) return diff + ' ثانية';
+  if(diff < 3600) return Math.floor(diff/60) + ' د';
+  if(diff < 86400) return Math.floor(diff/3600) + ' س';
+  return Math.floor(diff/86400) + ' ي';
+}
+
+function playNotificationSound(){
+  try {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.frequency.value = 880;
+    osc.type = 'sine';
+    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+    osc.start(audioCtx.currentTime);
+    osc.stop(audioCtx.currentTime + 0.3);
+  } catch(e){}
+}
+
+let lastRenderedMsgCount = 0;
+let lastMsgTs = 0;
+
+window.renderLiveChat = function(list){
+  const w = document.getElementById('liveChatWindow');
+  if(!w) return;
+  const myName = localStorage.getItem('liveChatUser') || '';
+
+  // إحصائيات
+  const today = new Date().toDateString();
+  const totalMsgsEl = document.getElementById('totalMsgs');
+  const msgsTodayEl = document.getElementById('msgsToday');
+  if(totalMsgsEl) totalMsgsEl.textContent = list.length;
+  if(msgsTodayEl){
+    const todayCount = list.filter(m => m.ts && new Date(m.ts).toDateString() === today).length;
+    msgsTodayEl.textContent = todayCount;
   }
-  if(window.renderBoard) window.renderBoard();
-});
 
-window.voteFor = (id) => runTransaction(ref(db, 'votes/' + id), c => (c || 0) + 1);
+  const scrollBtn = document.getElementById('scrollDownBtn');
 
-window.resetVotes = async () => {
-  if(!confirm('تصفّي التصويتات للكل؟')) return;
-  const upd = {};
-  window.STUDENTS.forEach(s => upd[s.id] = 0);
-  await update(votesRef, upd);
-};
-
-/* ═══════════════ العدادات ═══════════════ */
-const countersRef = ref(db, 'counters');
-onValue(countersRef, (snap) => {
-  window.__countersCache = snap.val() || {};
-  if(window.COUNTERS){
-    window.COUNTERS.forEach(c => {
-      if(typeof window.__countersCache[c.id] !== 'number') window.__countersCache[c.id] = 0;
-    });
+  if(list.length === 0){
+    w.innerHTML = '<div class="msg sys"><div class="bubble">لك ما في رسايل بعد... كون أول واحد يكتب 😎</div></div>';
+    if(scrollBtn) w.appendChild(scrollBtn);
+    return;
   }
-  if(window.renderCounters) window.renderCounters();
-});
 
-window.incCounter = (id) => runTransaction(ref(db, 'counters/' + id), c => (c || 0) + 1);
+  // صوت + animation لما تجي رسالة جديدة
+  const newest = list[list.length - 1];
+  if(list.length > lastRenderedMsgCount && lastMsgTs > 0){
+    const newestFromOther = newest && newest.name !== myName;
+    if(newestFromOther){
+      playNotificationSound();
+    }
+  }
+  lastMsgTs = Date.now();
+  lastRenderedMsgCount = list.length;
 
-window.resetCounters = async () => {
-  if(!confirm('تصفّي العدّادات للكل؟')) return;
-  const upd = {};
-  window.COUNTERS.forEach(c => upd[c.id] = 0);
-  await update(countersRef, upd);
+  const html = list.map(m => {
+    const mine = myName && m.name === myName;
+    const avatar = getAvatar(m.name);
+    const time = relTime(m.ts);
+
+    if(!m.text) {
+      return `<div class="msg sys"><div class="bubble">${escapeHtml(m.name || '؟')}</div></div>`;
+    }
+
+    if(mine){
+      return `<div class="msg mine">
+        <div class="avatar">${avatar}</div>
+        <div class="body">
+          <div class="top">
+            <span class="name">${escapeHtml(m.name)}</span>
+            <span class="time">${time}</span>
+          </div>
+          <div class="bubble">${escapeHtml(m.text)}</div>
+        </div>
+      </div>`;
+    } else {
+      return `<div class="msg other">
+        <div class="avatar">${avatar}</div>
+        <div class="body">
+          <div class="top">
+            <span class="name">${escapeHtml(m.name || '؟')}</span>
+            <span class="time">${time}</span>
+          </div>
+          <div class="bubble">${escapeHtml(m.text)}</div>
+        </div>
+      </div>`;
+    }
+  }).join('');
+
+  w.innerHTML = html;
+  if(scrollBtn) w.appendChild(scrollBtn);
+
+  // scroll للأسفل تلقائياً إذا المستخدم قريب من الأسفل
+  const isNearBottom = w.scrollHeight - w.scrollTop - w.clientHeight < 150;
+  if(isNearBottom){
+    w.scrollTop = w.scrollHeight;
+  }
 };
 
-/* ═══════════════ اللايكات ═══════════════ */
-const likesRef = ref(db, 'postLikes');
-onValue(likesRef, (snap) => {
-  window.__likesCache = snap.val() || {};
-  if(window.renderPosts) window.renderPosts();
+// زر "انزل لتحت"
+setTimeout(() => {
+  const w = document.getElementById('liveChatWindow');
+  const btn = document.getElementById('scrollDownBtn');
+  if(!w || !btn) return;
+  w.addEventListener('scroll', () => {
+    const isFar = w.scrollHeight - w.scrollTop - w.clientHeight > 200;
+    btn.classList.toggle('show', isFar);
+  });
+  btn.addEventListener('click', () => {
+    w.scrollTop = w.scrollHeight;
+    btn.classList.remove('show');
+  });
+}, 500);
+
+function updateMyInfo(){
+  const name = localStorage.getItem('liveChatUser') || '—';
+  const nameEl = document.getElementById('myNameDisplay');
+  const avatarEl = document.getElementById('myAvatar');
+  if(nameEl) nameEl.textContent = name;
+  if(avatarEl) avatarEl.textContent = getAvatar(name);
+}
+
+function sendLive(){
+  const myName = localStorage.getItem('liveChatUser');
+  if(!myName){ if(window.__openWhoOverlay) window.__openWhoOverlay(); return; }
+  const liveInput = document.getElementById('liveInput');
+  const txt = (liveInput.value || '').trim();
+  if(!txt) return;
+  liveInput.value = '';
+  if(window.sendLiveMessage) window.sendLiveMessage(myName, txt);
+}
+
+document.getElementById('liveSend')?.addEventListener('click', sendLive);
+document.getElementById('liveInput')?.addEventListener('keydown', e => {
+  if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendLive(); }
 });
 
-window.toggleLike = (id) => {
-  const had = localStorage.getItem('liked_' + id) === '1';
-  const d = had ? -1 : 1;
-  if(had) localStorage.removeItem('liked_' + id);
-  else localStorage.setItem('liked_' + id, '1');
-  runTransaction(ref(db, 'postLikes/' + id), c => Math.max(0, (c || 0) + d));
+// الإيموجيات
+document.querySelectorAll('.emoji-bar button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const inp = document.getElementById('liveInput');
+    if(!inp) return;
+    inp.value += btn.dataset.emoji;
+    inp.focus();
+  });
+});
+
+// زر التغيير
+document.getElementById('changeName')?.addEventListener('click', () => {
+  if(!confirm('بدك تغيّر اسمك؟')) return;
+  localStorage.removeItem('liveChatUser');
+  if(window.__openWhoOverlay) window.__openWhoOverlay();
+});
+
+// حدّث الاسم أول ما تفتح
+window.addEventListener('load', updateMyInfo);
+updateMyInfo();
+
+/* متصلين */
+function updateOnlineCount(){
+  const list = window.__liveChatCache || [];
+  const unique = new Set();
+  const cutoff = Date.now() - (5 * 60 * 1000);
+  list.forEach(m => { if(m.ts > cutoff) unique.add(m.name); });
+  const el = document.getElementById('onlineCount');
+  if(el) el.textContent = unique.size;
+}
+
+setInterval(updateOnlineCount, 5000);
+
+/* دردشة مع الشباب */
+const CHAT_PERSONAS={
+  najjar:{name:'محمد نجار',emoji:'🧠',opening:'لك أهلين! أنا نجار... الوحيد يللي فتح الكتاب 😂',askName:'يلا شو اسمك؟',
+    nameReact:['لك {name}! اسم حلو 🤣','أهلين {name}... شكلّك من الشلّة 😂','{name}؟ لك سمعت هالاسم 💀'],
+    random:['عم "أدرس" هلق 📚','أنا الوحيد يللي بيفهم أستاذ وسيم... بالحلم 😴','نسيت الوظيفة؟ 🤨']},
+  awwad:{name:'محمد عوض',emoji:'😴',opening:'لك أهلين... نسيت شو بدي قلك 😂',askName:'قول، شو اسمك؟',
+    nameReact:['لك {name}... عن جد؟ 🤔','{name}؟ كنت ناسي إني أعرفك 😂','أهلين {name}، إذا نسيتك سامحني 🙏'],
+    random:['شو قلنا؟ نسيت 😂','نسيت شنتتي بالباص 🎒','مرات بنسى إني بالمدرسة 🤯']},
+  mini:{name:'آدم ميني',emoji:'🎮',opening:'لك واقف... ثانية بلعب ليفل 🔥',askName:'شو اسمك؟',
+    nameReact:['{name}؟ زي اسم واحد فريقي 🤣','{name}، أنت تلعب؟ 🎮','أهلين {name}، بس لا تقاطعني 🔥'],
+    random:['الأستاذ طردني اليوم 🤷','فتحت الكتاب... مكتوب "الدرس" 😂','عقلي باللعبة 🧠']},
+  bilali:{name:'محمد بيلالي',emoji:'🍔',opening:'لك واقف... عم آكل 🍔',askName:'شو اسمك؟ بسرعة 😂',
+    nameReact:['{name}! زي اسم مطعم 🍕','{name}؟ جوعان؟ 🍔','أهلين {name}، تعا كل معي 🥪'],
+    random:['عم فكر بالغدا من الصبح 🤤','الساندويشة أحلى من الدروس 🍔','نروح شاورما بعد المدرسة؟ 🌯']},
+  ghazi:{name:'غازي نشابة',emoji:'👑',opening:'لك أهلين... أنا غازي، الزعيم 😎',askName:'شو اسمك؟ بسرعة 😎',
+    nameReact:['{name}؟ شكلّك من الشارع التاني 😏','أهلين {name}... خليك بحدودك 👑','{name}؟ اسم ضعيف 😂'],
+    random:['أنا الزعيم 👑','يوم غبت، الصف سأل عني 😎','إذا بدك نجاح، شوفني 🎯']}
+};
+let currentChatStudent='najjar';
+let chatStage='start',chatUserName=null;
+function renderPicker(){
+  document.getElementById('chatPicker').innerHTML=Object.keys(CHAT_PERSONAS).map(k=>{
+    const p=CHAT_PERSONAS[k];
+    return `<button data-cs="${k}" class="${k===currentChatStudent?'active':''}">${p.emoji} ${p.name.split(' ')[0]}</button>`;
+  }).join('');
+}
+document.getElementById('chatPicker').addEventListener('click',e=>{
+  const b=e.target.closest('[data-cs]'); if(!b) return;
+  currentChatStudent=b.dataset.cs; renderPicker(); startChat();
+});
+function addMsg(text,who){
+  const w=document.getElementById('chatWindow');
+  const d=document.createElement('div'); d.className='msg '+who;
+  d.innerHTML=text.replace(/\n/g,'<br>'); w.appendChild(d); w.scrollTop=w.scrollHeight;
+}
+function showTyping(){
+  const w=document.getElementById('chatWindow');
+  const d=document.createElement('div'); d.className='typing'; d.id='typingIndicator';
+  d.innerHTML='<span></span><span></span><span></span>';
+  w.appendChild(d); w.scrollTop=w.scrollHeight;
+}
+function hideTyping(){const t=document.getElementById('typingIndicator'); if(t) t.remove();}
+function startChat(){
+  const p=CHAT_PERSONAS[currentChatStudent];
+  chatStage='start'; chatUserName=null;
+  document.getElementById('chatWindow').innerHTML='';
+  addMsg('— بديت دردشة مع '+p.emoji+' '+p.name+' —','sys');
+  showTyping();
+  setTimeout(()=>{hideTyping(); addMsg(p.opening,'them'); chatStage='awaitFirst';},800);
+}
+function sendMessage(){
+  const inp=document.getElementById('chatInput');
+  const txt=inp.value.trim(); if(!txt) return;
+  inp.value=''; addMsg(txt,'me');
+  const p=CHAT_PERSONAS[currentChatStudent];
+  if(chatStage==='awaitFirst'){showTyping();setTimeout(()=>{hideTyping();addMsg(p.askName,'them');chatStage='awaitName';},800);return;}
+  if(chatStage==='awaitName'){
+    chatUserName=txt;
+    showTyping();
+    setTimeout(()=>{
+      hideTyping();
+      const r=p.nameReact[Math.floor(Math.random()*p.nameReact.length)].replace(/\{name\}/g,txt);
+      addMsg(r,'them'); chatStage='random';
+    },1000);
+    return;
+  }
+  showTyping();
+  setTimeout(()=>{
+    hideTyping();
+    let r=p.random[Math.floor(Math.random()*p.random.length)];
+    if(chatUserName&&Math.random()<0.3) r=r.replace(/^لك /,'لك يا '+chatUserName+'، ');
+    addMsg(r,'them');
+  },700);
+}
+document.getElementById('chatSend').addEventListener('click',sendMessage);
+document.getElementById('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendMessage();}});
+document.getElementById('chatReset').addEventListener('click',startChat);
+renderPicker(); startChat();
+
+/* الأساتذة */
+const TEACHERS=[
+  {name:'وسيم المحمد',sub:'رياضيات',emoji:'📐',nick:'ملك الأكس والفيتا',quote:'"لك شو هالسؤال؟ محلول من أول نظرة"'},
+  {name:'مريانا رضوان',sub:'بيو',emoji:'🧬',nick:'ملكة الخلايا',quote:'"الخلية وحدة بناء الكائن الحي... إلا أنتو"'},
+  {name:'أسراء',sub:'فيزيك',emoji:'⚡',nick:'أستاذة الجاذبية',quote:'"الجاذبية بتجذب كل شي... إلا انتباهكم"'},
+  {name:'حُسن',sub:'شيمي',emoji:'⚗️',nick:'ساحرة الذرات',quote:'"هالتفاعل ما بحتاج شروط"'},
+  {name:'نهلا الحج',sub:'فرنسي',emoji:'🥐',nick:'ملكة Bonjour',quote:'"Écoutez! يعني اسمعوا!"'},
+  {name:'بلال حمود',sub:'إنجليزي',emoji:'🇬🇧',nick:'زعيم Grammar',quote:'"Listen kids... LISTEN!"'},
+  {name:'هناء ياغي',sub:'اجتماع/اقتصاد',emoji:'📊',nick:'ملكة السوق',quote:'"أنا العرض الوحيد للعلامات 😂"'},
+  {name:'ندى',sub:'عربي',emoji:'📖',nick:'أم النحو',quote:'"الفاعل مرفوع بالضمة... إلا علاماتكن"'},
+  {name:'يوسف',sub:'رياضة',emoji:'⚽',nick:'زعيم الملعب',quote:'"يلا نجري!"'},
+  {name:'فاطمة قنواتي',sub:'دين',emoji:'🕌',nick:'أم الأخلاق',quote:'"الأخلاق قبل العلم"'},
+  {name:'محمد سعيد',sub:'تربية مدنية',emoji:'⚖️',nick:'أبو الدستور',quote:'"المواطنة الصالحة"'},
+  {name:'آية عصافيري',sub:'تاريخ/جغرافيا',emoji:'🗺️',nick:'ملكة التواريخ',quote:'"لك ليش ما بتتذكرو؟!"'}
+];
+document.getElementById('teachersBox').innerHTML=TEACHERS.map(t=>`
+  <div class="teacher"><div class="th"><span class="tav">${t.emoji}</span><div><div class="tnm">${t.name}</div><div class="tsub">${t.sub}</div></div></div>
+  <div class="tnick">👑 ${t.nick}</div><div class="tquote">${t.quote}</div></div>`).join('');
+
+const GREETS=['لك أهلين 👋','شو هالحكي؟','يا هلا بالزلمة 💪','لك شو هالغيااااب 😂','أهلين بالشلّة'];
+document.getElementById('rotator').addEventListener('click',function(){
+  this.textContent=GREETS[Math.floor(Math.random()*GREETS.length)];
+});
+
+const EXCUSES=["لك أستاذ {t}، الكهربا قطعت 😔","يا أستاذ {t}، شنتتي ضاعت 🎒","أخوي مزّق الدفتر 😭","النت مقطوع 📵","كنت تعبان 🤒","نسيت الدفتر 🏫","كان في ضيوف 🍽️","كتّر الوظايف 📚","درست بس نسيت 😅","الكتاب بالسيارة 🚗","المنبّه ما رن ⏰","كنت بالمستشفى 🏥","ساعدت أمي 🛒","الواي فاي ضعيف 📶","حفظت بس نسيت 🧽","الدفتر ضاع 🔍","كنت عالطريق 🚶","الوظيفة صعبة 📅","قلت بحلّها بكرا 🕑","عن جد نسيت 🤷"];
+let lastExcuse='';
+function newExcuse(){
+  const t=TEACHERS[Math.floor(Math.random()*TEACHERS.length)];
+  const e=EXCUSES[Math.floor(Math.random()*EXCUSES.length)].replace('{t}',t.name);
+  lastExcuse=e;
+  document.getElementById('excuseOut').textContent=e;
+}
+document.getElementById('waBtn').addEventListener('click',()=>{
+  if(!lastExcuse) newExcuse();
+  window.open("https://wa.me/?text="+encodeURIComponent(lastExcuse),"_blank");
+});
+
+const TIPS=["ادرس منيح 😂","أقوى غش = تفهم الشرح!","الورقة بتتغسّل 🧺","صاحبك يشرحلك 😉","المعلّم شاف كل شي 👀","'الله كريم' 😂","3 دقايق = بطل!"];
+function cheatTip(){
+  const d=document.createElement('div'); d.className='out'; d.textContent=TIPS[Math.floor(Math.random()*TIPS.length)];
+  const w=document.getElementById('cheatTips'); w.innerHTML=''; w.appendChild(d);
+}
+
+function calcGrade(){
+  const g=parseFloat(document.getElementById('realGrade').value);
+  const o=document.getElementById('calcOut');
+  if(isNaN(g)||g<0||g>100){o.textContent="اكتب رقم 0-100 🤦";return;}
+  let r;
+  if(g<=20) r="😂 رقم عشوائي"; else if(g<=40) r="😭 نمت السنة؟";
+  else if(g<=55) r="😐 ماشي بالحرف"; else if(g<=70) r="🙂 شدّ حيلك";
+  else if(g<=85) r="😏 براڤو!"; else if(g<=95) r="🤨 ممتاز!";
+  else r="🕵️ مين حلّها عنك؟";
+  o.textContent=r;
+}
+
+const QUIZ=[
+  {q:"أكتر شي بيعملو الطلاب؟",a:["ينامو","الموبايل","يقلّدو الأستاذ","كل ما سبق"],c:3},
+  {q:"أكتر وقت فيهم طاقة؟",a:["أول الحصة","بعد الاستراحة","آخر 5 دقايق","دايماً تعبان"],c:2},
+  {q:"شو يعني 'درست'؟",a:["العنوان","تيك توك","قلل لأمه","حفظ"],c:1},
+  {q:"الوظيفة بتنسى...",a:["بالويكند","بالعطلة","لما مباراة","كل الأوقات"],c:3},
+  {q:"أحلى شي؟",a:["الاستراحة","الجرس","الطريق","الأصحاب"],c:0},
+  {q:"أول شي بالامتحان؟",a:["تقرأ","تدعي","تدوّر صاحبك","تكبس قلمك"],c:1},
+  {q:"أكتر جملة؟",a:["اسمعو","بسمحلكم","وين الوظيفة؟","كل ما سبق"],c:3}
+];
+let answers=new Array(QUIZ.length).fill(null);
+function renderQuiz(){
+  document.getElementById('quizBox').innerHTML=QUIZ.map((it,qi)=>`
+    <div class="q"><p>${qi+1}. ${it.q}</p>
+    ${it.a.map((op,oi)=>`<button class="opt ${answers[qi]===oi?'sel':''}" data-q="${qi}" data-o="${oi}">${op}</button>`).join('')}</div>`).join('');
+}
+document.getElementById('quizBox').addEventListener('click',e=>{
+  const b=e.target.closest('.opt'); if(!b) return;
+  answers[+b.dataset.q]=+b.dataset.o; renderQuiz();
+});
+function submitQuiz(){
+  if(answers.includes(null)){alert('جاوب الكل 😤');return;}
+  let sc=0; QUIZ.forEach((it,i)=>{if(answers[i]===it.c)sc++;});
+  const o=document.getElementById('quizResult'); o.style.display='flex';
+  const t=QUIZ.length;
+  let m;
+  if(sc===0) m='0/'+t+' 😭 كسول رسمي!';
+  else if(sc<=2) m=sc+'/'+t+' 😅 بدك شغل';
+  else if(sc<=4) m=sc+'/'+t+' 🙂 نص نص';
+  else if(sc===5) m=sc+'/'+t+' 😎 قوي!';
+  else if(sc<t) m=sc+'/'+t+' 🤨 عالي!';
+  else m=sc+'/'+t+' 🕵️ مين حلها؟';
+  o.textContent=m;
+}
+renderQuiz();
+
+const T1=['ملك','زعيم','سلطان','أسطورة','بطل','شبح','أسد','نمر','أمير','خبير','عالم','قائد'];
+const T2=['النوم','النسيان','الموبايل','الأعذار','الاستراحة','الضحك','التأخير','الشغب','الحكي','القهوة'];
+function newNick(){
+  const n=T1[Math.floor(Math.random()*T1.length)]+' '+T2[Math.floor(Math.random()*T2.length)];
+  document.getElementById('nickBig').textContent=n;
+}
+
+const WHOIS=["مين بينسى الشنتة؟","مين يموت ضحك؟","مين بيسأل شو الوظيفة؟","مين بيفتح الموبايل؟","مين ينام أول 5 دقايق؟","مين يحلف عن جد وهو كذاب؟"];
+const REPLIES=["😂 الجواب واضح","🤣 ما توقعتها!","لك ما كنت أعرف 😂","🫣 ما قلت شي","💀 معروف","😭 أنا بريء"];
+function newWhois(){
+  const q=WHOIS[Math.floor(Math.random()*WHOIS.length)];
+  const s=window.STUDENTS[Math.floor(Math.random()*window.STUDENTS.length)];
+  const r=REPLIES[Math.floor(Math.random()*REPLIES.length)];
+  document.getElementById('whoisBox').innerHTML=`<div style="color:#94a3b8;font-size:.85rem">${q}</div><div class="big">${s.emoji}</div><div class="ans">${s.name}</div><div style="font-size:.9rem;color:#94a3b8">${r}</div>`;
+}
+
+const TRENDS=[{tag:'#لك_نسيت_الوظيفة',c:'2.4K'},{tag:'#نوم_بالحصة',c:'1.9K'},{tag:'#شو_الوظيفة',c:'1.5K'},{tag:'#الموبايل_تحت_الطاولة',c:'1.2K'},{tag:'#الجرس_رن_بدري',c:'980'},{tag:'#الساندويشة_أحلى',c:'876'}];
+document.getElementById('trendsBox').innerHTML=TRENDS.map((t,i)=>`<div class="hashtag"><span class="c">${i+1}</span><b>${t.tag}</b><span class="c">${t.c}</span></div>`).join('');
+
+const HAKI_T=["{n} نسي {x} وعمل فلم 😂","{n} جاب {x} وضحك الصف","{n} قال درست {x}... وما درست 😬","{n} قعد {x} طول الاستراحة","{n} فتح الكتاب وشاف {x} 😮"];
+const HAKI_V=["شنتتو","قلمو","دفترو","موبايلو","الكتاب","الوظيفة","الرياضيات","القهوة"];
+function newHaki(){
+  const t=HAKI_T[Math.floor(Math.random()*HAKI_T.length)];
+  const s=window.STUDENTS[Math.floor(Math.random()*window.STUDENTS.length)];
+  const v=HAKI_V[Math.floor(Math.random()*HAKI_V.length)];
+  document.getElementById('hakiOut').textContent=t.replace('{n}',s.name).replace('{x}',v);
+}
+
+const TQ=['"اسمعو اسمعو اسمعو!"','"بس هالمرة بسمحلكم..."','"لك جاي تنام؟"','"وين الوظيفة؟"','"الجرس ما رن!"','"شو هالصف؟"','"الامتحان الأحد!"'];
+function newTQuote(){
+  const t=TEACHERS[Math.floor(Math.random()*TEACHERS.length)];
+  const q=TQ[Math.floor(Math.random()*TQ.length)];
+  document.getElementById('tquoteOut').textContent=t.emoji+' '+t.name+' ('+t.sub+'): '+q;
+}
+
+/* Firebase Listeners */
+onValue(ref(db,'votes'),s=>{
+  window.__votesCache=s.val()||{};
+  window.STUDENTS.forEach(st=>{if(typeof window.__votesCache[st.id]!=='number')window.__votesCache[st.id]=0;});
+  window.renderBoard();
+});
+window.voteFor=id=>runTransaction(ref(db,'votes/'+id),c=>(c||0)+1);
+
+onValue(ref(db,'counters'),s=>{
+  window.__countersCache=s.val()||{};
+  window.COUNTERS.forEach(c=>{if(typeof window.__countersCache[c.id]!=='number')window.__countersCache[c.id]=0;});
+  window.renderCounters();
+});
+window.incCounter=id=>runTransaction(ref(db,'counters/'+id),c=>(c||0)+1);
+
+onValue(ref(db,'postLikes'),s=>{
+  window.__likesCache=s.val()||{};
+  window.renderPosts();
+});
+window.toggleLike=id=>{
+  const had=localStorage.getItem('liked_'+id)==='1';
+  const d=had?-1:1;
+  if(had) localStorage.removeItem('liked_'+id);
+  else localStorage.setItem('liked_'+id,'1');
+  runTransaction(ref(db,'postLikes/'+id),c=>Math.max(0,(c||0)+d));
 };
 
-/* ═══════════════ الشات الحي ═══════════════ */
-const chatRef = ref(db, 'liveChat');
-onValue(chatRef, (snap) => {
-  const data = snap.val() || {};
-  const list = Object.entries(data)
-    .map(([k, v]) => ({ id: k, ...v }))
-    .sort((a, b) => (a.ts || 0) - (b.ts || 0))
-    .slice(-100);
+onValue(ref(db,'liveChat'),s=>{
+  const data=s.val()||{};
+  const list=Object.entries(data).map(([k,v])=>({id:k,...v})).sort((a,b)=>(a.ts||0)-(b.ts||0)).slice(-100);
   window.__liveChatCache = list;
-  if(window.renderLiveChat) window.renderLiveChat(list);
+  window.renderLiveChat(list);
   if(window.updateOnlineCount) window.updateOnlineCount();
 });
+window.sendLiveMessage=(name,text)=>push(ref(db,'liveChat'),{name,text,ts:Date.now()});
 
-window.sendLiveMessage = (name, text) => push(chatRef, { name, text, ts: Date.now() });
+/* ===== شاشة مين أنت؟ ===== */
+(function(){
+  const overlay = document.getElementById('whoOverlay');
+  const list = document.getElementById('whoList');
+  if(!overlay || !list) return;
 
-console.log('✅✅ كل الـ listeners جاهزة');
+  const KEY = 'liveChatUser';
 
-// أطلق الحدث مرة تانية بعد شوي (احتياطي)
-setTimeout(() => {
-  window.dispatchEvent(new Event('firebase-ready'));
-  console.log('🔔 firebase-ready انطلق مرة تانية');
-}, 500);
+  function renderList(){
+    list.innerHTML = window.STUDENTS.map(s => `
+      <button class="who-btn" data-name="${s.name}">
+        <span class="em">${s.emoji}</span>
+        <span class="nm">${s.name}</span>
+        <span class="ar">›</span>
+      </button>
+    `).join('');
+  }
+
+  function show(){
+    renderList();
+    overlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function hide(){
+    overlay.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+
+  function getCurrent(){ return localStorage.getItem(KEY); }
+
+  list.addEventListener('click', e => {
+    const b = e.target.closest('[data-name]');
+    if(!b) return;
+    localStorage.setItem(KEY, b.dataset.name);
+    hide();
+    // لو كان داخل الشات، حدّث الواجهة
+    if(typeof showChatUI === 'function'){
+      showChatUI();
+      // أعد تحميل رسايل الشات
+      if(window.__liveChatCache) window.renderLiveChat(window.__liveChatCache);
+    }
+  });
+
+  // افتح الشاشة أول ما يحمّل إذا ما في اسم محفوظ
+  window.addEventListener('load', () => {
+    if(!getCurrent()) setTimeout(show, 300);
+  });
+
+  // خلّيها متاحة عشان زر "🔄 تغيير"
+  window.__openWhoOverlay = show;
+  window.__closeWhoOverlay = hide;
+})();
+
+
+/* GLOBAL_EXPOSE_FIX — تعريض دوال onclick على window */
+(function(){
+  var fns = ['submitQuiz','newExcuse','cheatTip','calcGrade','newNick','newWhois','newHaki','newTQuote','resetVotes','resetCounters','showChatUI','showWhoAmI','sendLive','enableNotifications'];
+  fns.forEach(function(n){
+    try {
+      var v = eval(n);
+      if(typeof v === 'function') window[n] = v;
+    } catch(e){}
+  });
+})();
+
+
+
+
+
+/* ============ FCM + الإشعارات (نسخة v3) ============ */
+const FCM_VAPID_KEY = "BGY4e-68lamnZ9Aee8PYzAbC72o4JEDXAWEenRrmFBFUwEljR8n2oM8sJaabeTSipb60xPNRUWEzk_RBdoMEW_A";
+const FIREBASE_CFG = {
+  apiKey: "AIzaSyCSTvrlV-0RM9LnxWNBhvR-E_jIWE1x6Wk",
+  authDomain: "saff-10.firebaseapp.com",
+  projectId: "saff-10",
+  storageBucket: "saff-10.firebasestorage.app",
+  messagingSenderId: "581594259710",
+  appId: "1:581594259710:web:32193312221b518b5c85af"
+};
+
+let fcmRegistered = false;
+let firebaseReady = false;
+
+// استنى Firebase Ready event
+window.addEventListener('firebase-ready', () => {
+  firebaseReady = true;
+  console.log('✅ Firebase جاهز — نسجّل FCM');
+  tryRegisterFCM();
+});
+
+// كمان نتحقق كل 300ms لمدة 30 ثانية (احتياطي)
+let attempts = 0;
+const checkFirebase = setInterval(() => {
+  attempts++;
+  if(window.__fb && window.__db){
+    firebaseReady = true;
+    clearInterval(checkFirebase);
+    console.log('✅ لقينا Firebase بعد', attempts, 'محاولة');
+    tryRegisterFCM();
+  }
+  if(attempts > 100){
+    clearInterval(checkFirebase);
+    console.warn('⚠️ Firebase ما حمّل بعد 30 ثانية');
+  }
+}, 300);
+
+async function tryRegisterFCM(){
+  const userName = localStorage.getItem('liveChatUser');
+  const hasPerm = 'Notification' in window && Notification.permission === 'granted';
+
+  if(!userName || !hasPerm){
+    console.log('ℹ️ ما في اسم أو إذن — ننتظر');
+    return;
+  }
+  if(fcmRegistered) return;
+
+  await registerFCMToken();
+}
+
+async function registerFCMToken(){
+  if(fcmRegistered){
+    console.log('ℹ️ FCM مسجّل مسبقاً');
+    return;
+  }
+
+  const userName = localStorage.getItem('liveChatUser');
+  if(!userName){
+    console.log('⚠️ ما في اسم مستخدم');
+    return;
+  }
+
+  console.log('🚀 بدء تسجيل FCM لـ:', userName);
+
+  try {
+    // نحصل على التوكن
+    let token = localStorage.getItem('fcmToken');
+    
+    if(!token){
+      console.log('🔑 نطلب FCM token...');
+      const modApp = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+      const modMsg = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js');
+      
+      let app;
+      try { app = modApp.getApp('fcm-app'); }
+      catch(e) { app = modApp.initializeApp(FIREBASE_CFG, 'fcm-app'); }
+      
+      const messaging = modMsg.getMessaging(app);
+      const reg = await navigator.serviceWorker.ready;
+      token = await modMsg.getToken(messaging, {
+        vapidKey: FCM_VAPID_KEY,
+        serviceWorkerRegistration: reg
+      });
+      
+      if(!token){
+        console.error('❌ ما وصل token');
+        return;
+      }
+      
+      console.log('✅ FCM Token:', token.substring(0, 30) + '...');
+      localStorage.setItem('fcmToken', token);
+    } else {
+      console.log('ℹ️ نستعمل التوكن المحفوظ');
+    }
+
+    // ⚠️ الأهم: نحفظ بقاعدة البيانات
+    if(!window.__fb || !window.__db){
+      console.error('❌ window.__fb أو window.__db مو موجودين!');
+      console.log('   window.__fb:', typeof window.__fb);
+      console.log('   window.__db:', typeof window.__db);
+      return;
+    }
+
+    const ref = window.__fb.ref;
+    const set = window.__fb.set;
+    
+    const userKey = userName.replace(/\s+/g, '_');
+    await set(ref(window.__db, 'fcmTokens/' + userKey), {
+      token: token,
+      name: userName,
+      updatedAt: Date.now()
+    });
+
+    console.log('✅✅ التوكن محفوظ بقاعدة البيانات لـ:', userName);
+    console.log('   مسار:', 'fcmTokens/' + userKey);
+
+    fcmRegistered = true;
+
+    // رسالة لما التطبيق مفتوح
+    if(window.__msg){
+      window.__msg.onMessage(window.__messaging || window.__msg, payload => {
+        console.log('📩 رسالة جديدة:', payload);
+      });
+    }
+
+  } catch(e){
+    console.error('❌ FCM error:', e);
+    console.error('   message:', e.message);
+  }
+}
+
+// طلب الإذن
+async function askPermission(){
+  if(Notification.permission === 'granted'){
+    console.log('✅ الإذن موجود');
+    tryRegisterFCM();
+    return;
+  }
+  if(Notification.permission === 'denied'){
+    console.log('❌ الإذن مرفوض');
+    return;
+  }
+  
+  try {
+    const perm = await Notification.requestPermission();
+    console.log('📋 نتيجة:', perm);
+    if(perm === 'granted'){
+      console.log('✅ قبل الإشعارات');
+      tryRegisterFCM();
+    }
+  } catch(e){
+    console.error('خطأ في طلب الإذن:', e);
+  }
+}
+
+// لما يختار اسم
+document.addEventListener('click', (e) => {
+  if(e.target.closest('[data-name]')){
+    setTimeout(askPermission, 500);
+  }
+});
+
+// عند التحميل
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const hasUser = localStorage.getItem('liveChatUser');
+    const hasPerm = 'Notification' in window && Notification.permission === 'granted';
+    if(hasUser && hasPerm){
+      console.log('🔄 عندنا اسم + إذن — نسجّل');
+      tryRegisterFCM();
+    }
+  }, 1500);
+});
+
+// زر يدوي
+window.forceRegisterFCM = registerFCMToken;
+
+// SW
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js')
+    .then(() => console.log('✅ SW registered'))
+    .catch(err => console.error('❌ SW error:', err));
+}
+
 </script>
 
 </body>

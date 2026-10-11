@@ -43,6 +43,22 @@ jobs:
       - name: Install Bubblewrap
         run: npm install -g @bubblewrap/cli
 
+      - name: Configure Bubblewrap paths
+        run: |
+          # نكتب ملف إعدادات مباشرة — هيك bubblewrap ما بيسأل عن JDK ولا SDK
+          mkdir -p $HOME/.bubblewrap
+          cat > $HOME/.bubblewrap/config.json << EOF
+          {
+            "jdkPath": "$JAVA_HOME",
+            "androidSdkPath": "$ANDROID_HOME"
+          }
+          EOF
+          echo "═══ ملف الإعدادات: ═══"
+          cat $HOME/.bubblewrap/config.json
+          echo ""
+          echo "JAVA_HOME=$JAVA_HOME"
+          echo "ANDROID_HOME=$ANDROID_HOME"
+
       - name: Decode keystore
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android.keystore
@@ -51,13 +67,10 @@ jobs:
         env:
           BUBBLEWRAP_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           BUBBLEWRAP_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          JAVA_HOME: ${{ env.JAVA_HOME }}
         run: |
-          echo "═══ JAVA_HOME: $JAVA_HOME ═══"
-          java -version 2>&1 || true
-          echo "═════════════════════════════"
-          # نجيب على الأسئلة: n (ما تنزّل JDK) + مسار JDK الحالي
-          printf 'n\n%s\n' "$JAVA_HOME" | bubblewrap build --skipPwaValidation
+          # نبعت n مرات لسؤال تثبيت JDK، وبعدها answers تانية
+          yes "n" | bubblewrap build --skipPwaValidation 2>&1 | head -100 || \
+          bubblewrap build --skipPwaValidation
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

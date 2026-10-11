@@ -796,6 +796,77 @@ window.sendLiveMessage=(name,text)=>push(ref(db,'liveChat'),{name,text,ts:Date.n
   });
 })();
 
+
+/* AUTO_NOTIFY_FIX — إشعارات تلقائية */
+
+// 1) اطلب الإذن أول ما يختار المستخدم اسمو
+document.addEventListener('click', function autoAsk(e){
+  const btn = e.target.closest('[data-name]');
+  if(!btn) return;
+  // شيل المستمع بعد أول كبسة
+  document.removeEventListener('click', autoAsk);
+  
+  // اطلب الإذن
+  if('Notification' in window && Notification.permission === 'default'){
+    Notification.requestPermission().then(perm => {
+      if(perm === 'granted'){
+        localStorage.setItem('notifyAuto', '1');
+        console.log('✅ الإشعارات مفعّلة');
+        // إشعار ترحيب
+        setTimeout(() => {
+          if('serviceWorker' in navigator && navigator.serviceWorker.controller){
+            navigator.serviceWorker.controller.postMessage({
+              type: 'notify',
+              title: '🎉 أهلين!',
+              body: 'الإشعارات مفعّلة — رح يوصلك خبر لما حدا يكتب بالشات',
+              tag: 'welcome'
+            });
+          } else {
+            new Notification('🎉 أهلين!', {
+              body: 'الإشعارات مفعّلة — رح يوصلك خبر لما حدا يكتب بالشات',
+              dir: 'rtl',
+              lang: 'ar'
+            });
+          }
+        }, 1500);
+      }
+    });
+  }
+});
+
+// 2) إشعار تلقائي لكل رسالة جديدة بالشات
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js').then(reg => {
+    console.log('✅ SW registered');
+  }).catch(err => console.log('SW error:', err));
+}
+
+// 3) طلب إذن الإشعارات إذا المستخدم سجّل اسم قبل الفيكس
+window.addEventListener('load', () => {
+  if(localStorage.getItem('liveChatUser') && 
+     'Notification' in window && 
+     Notification.permission === 'default'){
+    // ما نقدر نطلب بدون كبسة، بس نخزّن إنو بدنا نطلب
+    console.log('⏳ في انتظار تفاعل المستخدم باشي نطلب إذن الإشعارات');
+  }
+});
+
+// 4) زر تفعيل يدوي احتياطي — إذا المستخدم رفض قبل
+window.forceAskNotify = function(){
+  if(!('Notification' in window)){
+    alert('متصفحك ما بيدعم الإشعارات 😅');
+    return;
+  }
+  Notification.requestPermission().then(perm => {
+    if(perm === 'granted'){
+      alert('✅ الإشعارات مفعّلة!');
+      localStorage.setItem('notifyAuto', '1');
+    } else {
+      alert('❌ رفضت الإشعارات. إذا غيّرت رأيك، روح لإعدادات المتصفح ← الموقع ← الإشعارات');
+    }
+  });
+};
+
 </script>
 
 </body>

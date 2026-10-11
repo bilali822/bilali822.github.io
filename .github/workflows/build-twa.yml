@@ -40,18 +40,10 @@ jobs:
           echo "$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
           echo "$HOME/android-sdk/platform-tools" >> $GITHUB_PATH
 
-      - name: Install Bubblewrap
-        run: npm install -g @bubblewrap/cli
-
-      - name: Configure Bubblewrap
+      - name: Install Bubblewrap & expect
         run: |
-          mkdir -p $HOME/.bubblewrap
-          cat > $HOME/.bubblewrap/config.json << EOF
-          {
-            "jdkPath": "$JAVA_HOME",
-            "androidSdkPath": "$ANDROID_HOME"
-          }
-          EOF
+          npm install -g @bubblewrap/cli
+          sudo apt-get install -y expect
 
       - name: Decode keystore
         run: |
@@ -61,15 +53,26 @@ jobs:
         env:
           BUBBLEWRAP_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           BUBBLEWRAP_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          JDK_PATH: ${{ env.JAVA_HOME }}
         run: |
-          # نجاوب "n" للأسئلة، والـ Yes بتعطي إجابات تلقائية
-          yes "n" | bubblewrap build --skipPwaValidation || true
+          expect << 'EOF'
+          set timeout 900
+          spawn bubblewrap build --skipPwaValidation
+          expect {
+            -re "install the JDK" { send "n\r"; exp_continue }
+            -re "JDK 17:" { send "$env(JDK_PATH)\r"; exp_continue }
+            -re "Path to" { send "$env(JDK_PATH)\r"; exp_continue }
+            -re "Continue" { send "y\r"; exp_continue }
+            eof
+          }
+          EOF
           
           echo ""
           echo "═══ الملفات بعد البناء: ═══"
           ls -la
           echo ""
-          find . -name "*.apk" -o -name "*.aab" 2>/dev/null
+          echo "═══ ندور على APK: ═══"
+          find . -name "*.apk" -o -name "*.aab"
 
       - name: Find APK
         id: find-apk
@@ -79,18 +82,21 @@ jobs:
             APK_PATH=$(find . -name "*.apk" -type f | head -1)
           fi
           echo "apk_path=$APK_PATH" >> $GITHUB_OUTPUT
-          echo "✅ APK found at: $APK_PATH"
-          ls -lh "$APK_PATH" || echo "❌ ما لقينا APK"
+          if [ -n "$APK_PATH" ]; then
+            echo "✅ APK: $APK_PATH"
+            ls -lh "$APK_PATH"
+          else
+            echo "❌ ما لقينا APK"
+            exit 1
+          fi
 
       - name: Upload APK artifact
-        if: steps.find-apk.outputs.apk_path != ''
         uses: actions/upload-artifact@v4
         with:
           name: app-release-signed
           path: ${{ steps.find-apk.outputs.apk_path }}
 
       - name: Create Release
-        if: steps.find-apk.outputs.apk_path != ''
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v1.0.${{ github.run_number }}

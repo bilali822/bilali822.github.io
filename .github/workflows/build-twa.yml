@@ -40,10 +40,21 @@ jobs:
           echo "$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
           echo "$HOME/android-sdk/platform-tools" >> $GITHUB_PATH
 
-      - name: Install Bubblewrap & expect
+      - name: Install Bubblewrap
+        run: npm install -g @bubblewrap/cli
+
+      - name: Write Bubblewrap config
         run: |
-          npm install -g @bubblewrap/cli
-          sudo apt-get install -y expect
+          # ملف الإعدادات — باشي bubblewrap ما بيسأل أي سؤال
+          mkdir -p $HOME/.bubblewrap
+          cat > $HOME/.bubblewrap/config.json << EOF
+          {
+            "jdkPath": "$JAVA_HOME",
+            "androidSdkPath": "$ANDROID_HOME"
+          }
+          EOF
+          echo "═══ config.json: ═══"
+          cat $HOME/.bubblewrap/config.json
 
       - name: Decode keystore
         run: |
@@ -53,22 +64,12 @@ jobs:
         env:
           BUBBLEWRAP_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           BUBBLEWRAP_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          JDK_PATH: ${{ env.JAVA_HOME }}
         run: |
-          expect << 'EOF'
-          set timeout 900
-          spawn bubblewrap build --skipPwaValidation
-          expect {
-            -re "install the JDK" { send "n\r"; exp_continue }
-            -re "JDK 17:" { send "$env(JDK_PATH)\r"; exp_continue }
-            -re "Path to" { send "$env(JDK_PATH)\r"; exp_continue }
-            -re "Continue" { send "y\r"; exp_continue }
-            eof
-          }
-          EOF
+          # --skipPwaValidation + config.json موجود = ما بيسأل شي
+          bubblewrap build --skipPwaValidation
           
           echo ""
-          echo "═══ الملفات بعد البناء: ═══"
+          echo "═══ الملفات: ═══"
           ls -la
           echo ""
           echo "═══ ندور على APK: ═══"

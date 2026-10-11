@@ -1282,5 +1282,86 @@ if('serviceWorker' in navigator){
 
 </script>
 
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue, update, runTransaction, push, set }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+console.log('📦 تحميل Firebase...');
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCSTvrlV-0RM9LnxWNBhvR-E_jIWE1x6Wk",
+  authDomain: "saff-10.firebaseapp.com",
+  databaseURL: "https://saff-10-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "saff-10",
+  storageBucket: "saff-10.firebasestorage.app",
+  messagingSenderId: "581594259710",
+  appId: "1:581594259710:web:32193312221b518b5c85af"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+window.__db = db;
+window.__fb = { ref, onValue, update, runTransaction, push, set };
+
+console.log('✅ Firebase جاهز!');
+window.dispatchEvent(new Event('firebase-ready'));
+
+/* التصويتات */
+onValue(ref(db, 'votes'), (s) => {
+  window.__votesCache = s.val() || {};
+  if(window.STUDENTS) window.STUDENTS.forEach(x => { if(typeof window.__votesCache[x.id] !== 'number') window.__votesCache[x.id] = 0; });
+  if(window.renderBoard) window.renderBoard();
+});
+window.voteFor = (id) => runTransaction(ref(db, 'votes/' + id), c => (c || 0) + 1);
+window.resetVotes = async () => {
+  if(!confirm('تصفّي التصويتات للكل؟')) return;
+  const u = {};
+  window.STUDENTS.forEach(s => u[s.id] = 0);
+  await update(ref(db, 'votes'), u);
+};
+
+/* العدادات */
+onValue(ref(db, 'counters'), (s) => {
+  window.__countersCache = s.val() || {};
+  if(window.COUNTERS) window.COUNTERS.forEach(x => { if(typeof window.__countersCache[x.id] !== 'number') window.__countersCache[x.id] = 0; });
+  if(window.renderCounters) window.renderCounters();
+});
+window.incCounter = (id) => runTransaction(ref(db, 'counters/' + id), c => (c || 0) + 1);
+window.resetCounters = async () => {
+  if(!confirm('تصفّي العدّادات للكل؟')) return;
+  const u = {};
+  window.COUNTERS.forEach(c => u[c.id] = 0);
+  await update(ref(db, 'counters'), u);
+};
+
+/* اللايكات */
+onValue(ref(db, 'postLikes'), (s) => {
+  window.__likesCache = s.val() || {};
+  if(window.renderPosts) window.renderPosts();
+});
+window.toggleLike = (id) => {
+  const had = localStorage.getItem('liked_' + id) === '1';
+  const d = had ? -1 : 1;
+  if(had) localStorage.removeItem('liked_' + id);
+  else localStorage.setItem('liked_' + id, '1');
+  runTransaction(ref(db, 'postLikes/' + id), c => Math.max(0, (c || 0) + d));
+};
+
+/* الشات */
+onValue(ref(db, 'liveChat'), (s) => {
+  const data = s.val() || {};
+  const list = Object.entries(data).map(([k, v]) => ({ id: k, ...v })).sort((a, b) => (a.ts || 0) - (b.ts || 0)).slice(-100);
+  window.__liveChatCache = list;
+  if(window.renderLiveChat) window.renderLiveChat(list);
+  if(window.updateOnlineCount) window.updateOnlineCount();
+});
+window.sendLiveMessage = (name, text) => push(ref(db, 'liveChat'), { name, text, ts: Date.now() });
+
+console.log('✅ listeners جاهزة');
+</script>
+
 </body>
 </html>

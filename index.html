@@ -1093,150 +1093,173 @@ window.sendLiveMessage=(name,text)=>push(ref(db,'liveChat'),{name,text,ts:Date.n
 })();
 
 
-/* AUTO_NOTIFY_FIX — إشعارات تلقائية */
 
-// 1) اطلب الإذن أول ما يختار المستخدم اسمو
-document.addEventListener('click', function autoAsk(e){
-  const btn = e.target.closest('[data-name]');
-  if(!btn) return;
-  // شيل المستمع بعد أول كبسة
-  document.removeEventListener('click', autoAsk);
-  
-  // اطلب الإذن
-  if('Notification' in window && Notification.permission === 'default'){
-    Notification.requestPermission().then(perm => {
-      if(perm === 'granted'){
-        localStorage.setItem('notifyAuto', '1');
-        console.log('✅ الإشعارات مفعّلة');
-        // إشعار ترحيب
-        setTimeout(() => {
-          if('serviceWorker' in navigator && navigator.serviceWorker.controller){
-            navigator.serviceWorker.controller.postMessage({
-              type: 'notify',
-              title: '🎉 أهلين!',
-              body: 'الإشعارات مفعّلة — رح يوصلك خبر لما حدا يكتب بالشات',
-              tag: 'welcome'
-            });
-          } else {
-            new Notification('🎉 أهلين!', {
-              body: 'الإشعارات مفعّلة — رح يوصلك خبر لما حدا يكتب بالشات',
-              dir: 'rtl',
-              lang: 'ar'
-            });
-          }
-        }, 1500);
-      }
-    });
-  }
-});
 
-// 2) إشعار تلقائي لكل رسالة جديدة بالشات
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js').then(reg => {
-    console.log('✅ SW registered');
-  }).catch(err => console.log('SW error:', err));
-}
-
-// 3) طلب إذن الإشعارات إذا المستخدم سجّل اسم قبل الفيكس
-window.addEventListener('load', () => {
-  if(localStorage.getItem('liveChatUser') && 
-     'Notification' in window && 
-     Notification.permission === 'default'){
-    // ما نقدر نطلب بدون كبسة، بس نخزّن إنو بدنا نطلب
-    console.log('⏳ في انتظار تفاعل المستخدم باشي نطلب إذن الإشعارات');
-  }
-});
-
-// 4) زر تفعيل يدوي احتياطي — إذا المستخدم رفض قبل
-window.forceAskNotify = function(){
-  if(!('Notification' in window)){
-    alert('متصفحك ما بيدعم الإشعارات 😅');
-    return;
-  }
-  Notification.requestPermission().then(perm => {
-    if(perm === 'granted'){
-      alert('✅ الإشعارات مفعّلة!');
-      localStorage.setItem('notifyAuto', '1');
-    } else {
-      alert('❌ رفضت الإشعارات. إذا غيّرت رأيك، روح لإعدادات المتصفح ← الموقع ← الإشعارات');
-    }
-  });
+/* ============ FCM + الإشعارات (نسخة محسّنة) ============ */
+const FCM_VAPID_KEY = "BGY4e-68lamnZ9Aee8PYzAbC72o4JEDXAWEenRrmFBFUwEljR8n2oM8sJaabeTSipb60xPNRUWEzk_RBdoMEW_A";
+const FIREBASE_CFG = {
+  apiKey: "AIzaSyCSTvrlV-0RM9LnxWNBhvR-E_jIWE1x6Wk",
+  authDomain: "saff-10.firebaseapp.com",
+  projectId: "saff-10",
+  storageBucket: "saff-10.firebasestorage.app",
+  messagingSenderId: "581594259710",
+  appId: "1:581594259710:web:32193312221b518b5c85af"
 };
 
+let fcmRegistered = false;
 
-/* FCM_TOKEN_REGISTER — تسجيل الجهاز للإشعارات */
-const FCM_VAPID_KEY = 'BGY4e-68lamnZ9Aee8PYzAbC72o4JEDXAWEenRrmFBFUwEljR8n2oM8sJaabeTSipb60xPNRUWEzk_RBdoMEW_A';
+async function registerFCMToken(){
+  if(fcmRegistered){
+    console.log('ℹ️ FCM already registered');
+    return;
+  }
 
-async function registerFCMToken() {
-  if(!('serviceWorker' in navigator)) return;
-  if(!('Notification' in window)) return;
-  if(Notification.permission !== 'granted') return;
+  console.log('🚀 بدء تسجيل FCM...');
+
+  if(!('serviceWorker' in navigator)){
+    console.error('❌ Service Worker غير مدعوم');
+    return;
+  }
+  if(!('Notification' in window)){
+    console.error('❌ الإشعارات غير مدعومة');
+    return;
+  }
+  if(Notification.permission !== 'granted'){
+    console.warn('⚠️ الإذن لسا مو granted:', Notification.permission);
+    return;
+  }
+
+  const userName = localStorage.getItem('liveChatUser');
+  if(!userName){
+    console.warn('⚠️ ما في اسم مستخدم');
+    return;
+  }
 
   try {
+    console.log('📦 نستورد firebase...');
     const modApp = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
     const modMsg = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js');
 
-    const cfg = {
-      apiKey: "AIzaSyCSTvrlV-0RM9LnxWNBhvR-E_jIWE1x6Wk",
-      authDomain: "saff-10.firebaseapp.com",
-      projectId: "saff-10",
-      storageBucket: "saff-10.firebasestorage.app",
-      messagingSenderId: "581594259710",
-      appId: "1:581594259710:web:32193312221b518b5c85af"
-    };
+    console.log('🔥 نهيّئ Firebase...');
+    let app;
+    try {
+      app = modApp.getApp('fcm-app');
+      console.log('ℹ️ Firebase instance موجود');
+    } catch(e) {
+      app = modApp.initializeApp(FIREBASE_CFG, 'fcm-app');
+      console.log('✅ Firebase instance جديد');
+    }
 
-    const app = modApp.initializeApp(cfg, 'fcm-app');
     const messaging = modMsg.getMessaging(app);
 
+    console.log('🔑 نطلب FCM token...');
     const reg = await navigator.serviceWorker.ready;
     const token = await modMsg.getToken(messaging, {
       vapidKey: FCM_VAPID_KEY,
       serviceWorkerRegistration: reg
     });
 
-    if(token){
-      console.log('✅ FCM Token:', token);
-      const userName = localStorage.getItem('liveChatUser') || 'مجهول';
-      localStorage.setItem('fcmToken', token);
-
-      if(window.__db && window.__fb){
-        const ref = window.__fb.ref;
-        const set = window.__fb.set;
-        await set(ref(window.__db, 'fcmTokens/' + userName.replace(/\s+/g, '_')), {
-          token: token,
-          name: userName,
-          updatedAt: Date.now()
-        });
-        console.log('✅ Token saved for', userName);
-      }
+    if(!token){
+      console.error('❌ ما وصل token من FCM');
+      return;
     }
 
+    console.log('✅ FCM Token:', token.substring(0, 30) + '...');
+    localStorage.setItem('fcmToken', token);
+    localStorage.setItem('fcmTokenUser', userName);
+
+    // احفظ التوكن بقاعدة البيانات
+    if(window.__db && window.__fb){
+      const ref = window.__fb.ref;
+      const set = window.__fb.set;
+      await set(ref(window.__db, 'fcmTokens/' + userName.replace(/\s+/g, '_')), {
+        token: token,
+        name: userName,
+        updatedAt: Date.now()
+      });
+      console.log('✅ التوكن محفوظ بقاعدة البيانات لـ:', userName);
+    } else {
+      console.warn('⚠️ ما لقينا window.__fb — بنحاول مرة تانية بعد ثانية');
+      setTimeout(registerFCMToken, 2000);
+      return;
+    }
+
+    fcmRegistered = true;
+
+    // رسالة لما التطبيق مفتوح
     modMsg.onMessage(messaging, payload => {
-      console.log('📩 Foreground message:', payload);
+      console.log('📩 رسالة new:', payload);
       if(Notification.permission === 'granted'){
-        const t = payload.notification && payload.notification.title || '💬 رسالة جديدة';
-        const b = payload.notification && payload.notification.body || '';
-        new Notification(t, { body: b, icon: './icons/icon-192x192.png', dir: 'rtl', lang: 'ar' });
+        const t = (payload.notification && payload.notification.title) || '💬 رسالة جديدة';
+        const b = (payload.notification && payload.notification.body) || '';
+        new Notification(t, { body: b, icon: './icons/icon-192x192.png', dir: 'rtl' });
       }
     });
-  } catch(e) {
-    console.warn('❌ FCM error:', e);
+
+  } catch(e){
+    console.error('❌ FCM error:', e);
+    console.error('   message:', e.message);
+    console.error('   code:', e.code);
   }
 }
 
-document.addEventListener('click', function once(e) {
+// ═══ الطريقة الجديدة: نطلب الإذن، وبعدها نسجّل ═══
+async function askPermissionAndRegister(){
+  console.log('🔔 طلب إذن الإشعارات...');
+
+  if(Notification.permission === 'granted'){
+    console.log('✅ الإذن موجود مسبقاً');
+    registerFCMToken();
+    return;
+  }
+
+  if(Notification.permission === 'denied'){
+    console.warn('❌ المستخدم رفض الإشعارات سابقاً');
+    return;
+  }
+
+  try {
+    const perm = await Notification.requestPermission();
+    console.log('📋 نتيجة الطلب:', perm);
+    if(perm === 'granted'){
+      console.log('✅ المستخدم وافق على الإشعارات');
+      // انتظر ثانية باشي Firebase يخلص التحميل
+      setTimeout(registerFCMToken, 500);
+    }
+  } catch(e){
+    console.error('❌ خطأ في طلب الإذن:', e);
+  }
+}
+
+// أول ما يختار المستخدم اسمو
+document.addEventListener('click', function pickName(e){
   if(e.target.closest('[data-name]')){
-    setTimeout(() => {
-      if(Notification.permission === 'granted') registerFCMToken();
-    }, 1500);
-    document.removeEventListener('click', once);
+    console.log('👤 اختار المستخدم اسم:', e.target.closest('[data-name]').dataset.name);
+    // انتظر شوي باشي الاسم ينحفظ
+    setTimeout(askPermissionAndRegister, 300);
   }
 });
 
-if(localStorage.getItem('liveChatUser') && 
-   'Notification' in window && 
-   Notification.permission === 'granted'){
-  window.addEventListener('load', () => setTimeout(registerFCMToken, 1000));
+// إذا المستخدم عندو اسم محفوظ + الإذن معطى = سجّل مباشرة
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const hasUser = localStorage.getItem('liveChatUser');
+    const hasPerm = 'Notification' in window && Notification.permission === 'granted';
+    if(hasUser && hasPerm){
+      console.log('🔄 المستخدم عندو اسم + إذن — نسجّل FCM');
+      registerFCMToken();
+    }
+  }, 2000);
+});
+
+// زر يدوي للتسجيل
+window.forceRegisterFCM = registerFCMToken;
+
+// سجّل الـ SW
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js').then(() => {
+    console.log('✅ SW registered');
+  }).catch(err => console.error('❌ SW error:', err));
 }
 
 </script>

@@ -51,10 +51,13 @@ jobs:
         env:
           BUBBLEWRAP_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           BUBBLEWRAP_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          JAVA_HOME: ${{ env.JAVA_HOME }}
         run: |
-          # نجاوب "n" على سؤال تثبيت JDK (لأننا نزّلناه أصلاً)
-          # نجاوب "y" على أي سؤال تاني
-          printf 'n\ny\ny\ny\ny\ny\ny\ny\n' | bubblewrap build --skipPwaValidation
+          echo "═══ JAVA_HOME: $JAVA_HOME ═══"
+          java -version 2>&1 || true
+          echo "═════════════════════════════"
+          # نجيب على الأسئلة: n (ما تنزّل JDK) + مسار JDK الحالي
+          printf 'n\n%s\n' "$JAVA_HOME" | bubblewrap build --skipPwaValidation
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

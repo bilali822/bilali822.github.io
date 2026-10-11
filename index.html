@@ -92,9 +92,34 @@
   .chat-input button{background:linear-gradient(135deg,#e11d48,#7c3aed);border:0;color:#fff;padding:0 20px;border-radius:12px;font-family:inherit;font-weight:800;font-size:1rem;cursor:pointer}
   .live-badge{display:inline-block;background:#22c55e;color:#000;font-size:.7rem;padding:2px 8px;border-radius:10px;font-weight:800;margin-right:6px}
   footer{text-align:center;padding:26px 16px;color:#4b4b6b;font-size:.82rem;line-height:1.9}
+
+  /* شاشة "مين أنت؟" */
+  #whoOverlay{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#0a0a1a,#2a1f3d,#0a0a1a);display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px 18px;overflow-y:auto}
+  #whoOverlay.show{display:flex}
+  #whoOverlay .who-emoji{font-size:4rem;margin-bottom:14px;animation:wave 1.8s ease-in-out infinite}
+  @keyframes wave{0%,100%{transform:rotate(0)}25%{transform:rotate(-12deg)}75%{transform:rotate(12deg)}}
+  #whoOverlay h2{color:#f472b6;font-size:1.5rem;margin-bottom:8px;text-align:center}
+  #whoOverlay p{color:#94a3b8;font-size:.95rem;margin-bottom:24px;text-align:center;max-width:400px;line-height:1.7}
+  #whoOverlay .who-list{display:flex;flex-direction:column;gap:10px;width:100%;max-width:380px}
+  #whoOverlay .who-btn{display:flex;align-items:center;gap:12px;background:#1a1a2e;border:2px solid #2a2a4a;color:#fff;padding:14px 18px;border-radius:14px;font-family:inherit;font-weight:700;font-size:1.05rem;cursor:pointer;transition:.2s;text-align:right}
+  #whoOverlay .who-btn:hover{border-color:#e11d48;background:#252542;transform:translateY(-2px)}
+  #whoOverlay .who-btn:active{transform:scale(.97)}
+  #whoOverlay .who-btn .em{font-size:1.6rem}
+  #whoOverlay .who-btn .nm{flex:1}
+  #whoOverlay .who-btn .ar{color:#f472b6;font-size:1.2rem}
+  #whoOverlay .who-footer{margin-top:22px;color:#64748b;font-size:.8rem;text-align:center}
 </style>
 </head>
 <body>
+<!-- شاشة مين أنت؟ -->
+<div id="whoOverlay">
+  <div class="who-emoji">👋</div>
+  <h2>لك مين أنت؟</h2>
+  <p>اختار اسمك من الشلّة باشي نعرف مين عم يستعمل التطبيق 😂</p>
+  <div class="who-list" id="whoList"></div>
+  <div class="who-footer">اختيارك رح ينحفظ على جهازك ✅</div>
+</div>
+
 
 <div class="marquee"><span>📢 محمد عوض نسي الشنتة &nbsp;•&nbsp; 💀 ميني كسر رقم الموبايل &nbsp;•&nbsp; 👑 غازي رفض الاستراحة &nbsp;•&nbsp; 🍔 بيلالي خلّص الساندويشة &nbsp;•&nbsp; 🧠 نجار فتح الكتاب بالغلط &nbsp;•&nbsp; 🌐 جديد! شات الصف الحي!</span></div>
 
@@ -147,12 +172,24 @@
 <section id="livechat">
   <div class="card">
     <h2><span class="live-badge">LIVE</span> شات الصف العام</h2>
-    <p class="sub">كل رسالة بتظهر فوراً عند الكل 🌐</p>
-    <input id="liveName" placeholder="اسمك؟" maxlength="20">
-    <div class="chat-window" id="liveChatWindow" style="height:380px"></div>
-    <div class="chat-input">
-      <input id="liveInput" placeholder="اكتب رسالة..." maxlength="200">
-      <button id="liveSend">📤</button>
+
+    <div id="whoAmI" style="text-align:center;padding:20px 10px">
+      <div style="font-size:3.5rem">🤔</div>
+      <h3 style="color:#f472b6;font-size:1.25rem;margin:12px 0 6px">لك مين أنت؟ 👀</h3>
+      <p style="color:#94a3b8;font-size:.9rem;margin-bottom:18px">اختار اسمك من الشلّة باشي نعرف مين عم يحكي 😂</p>
+      <div id="whoPicker" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center"></div>
+    </div>
+
+    <div id="chatMain" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;background:#0a0a1a;border-radius:12px;padding:10px 14px;margin-bottom:12px;border:1px solid #2a2a4a">
+        <span style="font-size:.9rem">👤 أنت: <b id="myNameDisplay" style="color:#facc15"></b></span>
+        <button id="changeName" style="background:transparent;border:1px solid #2a2a4a;color:#94a3b8;padding:6px 12px;border-radius:20px;font-family:inherit;font-size:.8rem;cursor:pointer">🔄 تغيير</button>
+      </div>
+      <div class="chat-window" id="liveChatWindow" style="height:380px"></div>
+      <div class="chat-input">
+        <input id="liveInput" placeholder="اكتب رسالة..." maxlength="200">
+        <button id="liveSend">📤</button>
+      </div>
     </div>
   </div>
 </section>
@@ -388,30 +425,71 @@ document.getElementById('postsBox').addEventListener('click',e=>{
 
 /* الشات الحي */
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+function renderWhoPicker(){
+  const picker = document.getElementById('whoPicker');
+  if(!picker) return;
+  picker.innerHTML = window.STUDENTS.map(s =>
+    `<button data-pick="${s.name}" style="background:#1a1a2e;border:1px solid #2a2a4a;color:#fff;padding:12px 18px;border-radius:16px;font-family:inherit;font-weight:700;font-size:.95rem;cursor:pointer">${s.emoji} ${s.name}</button>`
+  ).join('');
+}
+
+function showChatUI(){
+  document.getElementById('whoAmI').style.display = 'none';
+  document.getElementById('chatMain').style.display = 'block';
+  document.getElementById('myNameDisplay').textContent = localStorage.getItem('liveChatUser') || '';
+}
+
+function showWhoAmI(){
+  document.getElementById('whoAmI').style.display = 'block';
+  document.getElementById('chatMain').style.display = 'none';
+}
+
+renderWhoPicker();
+showChatUI();
+
+document.getElementById('whoPicker')?.addEventListener('click', e => {
+  const b = e.target.closest('[data-pick]');
+  if(!b) return;
+  localStorage.setItem('liveChatUser', b.dataset.pick);
+  showChatUI();
+});
+
+document.getElementById('changeName')?.addEventListener('click', () => {
+  if(!confirm('بدك تغيّر اسمك؟')) return;
+  localStorage.removeItem('liveChatUser');
+  if(window.__openWhoOverlay) window.__openWhoOverlay();
+});
+
 window.renderLiveChat = function(list){
-  const w=document.getElementById('liveChatWindow'); if(!w) return;
-  const myName=(document.getElementById('liveName').value||'').trim();
-  if(list.length===0){ w.innerHTML='<div class="msg sys">لك ما في رسايل بعد... كون أول واحد 😎</div>'; return; }
-  w.innerHTML=list.map(m=>{
-    const mine=myName&&m.name===myName;
+  const w = document.getElementById('liveChatWindow');
+  if(!w) return;
+  const myName = localStorage.getItem('liveChatUser') || '';
+  if(list.length === 0){
+    w.innerHTML = '<div class="msg sys">لك ما في رسايل بعد... كون أول واحد 😎</div>';
+    return;
+  }
+  w.innerHTML = list.map(m => {
+    const mine = myName && m.name === myName;
     return `<div class="msg ${mine?'me':'them'}"><b style="font-size:.72rem;opacity:.75;display:block;margin-bottom:2px">${escapeHtml(m.name||'؟')}</b>${escapeHtml(m.text||'')}</div>`;
   }).join('');
-  w.scrollTop=w.scrollHeight;
+  w.scrollTop = w.scrollHeight;
 };
-const liveNameInput=document.getElementById('liveName');
-const liveInput=document.getElementById('liveInput');
-liveNameInput.value=localStorage.getItem('liveName')||'';
+
 function sendLive(){
-  const name=(liveNameInput.value||'').trim();
-  const txt=(liveInput.value||'').trim();
-  if(!name){ alert('اكتب اسمك 😅'); liveNameInput.focus(); return; }
+  const myName = localStorage.getItem('liveChatUser');
+  if(!myName){ showWhoAmI(); return; }
+  const liveInput = document.getElementById('liveInput');
+  const txt = (liveInput.value || '').trim();
   if(!txt) return;
-  localStorage.setItem('liveName',name);
-  liveInput.value='';
-  if(window.sendLiveMessage) window.sendLiveMessage(name,txt);
+  liveInput.value = '';
+  if(window.sendLiveMessage) window.sendLiveMessage(myName, txt);
 }
-document.getElementById('liveSend').addEventListener('click',sendLive);
-liveInput.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendLive();}});
+
+document.getElementById('liveSend')?.addEventListener('click', sendLive);
+document.getElementById('liveInput')?.addEventListener('keydown', e => {
+  if(e.key === 'Enter'){ e.preventDefault(); sendLive(); }
+});
 
 /* دردشة مع الشباب */
 const CHAT_PERSONAS={
@@ -650,6 +728,61 @@ onValue(ref(db,'liveChat'),s=>{
   window.renderLiveChat(list);
 });
 window.sendLiveMessage=(name,text)=>push(ref(db,'liveChat'),{name,text,ts:Date.now()});
+
+/* ===== شاشة مين أنت؟ ===== */
+(function(){
+  const overlay = document.getElementById('whoOverlay');
+  const list = document.getElementById('whoList');
+  if(!overlay || !list) return;
+
+  const KEY = 'liveChatUser';
+
+  function renderList(){
+    list.innerHTML = window.STUDENTS.map(s => `
+      <button class="who-btn" data-name="${s.name}">
+        <span class="em">${s.emoji}</span>
+        <span class="nm">${s.name}</span>
+        <span class="ar">›</span>
+      </button>
+    `).join('');
+  }
+
+  function show(){
+    renderList();
+    overlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function hide(){
+    overlay.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+
+  function getCurrent(){ return localStorage.getItem(KEY); }
+
+  list.addEventListener('click', e => {
+    const b = e.target.closest('[data-name]');
+    if(!b) return;
+    localStorage.setItem(KEY, b.dataset.name);
+    hide();
+    // لو كان داخل الشات، حدّث الواجهة
+    if(typeof showChatUI === 'function'){
+      showChatUI();
+      // أعد تحميل رسايل الشات
+      if(window.__liveChatCache) window.renderLiveChat(window.__liveChatCache);
+    }
+  });
+
+  // افتح الشاشة أول ما يحمّل إذا ما في اسم محفوظ
+  window.addEventListener('load', () => {
+    if(!getCurrent()) setTimeout(show, 300);
+  });
+
+  // خلّيها متاحة عشان زر "🔄 تغيير"
+  window.__openWhoOverlay = show;
+  window.__closeWhoOverlay = hide;
+})();
+
 </script>
 
 </body>

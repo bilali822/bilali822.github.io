@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.bilali822.saff10",
+    "sha256_cert_fingerprints": [" 29:5C:E3:D5:92:92:CD:55:C1:40:3E:36:AE:B9:47:F4:0A:29:BD:6A:6D:7A:05:8E:AE:77:12:98:8F:58:71:8D"]
+  }
+}]

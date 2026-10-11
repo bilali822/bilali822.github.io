@@ -1,0 +1,31 @@
+{
+  "packageId": "com.bilali822.saff10",
+  "host": "bilali822.github.io",
+  "name": "الصف العاشر",
+  "launcherName": "الصف العاشر",
+  "display": "standalone",
+  "themeColor": "#e11d48",
+  "navigationColor": "#0a0a1a",
+  "backgroundColor": "#0a0a1a",
+  "enableNotifications": true,
+  "startUrl": "/saff-10/index.html",
+  "iconUrl": "https://bilali822.github.io/saff-10/icons/icon-512x512.png",
+  "maskableIconUrl": "https://bilali822.github.io/saff-10/icons/maskable-512x512.png",
+  "signingKey": {
+    "path": "./android.keystore",
+    "alias": "android"
+  },
+  "appVersionName": "1.0.0",
+  "appVersionCode": 1,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://bilali822.github.io/saff-10/manifest.json",
+  "fallbackType": "customtabs",
+  "features": {},
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://bilali822.github.io/saff-10/",
+  "minSdkVersion": 21,
+  "orientation": "portrait"
+}

@@ -867,6 +867,82 @@ window.forceAskNotify = function(){
   });
 };
 
+
+/* FCM_TOKEN_REGISTER — تسجيل الجهاز للإشعارات */
+const FCM_VAPID_KEY = 'BGY4e-68lamnZ9Aee8PYzAbC72o4JEDXAWEenRrmFBFUwEljR8n2oM8sJaabeTSipb60xPNRUWEzk_RBdoMEW_A';
+
+async function registerFCMToken() {
+  if(!('serviceWorker' in navigator)) return;
+  if(!('Notification' in window)) return;
+  if(Notification.permission !== 'granted') return;
+
+  try {
+    const modApp = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+    const modMsg = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js');
+
+    const cfg = {
+      apiKey: "AIzaSyCSTvrlV-0RM9LnxWNBhvR-E_jIWE1x6Wk",
+      authDomain: "saff-10.firebaseapp.com",
+      projectId: "saff-10",
+      storageBucket: "saff-10.firebasestorage.app",
+      messagingSenderId: "581594259710",
+      appId: "1:581594259710:web:32193312221b518b5c85af"
+    };
+
+    const app = modApp.initializeApp(cfg, 'fcm-app');
+    const messaging = modMsg.getMessaging(app);
+
+    const reg = await navigator.serviceWorker.ready;
+    const token = await modMsg.getToken(messaging, {
+      vapidKey: FCM_VAPID_KEY,
+      serviceWorkerRegistration: reg
+    });
+
+    if(token){
+      console.log('✅ FCM Token:', token);
+      const userName = localStorage.getItem('liveChatUser') || 'مجهول';
+      localStorage.setItem('fcmToken', token);
+
+      if(window.__db && window.__fb){
+        const ref = window.__fb.ref;
+        const set = window.__fb.set;
+        await set(ref(window.__db, 'fcmTokens/' + userName.replace(/\s+/g, '_')), {
+          token: token,
+          name: userName,
+          updatedAt: Date.now()
+        });
+        console.log('✅ Token saved for', userName);
+      }
+    }
+
+    modMsg.onMessage(messaging, payload => {
+      console.log('📩 Foreground message:', payload);
+      if(Notification.permission === 'granted'){
+        const t = payload.notification && payload.notification.title || '💬 رسالة جديدة';
+        const b = payload.notification && payload.notification.body || '';
+        new Notification(t, { body: b, icon: './icons/icon-192x192.png', dir: 'rtl', lang: 'ar' });
+      }
+    });
+  } catch(e) {
+    console.warn('❌ FCM error:', e);
+  }
+}
+
+document.addEventListener('click', function once(e) {
+  if(e.target.closest('[data-name]')){
+    setTimeout(() => {
+      if(Notification.permission === 'granted') registerFCMToken();
+    }, 1500);
+    document.removeEventListener('click', once);
+  }
+});
+
+if(localStorage.getItem('liveChatUser') && 
+   'Notification' in window && 
+   Notification.permission === 'granted'){
+  window.addEventListener('load', () => setTimeout(registerFCMToken, 1000));
+}
+
 </script>
 
 </body>

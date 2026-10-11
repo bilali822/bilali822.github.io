@@ -109,6 +109,58 @@
   #whoOverlay .who-btn .nm{flex:1}
   #whoOverlay .who-btn .ar{color:#f472b6;font-size:1.2rem}
   #whoOverlay .who-footer{margin-top:22px;color:#64748b;font-size:.8rem;text-align:center}
+
+  /* شات جديد - تصميم محسّن */
+  .chat-header{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#1a1a2e,#252542);border-radius:14px;padding:12px 16px;margin-bottom:12px;border:1px solid #2a2a4a}
+  .chat-header .me{display:flex;align-items:center;gap:10px;font-weight:700;font-size:.9rem}
+  .chat-header .me .em{font-size:1.6rem}
+  .chat-header .me .tt{color:#facc15;font-size:1rem}
+  .chat-header .online-badge{background:rgba(34,197,94,.15);color:#22c55e;font-size:.75rem;padding:4px 10px;border-radius:20px;font-weight:700;display:flex;align-items:center;gap:5px}
+  .chat-header .online-badge::before{content:"";width:7px;height:7px;background:#22c55e;border-radius:50%;animation:pulse 1.5s infinite}
+  .chat-header button{background:transparent;border:1px solid #2a2a4a;color:#94a3b8;padding:6px 12px;border-radius:20px;font-family:inherit;font-size:.8rem;cursor:pointer;transition:.15s}
+  .chat-header button:hover{color:#f472b6;border-color:#f472b6}
+
+  .chat-window{background:linear-gradient(180deg,#0a0a1a,#0f0f24);border-radius:16px;padding:16px;border:1px solid #2a2a4a;height:420px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;margin-bottom:12px;scroll-behavior:smooth;position:relative}
+  .chat-window::-webkit-scrollbar{width:6px}
+  .chat-window::-webkit-scrollbar-thumb{background:#2a2a4a;border-radius:3px}
+  .chat-window::-webkit-scrollbar-thumb:hover{background:#3a3a5a}
+
+  .msg{display:flex;gap:10px;max-width:85%;animation:msgIn .3s}
+  @keyframes msgIn{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
+  .msg.mine{align-self:flex-end;flex-direction:row-reverse}
+  .msg .avatar{flex:0 0 auto;width:38px;height:38px;background:linear-gradient(135deg,#2a2a4a,#1a1a2e);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;border:2px solid #2a2a4a}
+  .msg.mine .avatar{background:linear-gradient(135deg,#7c3aed,#e11d48);border-color:#7c3aed}
+  .msg .body{flex:1;min-width:0}
+  .msg .top{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:.75rem}
+  .msg.mine .top{flex-direction:row-reverse}
+  .msg .name{font-weight:700;color:#94a3b8}
+  .msg.mine .name{color:#f472b6}
+  .msg .time{color:#475569;font-size:.7rem}
+  .msg .bubble{padding:10px 14px;border-radius:16px;font-size:.92rem;line-height:1.5;word-wrap:break-word;white-space:pre-wrap}
+  .msg.other .bubble{background:#1a1a2e;border:1px solid #2a2a4a;border-bottom-right-radius:4px;color:#e2e8f0}
+  .msg.mine .bubble{background:linear-gradient(135deg,#7c3aed,#e11d48);color:#fff;border-bottom-left-radius:4px;box-shadow:0 4px 12px rgba(124,58,237,.3)}
+  .msg.sys{align-self:center;max-width:90%;justify-content:center}
+  .msg.sys .bubble{background:transparent;color:#64748b;font-size:.78rem;font-style:italic;padding:6px 12px;border:1px dashed #2a2a4a;border-radius:20px;text-align:center}
+
+  .chat-input-wrap{margin-top:4px}
+  .emoji-bar{display:flex;gap:6px;padding:8px 0;overflow-x:auto;scrollbar-width:none}
+  .emoji-bar::-webkit-scrollbar{display:none}
+  .emoji-bar button{flex:0 0 auto;background:#1a1a2e;border:1px solid #2a2a4a;border-radius:10px;padding:6px 10px;font-size:1.3rem;cursor:pointer;transition:.15s}
+  .emoji-bar button:hover{background:#252542;transform:scale(1.1)}
+  .chat-input{display:flex;gap:8px}
+  .chat-input input{flex:1;margin:0;background:#0a0a1a;border-radius:20px;padding:12px 18px}
+  .chat-input button{background:linear-gradient(135deg,#e11d48,#7c3aed);border:0;color:#fff;width:48px;padding:0;border-radius:50%;font-size:1.2rem;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center}
+  .chat-input button:hover{transform:scale(1.05)}
+  .chat-input button:active{transform:scale(.92)}
+
+  .scroll-down{position:absolute;bottom:16px;right:16px;background:linear-gradient(135deg,#e11d48,#7c3aed);color:#fff;border:0;width:42px;height:42px;border-radius:50%;cursor:pointer;font-size:1.2rem;box-shadow:0 4px 15px rgba(225,29,72,.5);display:none;z-index:10;animation:pulse 2s infinite}
+  .scroll-down.show{display:flex;align-items:center;justify-content:center}
+
+  .typing-inline{display:flex;align-items:center;gap:8px;font-size:.8rem;color:#64748b;padding:4px 0;font-style:italic}
+  .typing-inline .dots span{display:inline-block;width:5px;height:5px;background:#64748b;border-radius:50%;margin:0 1px;animation:blink 1.2s infinite}
+  .typing-inline .dots span:nth-child(2){animation-delay:.2s}
+  .typing-inline .dots span:nth-child(3){animation-delay:.4s}
+
 </style>
 </head>
 <body>
@@ -173,22 +225,48 @@
 <section id="livechat">
   <div class="card">
     <h2><span class="live-badge">LIVE</span> شات الصف العام</h2>
+    <p class="sub">كل رسالة بتظهر فوراً عند الكل 🌐</p>
 
-    <div id="whoAmI" style="text-align:center;padding:20px 10px">
-      <div style="font-size:3.5rem">🤔</div>
-      <h3 style="color:#f472b6;font-size:1.25rem;margin:12px 0 6px">لك مين أنت؟ 👀</h3>
-      <p style="color:#94a3b8;font-size:.9rem;margin-bottom:18px">اختار اسمك من الشلّة باشي نعرف مين عم يحكي 😂</p>
-      <div id="whoPicker" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center"></div>
+    <div class="chat-header">
+      <div class="me">
+        <span class="em" id="myAvatar">👤</span>
+        <div>
+          <div class="tt" id="myNameDisplay">—</div>
+          <div style="font-size:.7rem;color:#64748b">هيدا إنت</div>
+        </div>
+      </div>
+      <div class="online-badge"><span id="onlineCount">0</span> متصل</div>
+      <button id="changeName">🔄 تغيير</button>
     </div>
 
-    <div id="chatMain" style="display:none">
-      <div style="display:flex;justify-content:space-between;align-items:center;background:#0a0a1a;border-radius:12px;padding:10px 14px;margin-bottom:12px;border:1px solid #2a2a4a">
-        <span style="font-size:.9rem">👤 أنت: <b id="myNameDisplay" style="color:#facc15"></b></span>
-        <button id="changeName" style="background:transparent;border:1px solid #2a2a4a;color:#94a3b8;padding:6px 12px;border-radius:20px;font-family:inherit;font-size:.8rem;cursor:pointer">🔄 تغيير</button>
+    <div class="chat-window" id="liveChatWindow">
+      <button class="scroll-down" id="scrollDownBtn">⬇️</button>
+    </div>
+
+    <div class="typing-inline" id="typingIndicator" style="display:none">
+      <span id="typingName">حدا</span> عم يكتب
+      <span class="dots"><span></span><span></span><span></span></span>
+    </div>
+
+    <div class="chat-input-wrap">
+      <div class="emoji-bar">
+        <button data-emoji="😂">😂</button>
+        <button data-emoji="🤣">🤣</button>
+        <button data-emoji="😭">😭</button>
+        <button data-emoji="😴">😴</button>
+        <button data-emoji="🔥">🔥</button>
+        <button data-emoji="💀">💀</button>
+        <button data-emoji="👑">👑</button>
+        <button data-emoji="❤️">❤️</button>
+        <button data-emoji="😎">😎</button>
+        <button data-emoji="🤡">🤡</button>
+        <button data-emoji="🙄">🙄</button>
+        <button data-emoji="🍔">🍔</button>
+        <button data-emoji="🎮">🎮</button>
+        <button data-emoji="📚">📚</button>
       </div>
-      <div class="chat-window" id="liveChatWindow" style="height:380px"></div>
       <div class="chat-input">
-        <input id="liveInput" placeholder="اكتب رسالة..." maxlength="200">
+        <input id="liveInput" placeholder="اكتب رسالة..." maxlength="300" autocomplete="off">
         <button id="liveSend">📤</button>
       </div>
     </div>
@@ -424,62 +502,148 @@ document.getElementById('postsBox').addEventListener('click',e=>{
   if(window.toggleLike) window.toggleLike(b.dataset.l);
 });
 
-/* الشات الحي */
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
-function renderWhoPicker(){
-  const picker = document.getElementById('whoPicker');
-  if(!picker) return;
-  picker.innerHTML = window.STUDENTS.map(s =>
-    `<button data-pick="${s.name}" style="background:#1a1a2e;border:1px solid #2a2a4a;color:#fff;padding:12px 18px;border-radius:16px;font-family:inherit;font-weight:700;font-size:.95rem;cursor:pointer">${s.emoji} ${s.name}</button>`
-  ).join('');
+/* ============ الشات الحي - النسخة المحسّنة ============ */
+const AVATARS = {
+  'محمد نجار': '🧠',
+  'محمد عوض': '😴',
+  'آدم ميني': '🎮',
+  'محمد بيلالي': '🍔',
+  'غازي نشابة': '👑'
+};
+
+function getAvatar(name){
+  return AVATARS[name] || '👤';
 }
 
-function showChatUI(){
-  document.getElementById('whoAmI').style.display = 'none';
-  document.getElementById('chatMain').style.display = 'block';
-  document.getElementById('myNameDisplay').textContent = localStorage.getItem('liveChatUser') || '';
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-function showWhoAmI(){
-  document.getElementById('whoAmI').style.display = 'block';
-  document.getElementById('chatMain').style.display = 'none';
+function relTime(ts){
+  if(!ts) return '';
+  const diff = Math.floor((Date.now() - ts) / 1000);
+  if(diff < 30) return 'هلق';
+  if(diff < 60) return diff + ' ثانية';
+  if(diff < 3600) return Math.floor(diff/60) + ' د';
+  if(diff < 86400) return Math.floor(diff/3600) + ' س';
+  return Math.floor(diff/86400) + ' ي';
 }
 
-renderWhoPicker();
-showChatUI();
+function playNotificationSound(){
+  try {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.frequency.value = 880;
+    osc.type = 'sine';
+    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+    osc.start(audioCtx.currentTime);
+    osc.stop(audioCtx.currentTime + 0.3);
+  } catch(e){}
+}
 
-document.getElementById('whoPicker')?.addEventListener('click', e => {
-  const b = e.target.closest('[data-pick]');
-  if(!b) return;
-  localStorage.setItem('liveChatUser', b.dataset.pick);
-  showChatUI();
-});
-
-document.getElementById('changeName')?.addEventListener('click', () => {
-  if(!confirm('بدك تغيّر اسمك؟')) return;
-  localStorage.removeItem('liveChatUser');
-  if(window.__openWhoOverlay) window.__openWhoOverlay();
-});
+let lastRenderedMsgCount = 0;
+let lastMsgTs = 0;
 
 window.renderLiveChat = function(list){
   const w = document.getElementById('liveChatWindow');
   if(!w) return;
   const myName = localStorage.getItem('liveChatUser') || '';
+
+  // شيل زر scroll-down قبل ما نعيد الرسم
+  const scrollBtn = document.getElementById('scrollDownBtn');
+
   if(list.length === 0){
-    w.innerHTML = '<div class="msg sys">لك ما في رسايل بعد... كون أول واحد 😎</div>';
+    w.innerHTML = '<div class="msg sys"><div class="bubble">لك ما في رسايل بعد... كون أول واحد يكتب 😎</div></div>';
+    if(scrollBtn) w.appendChild(scrollBtn);
     return;
   }
-  w.innerHTML = list.map(m => {
+
+  // صوت + animation لما تجي رسالة جديدة
+  const newest = list[list.length - 1];
+  if(list.length > lastRenderedMsgCount && lastMsgTs > 0){
+    const newestFromOther = newest && newest.name !== myName;
+    if(newestFromOther){
+      playNotificationSound();
+    }
+  }
+  lastMsgTs = Date.now();
+  lastRenderedMsgCount = list.length;
+
+  const html = list.map(m => {
     const mine = myName && m.name === myName;
-    return `<div class="msg ${mine?'me':'them'}"><b style="font-size:.72rem;opacity:.75;display:block;margin-bottom:2px">${escapeHtml(m.name||'؟')}</b>${escapeHtml(m.text||'')}</div>`;
+    const avatar = getAvatar(m.name);
+    const time = relTime(m.ts);
+
+    if(!m.text) {
+      return `<div class="msg sys"><div class="bubble">${escapeHtml(m.name || '؟')}</div></div>`;
+    }
+
+    if(mine){
+      return `<div class="msg mine">
+        <div class="avatar">${avatar}</div>
+        <div class="body">
+          <div class="top">
+            <span class="name">${escapeHtml(m.name)}</span>
+            <span class="time">${time}</span>
+          </div>
+          <div class="bubble">${escapeHtml(m.text)}</div>
+        </div>
+      </div>`;
+    } else {
+      return `<div class="msg other">
+        <div class="avatar">${avatar}</div>
+        <div class="body">
+          <div class="top">
+            <span class="name">${escapeHtml(m.name || '؟')}</span>
+            <span class="time">${time}</span>
+          </div>
+          <div class="bubble">${escapeHtml(m.text)}</div>
+        </div>
+      </div>`;
+    }
   }).join('');
-  w.scrollTop = w.scrollHeight;
+
+  w.innerHTML = html;
+  if(scrollBtn) w.appendChild(scrollBtn);
+
+  // scroll للأسفل تلقائياً إذا المستخدم قريب من الأسفل
+  const isNearBottom = w.scrollHeight - w.scrollTop - w.clientHeight < 150;
+  if(isNearBottom){
+    w.scrollTop = w.scrollHeight;
+  }
 };
+
+// زر "انزل لتحت"
+setTimeout(() => {
+  const w = document.getElementById('liveChatWindow');
+  const btn = document.getElementById('scrollDownBtn');
+  if(!w || !btn) return;
+  w.addEventListener('scroll', () => {
+    const isFar = w.scrollHeight - w.scrollTop - w.clientHeight > 200;
+    btn.classList.toggle('show', isFar);
+  });
+  btn.addEventListener('click', () => {
+    w.scrollTop = w.scrollHeight;
+    btn.classList.remove('show');
+  });
+}, 500);
+
+function updateMyInfo(){
+  const name = localStorage.getItem('liveChatUser') || '—';
+  const nameEl = document.getElementById('myNameDisplay');
+  const avatarEl = document.getElementById('myAvatar');
+  if(nameEl) nameEl.textContent = name;
+  if(avatarEl) avatarEl.textContent = getAvatar(name);
+}
 
 function sendLive(){
   const myName = localStorage.getItem('liveChatUser');
-  if(!myName){ showWhoAmI(); return; }
+  if(!myName){ if(window.__openWhoOverlay) window.__openWhoOverlay(); return; }
   const liveInput = document.getElementById('liveInput');
   const txt = (liveInput.value || '').trim();
   if(!txt) return;
@@ -489,8 +653,41 @@ function sendLive(){
 
 document.getElementById('liveSend')?.addEventListener('click', sendLive);
 document.getElementById('liveInput')?.addEventListener('keydown', e => {
-  if(e.key === 'Enter'){ e.preventDefault(); sendLive(); }
+  if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendLive(); }
 });
+
+// الإيموجيات
+document.querySelectorAll('.emoji-bar button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const inp = document.getElementById('liveInput');
+    if(!inp) return;
+    inp.value += btn.dataset.emoji;
+    inp.focus();
+  });
+});
+
+// زر التغيير
+document.getElementById('changeName')?.addEventListener('click', () => {
+  if(!confirm('بدك تغيّر اسمك؟')) return;
+  localStorage.removeItem('liveChatUser');
+  if(window.__openWhoOverlay) window.__openWhoOverlay();
+});
+
+// حدّث الاسم أول ما تفتح
+window.addEventListener('load', updateMyInfo);
+updateMyInfo();
+
+/* متصلين */
+function updateOnlineCount(){
+  const list = window.__liveChatCache || [];
+  const unique = new Set();
+  const cutoff = Date.now() - (5 * 60 * 1000);
+  list.forEach(m => { if(m.ts > cutoff) unique.add(m.name); });
+  const el = document.getElementById('onlineCount');
+  if(el) el.textContent = unique.size;
+}
+
+setInterval(updateOnlineCount, 5000);
 
 /* دردشة مع الشباب */
 const CHAT_PERSONAS={
@@ -726,7 +923,9 @@ window.toggleLike=id=>{
 onValue(ref(db,'liveChat'),s=>{
   const data=s.val()||{};
   const list=Object.entries(data).map(([k,v])=>({id:k,...v})).sort((a,b)=>(a.ts||0)-(b.ts||0)).slice(-100);
+  window.__liveChatCache = list;
   window.renderLiveChat(list);
+  if(window.updateOnlineCount) window.updateOnlineCount();
 });
 window.sendLiveMessage=(name,text)=>push(ref(db,'liveChat'),{name,text,ts:Date.now()});
 

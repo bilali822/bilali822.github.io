@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الصف العاشر — مسخرة طرابلسية 😂</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:"Segoe UI",Tahoma,sans-serif;background:#0a0a1a;color:#fff;line-height:1.75;overflow-x:hidden}
+  body::before{content:"";position:fixed;inset:0;z-index:-1;background:
+    radial-gradient(circle at 15% 10%,rgba(124,58,237,.4),transparent 45%),
+    radial-gradient(circle at 85% 20%,rgba(225,29,72,.3),transparent 45%),
+    radial-gradient(circle at 50% 90%,rgba(6,182,212,.25),transparent 45%)}
+  .marquee{background:#000;color:#facc15;padding:8px;overflow:hidden;white-space:nowrap;border-bottom:2px solid #e11d48;font-weight:700}
+  .marquee span{display:inline-block;padding-right:100%;animation:mv 40s linear infinite}
+  @keyframes mv{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+  header{background:linear-gradient(135deg,#e11d48,#7c3aed,#06b6d4);padding:34px 18px;text-align:center;position:relative;overflow:hidden}
+  header::after{content:"😂😂😂";position:absolute;font-size:5rem;opacity:.06;bottom:-20px;left:10px}
+  header h1{font-size:1.9rem;text-shadow:2px 2px 0 #000;line-height:1.2}
+  header p{opacity:.95;font-size:.95rem;margin-top:6px}
+  .rotator{display:inline-block;background:rgba(0,0,0,.35);padding:6px 14px;border-radius:20px;margin-top:10px;font-size:.9rem;cursor:pointer;border:1px solid rgba(255,255,255,.2)}
+  nav{display:flex;gap:6px;overflow-x:auto;padding:10px;background:rgba(10,10,26,.95);backdrop-filter:blur(8px);position:sticky;top:0;z-index:20;border-bottom:2px solid #e11d48;scrollbar-width:none}
+  nav::-webkit-scrollbar{display:none}
+  nav button{flex:0 0 auto;border:0;background:#1a1a2e;color:#94a3b8;padding:8px 14px;border-radius:20px;font-size:.85rem;font-family:inherit;font-weight:700;cursor:pointer;white-space:nowrap;transition:.2s}
+  nav button:hover{color:#fff}
+  nav button.active{background:linear-gradient(135deg,#e11d48,#7c3aed);color:#fff;box-shadow:0 4px 15px rgba(225,29,72,.5)}
+  main{max-width:800px;margin:auto;padding:18px 14px 60px}
+  section{display:none}
+  section.active{display:block;animation:in .35s}
+  @keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .card{background:#16162b;border-radius:16px;padding:18px;margin-bottom:14px;border:1px solid #2a2a4a;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+  .card h2{font-size:1.15rem;margin-bottom:10px;color:#f472b6}
+  .card .sub{color:#94a3b8;font-size:.88rem;margin-bottom:12px}
+  .btn{background:linear-gradient(135deg,#e11d48,#7c3aed);color:#fff;border:0;padding:13px 20px;border-radius:12px;font-size:1rem;font-family:inherit;cursor:pointer;font-weight:800;margin-top:8px;width:100%;transition:.15s}
+  .btn:active{transform:scale(.96)}
+  .btn-mini{width:auto;padding:8px 16px;font-size:.85rem;margin:6px 4px 0 0;display:inline-block}
+  .btn-ghost{background:#2a2a4a}
+  .btn-wa{background:linear-gradient(135deg,#25D366,#128C7E)}
+  .out{margin-top:12px;padding:16px;background:#0a0a1a;border-radius:12px;border-right:4px solid #f472b6;font-size:1rem;font-weight:600;min-height:56px;transition:.2s}
+  ul,ol{padding-right:22px}
+  li{margin-bottom:6px}
+  .rank{display:flex;align-items:center;gap:10px;padding:11px;background:#0a0a1a;border-radius:12px;margin-bottom:8px;border-right:3px solid #f472b6}
+  .rank.top{border-right-color:#facc15;background:linear-gradient(90deg,#0a0a1a,#2a1f00)}
+  .medal{font-size:1.4rem;width:30px;text-align:center;flex:0 0 auto}
+  .rank .info{flex:1;min-width:0}
+  .rank .nm{font-weight:700;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rank .tt{font-size:.75rem;color:#94a3b8}
+  .rank .v{color:#facc15;font-weight:800;font-size:1.05rem;min-width:28px;text-align:center}
+  .voteBtn{background:linear-gradient(135deg,#e11d48,#7c3aed);color:#fff;border:0;border-radius:9px;padding:7px 12px;font-weight:700;font-family:inherit;font-size:.8rem;cursor:pointer;transition:.15s;flex:0 0 auto}
+  .voteBtn:active{transform:scale(.9)}
+  .warn{background:#7f1d1d;border-right:4px solid #ef4444;padding:12px;border-radius:10px;margin-bottom:14px;color:#fecaca;font-size:.88rem}
+  .cheat{background:#0a0a1a;padding:12px;border-radius:10px;margin-bottom:10px;border-right:4px solid #facc15;font-size:.93rem}
+  .cheat b{color:#fbbf24}
+  input{width:100%;padding:13px;border-radius:12px;border:1px solid #2a2a4a;background:#0a0a1a;color:#fff;font-family:inherit;font-size:1rem;margin-bottom:8px}
+  input:focus{outline:2px solid #e11d48}
+  .counter{display:flex;align-items:center;background:#0a0a1a;border-radius:12px;padding:10px 12px;margin-bottom:8px;gap:8px}
+  .counter span.lb{font-weight:600;font-size:.9rem;flex:1}
+  .counter .n{font-size:1.2rem;font-weight:800;color:#22c55e;min-width:32px;text-align:center}
+  .plus{background:linear-gradient(135deg,#22c55e,#15803d);border:0;color:#fff;width:38px;height:38px;border-radius:10px;font-size:1.2rem;font-weight:800;cursor:pointer;flex:0 0 auto;transition:.15s}
+  .plus:active{transform:scale(.88)}
+  .post{background:#0a0a1a;border-radius:14px;padding:14px;margin-bottom:12px;border:1px solid #2a2a4a}
+  .post .ph{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .post .av{font-size:1.6rem}
+  .post .pn{font-weight:700;font-size:.95rem}
+  .post .pt{font-size:.72rem;color:#64748b}
+  .post .pc{font-size:.95rem;margin-bottom:10px;line-height:1.6}
+  .post .pa{display:flex;gap:8px;align-items:center}
+  .likeBtn{background:transparent;border:1px solid #2a2a4a;color:#94a3b8;padding:6px 12px;border-radius:20px;font-family:inherit;cursor:pointer;font-size:.85rem;font-weight:700;transition:.15s}
+  .likeBtn.liked{background:linear-gradient(135deg,#e11d48,#7c3aed);color:#fff;border-color:transparent}
+  .likeBtn:active{transform:scale(.92)}
+  .hashtag{display:inline-block;background:#1a1a2e;padding:8px 14px;border-radius:20px;margin:4px 4px 4px 0;font-size:.9rem;border:1px solid #2a2a4a}
+  .hashtag b{color:#f472b6}
+  .hashtag .c{color:#64748b;font-size:.8rem;margin-right:6px}
+  .q{background:#0a0a1a;border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid #2a2a4a}
+  .q p{font-weight:700;font-size:.95rem;margin-bottom:8px}
+  .opt{display:block;width:100%;text-align:right;background:#1a1a2e;border:1px solid #2a2a4a;color:#e2e8f0;border-radius:10px;padding:10px 14px;margin-bottom:6px;font-family:inherit;font-size:.88rem;cursor:pointer;transition:.15s}
+  .opt:hover{background:#252542}
+  .opt.sel{background:linear-gradient(135deg,#7c3aed,#e11d48);border-color:transparent;font-weight:700;color:#fff}
+  .q-result{padding:14px;border-radius:12px;font-weight:700;text-align:center;margin-top:6px;min-height:50px;display:flex;align-items:center;justify-content:center}
+  .nick-big{text-align:center;font-size:1.5rem;font-weight:800;padding:22px;background:linear-gradient(135deg,#2a1f00,#3b1d3d);border-radius:14px;margin:12px 0;min-height:80px;display:flex;align-items:center;justify-content:center;border:2px solid #facc15}
+  .whois-box{text-align:center;padding:22px;background:linear-gradient(135deg,#1a1a2e,#2a1f3d);border-radius:14px;font-size:1.05rem;font-weight:700;min-height:100px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+  .whois-box .big{font-size:2rem}
+  .whois-box .ans{color:#facc15;font-size:1.2rem}
+  .teacher{background:#0a0a1a;border-radius:14px;padding:14px;margin-bottom:12px;border:1px solid #2a2a4a;border-right:4px solid #facc15;transition:.2s;cursor:pointer}
+  .teacher:hover{background:#14142a}
+  .teacher .th{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .teacher .tav{font-size:2rem;flex:0 0 auto}
+  .teacher .tnm{font-weight:800;font-size:1.05rem}
+  .teacher .tsub{font-size:.78rem;color:#94a3b8}
+  .teacher .tnick{background:linear-gradient(135deg,#7c3aed,#e11d48);padding:4px 12px;border-radius:14px;font-size:.8rem;font-weight:700;display:inline-block;margin-bottom:8px}
+  .teacher .tquote{font-size:.9rem;color:#cbd5e1;font-style:italic;border-right:3px solid #facc15;padding-right:10px;line-height:1.6}
+  footer{text-align:center;padding:26px 16px;color:#4b4b6b;font-size:.82rem;line-height:1.9}
+</style>
+</head>
+<body>
+
+<div class="marquee">
+  <span>📢 يا أهلين يا أهلين! محمد عوض نسي الشنتة بالباص اليوم — لك كيف بدك تدرس &nbsp;•&nbsp; 💀 آدم ميني كسر الرقم القياسي بلعب الموبايل تحت الطاولة &nbsp;•&nbsp; 👑 غازي نشابة رفض الاستراحة لأنها "وقت ضايع" &nbsp;•&nbsp; 🍔 محمد بيلالي خلّص الساندويشة قبل ما يبلّش الشرح &nbsp;•&nbsp; 🧠 محمد نجار الوحيد يللي فتّح الكتاب... بالغلط &nbsp;•&nbsp; 🔔 الجرس رن قبل ما يخلص الشرح مرة تانية &nbsp;•&nbsp; 🚨 لك شو عم يصير بهالصف يا خيي!</span>
+</div>
+
+<header>
+  <h1>الصف العاشر يا معلم 😂</h1>
+  <p>مدرسة الرسالة الإسلامية — طرابلس</p>
+  <div class="rotator" id="rotator">لك كبسني وشوف 👆</div>
+</header>
+
+<nav>
+  <button class="active" data-tab="home">🏠 الرئيسية</button>
+  <button data-tab="teachers">👨‍🏫 الأساتذة</button>
+  <button data-tab="excuses">🤖 مصنع الأعذار</button>
+  <button data-tab="rank">🏆 لوحة الكسولة</button>
+  <button data-tab="cheat">💀 أساليب الغش</button>
+  <button data-tab="counters">📊 عدّادات</button>
+  <button data-tab="calc">📉 حاسبة المعدل</button>
+  <button data-tab="quiz">📝 امتحان بمزاج</button>
+  <button data-tab="nick">🎭 مصنع الألقاب</button>
+  <button data-tab="posts">💬 منشورات الصف</button>
+  <button data-tab="whois">🎯 مين هو؟</button>
+  <button data-tab="trends">🔥 ترند الصف</button>
+  <button data-tab="haki">🎰 ماكينة الحكي</button>
+  <button data-tab="tquote">💬 جملة الأستاذ</button>
+</nav>
+
+<main>
+
+<!-- الرئيسية -->
+<section id="home" class="active">
+  <div class="card">
+    <h2>لك أهلين وسهلين يا خيي 👋</h2>
+    <p>هيدا الموقع مال الصف العاشر بمدرسة الرسالة الإسلامية. هون منقول كل شي وما منقول شي... يعني منضحك وبس.</p>
+    <br>
+    <p><b>الشلّة كلا:</b></p>
+    <ul>
+      <li>🧠 <b>محمد نجار</b> — الوحيد يللي فتح الكتاب</li>
+      <li>😴 <b>محمد عوض</b> — أسطورة النسيان</li>
+      <li>🎮 <b>آدم ميني</b> — بطل الموبايل تحت الطاولة</li>
+      <li>🍔 <b>محمد بيلالي</b> — ملك الاستراحة</li>
+      <li>👑 <b>غازي نشابة</b> — الزعيم بلا منافس</li>
+    </ul>
+    <br>
+    <p><b>وعلى راسنا الأساتذة والمعلمات 💜</b> — شوف قسم "👨‍🏫 الأساتذة" بلوحة الألقاب 😂</p>
+    <button class="btn" onclick="document.querySelector('nav button[data-tab=&quot;teachers&quot;]').click()">👨‍🏫 يلا شوف الأساتذة</button>
+  </div>
+</section>
+
+<!-- الأساتذة -->
+<section id="teachers">
+  <div class="card">
+    <h2>👨‍🏫 الأساتذة والمعلمات</h2>
+    <p class="sub">هيدا القسم كله محبة 💜 — كل أستاذ ومعلمة إلن فضل علينا. اضغط على أي كارد وشوف اللقب والجملة 😂</p>
+    <div id="teachersBox"></div>
+  </div>
+</section>
+
+<!-- مصنع الأعذار -->
+<section id="excuses">
+  <div class="card">
+    <h2>🤖 مصنع الأعذار الطرابلسي</h2>
+    <p class="sub">نسيت الوظيفة؟ تأخرت؟ لك لا تشيل هم — كبس الزر وبيطلعلك عذر جاهز مع اسم أستاذ 👇</p>
+    <div class="out" id="excuseOut">لك كبس الزر وشوف شو بيطلعلك 👇</div>
+    <button class="btn" onclick="newExcuse()">🎲 عطيني عذر جديد</button>
+    <button class="btn btn-wa" id="waBtn">📤 ابعته للمعلّم عالواتساب</button>
+  </div>
+</section>
+
+<!-- لوحة الشرف -->
+<section id="rank">
+  <div class="card">
+    <h2>🏆 لوحة شرف الكسولة</h2>
+    <p class="sub">صوّت لمين بيستاهل اللقب هالأسبوع.</p>
+    <div id="board"></div>
+    <button class="btn btn-ghost btn-mini" onclick="resetVotes()">🗑️ صفّي التصويتات</button>
+  </div>
+</section>
+
+<!-- أساليب الغش -->
+<section id="cheat">
+  <div class="card">
+    <h2>💀 أساليب الغش الفاشلة</h2>
+    <div class="warn">⚠️ <b>لك يا زلمة:</b> كل اللي تحت مزح. الغش الحقيقي بيضرّك. ادرس وارتاح.</div>
+    <div class="cheat"><b>1. الكتابة عالطاولة</b><br>خربشت كل شي، وبعدين المعلّم نقلّك مكان تاني 😭</div>
+    <div class="cheat"><b>2. الورقة الصغيرة</b><br>كتبتها بحجم حبة العدس، وبعدين ما لقيت نظارة تقراها فيها أنت نفسك 💀</div>
+    <div class="cheat"><b>3. إشارات اليدين</b><br>اتفقتو إشارات سرية، طلع المعلّم فهمها قبلكم وضحك 🤡</div>
+    <div class="cheat"><b>4. الموبايل تحت الطاولة</b><br>فتّحت الموبايل، والصدى "تِنغ" سمعته المدرسة كلا 📢</div>
+    <div class="cheat"><b>5. "عطيني الجواب"</b><br>قلبت على صاحبك، طلع هو بدو الجواب منك 🪦</div>
+    <div class="cheat"><b>6. الكتاب تحت إجرك</b><br>حطيتو تحت رجليك، وبعدين نسيت وين حطيتو 😂</div>
+    <div class="cheat"><b>7. كبس الرجل = جواب أ</b><br>أنت كبست، هو كبس، والأستاذ كبس عليكم كلكم 🚨</div>
+    <div class="cheat"><b>8. "نسيت الدفتر"</b><br>المعلّم جابلك ورقة وقال "اكتب من ذاكرتك" 💀</div>
+    <div class="cheat"><b>9. الغش الأخلاقي</b><br>درست 10 دقايق قبل الامتحان = أعلى نسبة نجاح 😉</div>
+    <button class="btn" onclick="cheatTip()">🎯 عطيني نصيحة "غش"</button>
+    <div id="cheatTips"></div>
+  </div>
+</section>
+
+<!-- العدادات -->
+<section id="counters">
+  <div class="card">
+    <h2>📊 عدّادات الصف</h2>
+    <p class="sub">كل ما تصير، كبس + وسجّلها 😂</p>
+    <div id="countersBox"></div>
+    <button class="btn btn-ghost btn-mini" onclick="resetCounters()">🗑️ صفّي كل العدّادات</button>
+  </div>
+</section>
+
+<!-- حاسبة المعدل -->
+<section id="calc">
+  <div class="card">
+    <h2>📉 معدّلك الحقيقي</h2>
+    <p class="sub">كتب معدّلك بالدفتر، وشوف شو رأي الموقع فيك 😈</p>
+    <input id="realGrade" type="number" placeholder="مثلاً: 85" min="0" max="100">
+    <button class="btn" onclick="calcGrade()">😈 احسب الحقيقة</button>
+    <div class="out" id="calcOut">لسا ما حسبنا شي...</div>
+  </div>
+</section>
+
+<!-- الامتحان -->
+<section id="quiz">
+  <div class="card">
+    <h2>📝 امتحان بمزاج</h2>
+    <p class="sub">7 أسئلة... بس هالامتحان ما بينجح فيه حدا 😅</p>
+    <div id="quizBox"></div>
+    <button class="btn" onclick="submitQuiz()">🎯 شوف نتيجتك</button>
+    <div class="q-result" id="quizResult" style="display:none"></div>
+  </div>
+</section>
+
+<!-- مصنع الألقاب -->
+<section id="nick">
+  <div class="card">
+    <h2>🎭 مصنع الألقاب</h2>
+    <p class="sub">كبس الزر بيطلعلك لقب رسمي 👑</p>
+    <div class="nick-big" id="nickBig">لك كبس الزر وشوف شو بيطلعلك 👇</div>
+    <button class="btn" onclick="newNick()">🎲 عطيني لقب</button>
+  </div>
+</section>
+
+<!-- منشورات الصف -->
+<section id="posts">
+  <div class="card">
+    <h2>💬 منشورات الصف</h2>
+    <p class="sub">لك شو كاتبين الشباب اليوم... 😂</p>
+    <div id="postsBox"></div>
+  </div>
+</section>
+
+<!-- مين هو؟ -->
+<section id="whois">
+  <div class="card">
+    <h2>🎯 مين هو؟</h2>
+    <p class="sub">سؤال جديد كل مرة. كبس وشوف مين الجواب 😂</p>
+    <div class="whois-box" id="whoisBox"><div>لك كبس الزر وشوف السؤال 👇</div></div>
+    <button class="btn" onclick="newWhois()">🎲 سؤال جديد</button>
+  </div>
+</section>
+
+<!-- ترند الصف -->
+<section id="trends">
+  <div class="card">
+    <h2>🔥 ترند الصف</h2>
+    <p class="sub">أكثر الهاشتاغات trending هالأسبوع 🔥</p>
+    <div id="trendsBox"></div>
+  </div>
+</section>
+
+<!-- ماكينة الحكي -->
+<section id="haki">
+  <div class="card">
+    <h2>🎰 ماكينة الحكي</h2>
+    <p class="sub">كبس الزر وبيطلعلك جملة طرابلسية عشوائية 😂</p>
+    <div class="out" id="hakiOut" style="border-right-color:#22c55e;font-size:1.05rem">لك كبس الزر وشوف شو بيطلعلك 👇</div>
+    <button class="btn" onclick="newHaki()">🎰 جملة جديدة</button>
+  </div>
+</section>
+
+<!-- جملة الأستاذ -->
+<section id="tquote">
+  <div class="card">
+    <h2>💬 جملة الأستاذ</h2>
+    <p class="sub">كبس الزر وبيطلعلك جملة معروفة من أستاذ/معلمة عشوائية 😂</p>
+    <div class="out" id="tquoteOut" style="border-right-color:#06b6d4;font-size:1rem">لك كبس الزر وشوف شو بيطلعلك 👇</div>
+    <button class="btn" onclick="newTQuote()">🎲 جملة جديدة</button>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  © 2025 الصف العاشر — مدرسة الرسالة الإسلامية — طرابلس<br>
+  صنع بضحك وشوية قهوة ☕ — كل شي مزح، وكل الاحترام والحب للأساتذة وللصف 💜
+</footer>
+
+<script>
+/* ===== التنقل ===== */
+document.querySelectorAll('nav button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('nav button').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+  b.classList.add('active');
+  document.getElementById(b.dataset.tab).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}));
+
+/* ===== الطلاب ===== */
+const STUDENTS = [
+  {id:'najjar', name:'محمد نجار',  emoji:'🧠', title:'الوحيد يللي فتح الكتاب'},
+  {id:'awwad',  name:'محمد عوض',   emoji:'😴', title:'أسطورة النسيان'},
+  {id:'mini',   name:'آدم ميني',   emoji:'🎮', title:'بطل الموبايل تحت الطاولة'},
+  {id:'bilali', name:'محمد بيلالي',emoji:'🍔', title:'ملك الاستراحة'},
+  {id:'ghazi',  name:'غازي نشابة', emoji:'👑', title:'الزعيم بلا منافس'}
+];
+
+/* ===== الأساتذة والمعلمات ===== */
+const TEACHERS = [
+  {name:'وسيم المحمد', sub:'رياضيات', emoji:'📐', nick:'ملك الأكس والفيتا',
+   quote:'"لك شو هالسؤال؟ هيدا محلول من أول نظرة" — وهو ما حلّ شي'},
+  {name:'مريانا رضوان', sub:'بيو', emoji:'🧬', nick:'ملكة الخلايا',
+   quote:'"الخلية هي وحدة بناء الكائن الحي... إلا أنتو ما بتتعلّمو 😂"'},
+  {name:'أسراء', sub:'فيزيك', emoji:'⚡', nick:'أستاذة الجاذبية',
+   quote:'"الجاذبية بتجذب كل شي... إلا انتباهكم"'},
+  {name:'حُسن', sub:'شيمي', emoji:'⚗️', nick:'ساحرة الذرات',
+   quote:'"لك هالتفاعل ما بحتاج شروط... هيدا معجزة إنو فهمتوه"'},
+  {name:'نهلا الحج', sub:'فرنسي', emoji:'🥐', nick:'ملكة الـ Bonjour',
+   quote:'"Écoutez! يعني اسمعوا! Vraiment! يعني عن جد!"'},
+  {name:'بلال حمود', sub:'إنجليزي', emoji:'🇬🇧', nick:'زعيم الـ Grammar',
+   quote:'"Listen kids... no no no, LISTEN! Present perfect! شو ما بتسمعو؟"'},
+  {name:'هناء ياغي', sub:'اجتماع / اقتصاد', emoji:'📊', nick:'ملكة السوق',
+   quote:'"العرض والطلب... أنتو الطلب، وأنا العرض الوحيد للعلامات 😂"'},
+  {name:'ندى', sub:'عربي', emoji:'📖', nick:'أم النحو والبلاغة',
+   quote:'"الفاعل مرفوع بالضمة... إلا علاماتكن إنتو مرفوعة بغباوة 😂"'},
+  {name:'يوسف', sub:'رياضة', emoji:'⚽', nick:'زعيم الملعب',
+   quote:'"يلا يا شباب نجري! — وفي 3 واقفين عم يضحكو 😂"'},
+  {name:'فاطمة قنواتي', sub:'دين', emoji:'🕌', nick:'أم الأخلاق',
+   quote:'"الأخلاق قبل العلم يا شباب... بس إنتو الاثنين بدكن دراسة"'},
+  {name:'محمد سعيد', sub:'تربية مدنية', emoji:'⚖️', nick:'أبو الدستور',
+   quote:'"المواطنة الصالحة... يعني تحضرو الحصة كاملة 😅"'},
+  {name:'آية عصافيري', sub:'تاريخ / جغرافيا', emoji:'🗺️', nick:'ملكة التواريخ',
+   quote:'"سنة ١٤٥٣... لك ليش ما بتتذكرو؟! حرب! تاريخ! حدث!"'}
+];
+
+function renderTeachers(){
+  document.getElementById('teachersBox').innerHTML = TEACHERS.map((t,i)=>`
+    <div class="teacher" data-ti="${i}">
+      <div class="th">
+        <span class="tav">${t.emoji}</span>
+        <div>
+          <div class="tnm">${t.name}</div>
+          <div class="tsub">${t.sub}</div>
+        </div>
+      </div>
+      <div class="tnick">👑 ${t.nick}</div>
+      <div class="tquote">${t.quote}</div>
+    </div>`).join('');
+}
+renderTeachers();
+
+/* ===== الترحيب المتغيّر ===== */
+const GREETS = [
+  'لك أهلين يا معلم 👋','شو هالحكي، وينكن يا شباب؟','يا هلا بالزلمة 💪',
+  'لك شو هالغيااااب 😂','أهلين بالشلّة كلا','شو عم تعملو هلق؟',
+  'لك حبيبي كيفك؟','يا خيي شو الأخبار؟'
+];
+document.getElementById('rotator').addEventListener('click', function(){
+  this.textContent = GREETS[Math.floor(Math.random()*GREETS.length)];
+});
+
+/* ===== مصنع الأعذار ===== */
+const EXCUSES = [
+  "لك أستاذ {t}، الكهربا قطعت وقت بلّشت أدرس 😔",
+  "يا أستاذ {t}، الوظيفة كانت بالشنتة، وشنتتي ضاعت 🎒",
+  "أستاذ {t}، أخوي الصغير مزّق الدفتر، عن جد والله 😭",
+  "لك أستاذ {t}، النت كان مقطوع وما لقيت شي أدرسو 📵",
+  "أستاذ {t}، كنت تعبان شوي، بس هلق صرت منيح 🤒",
+  "يا أستاذ {t}، نسيت الدفتر بالمدرسة التانية 🏫",
+  "أستاذ {t}، كان في ضيوف عندنا وما خلّصت 🍽️",
+  "لك أستاذ {t}، المعلّم التاني كتّر علينا الوظايف 📚",
+  "أستاذ {t}، درست بس نسيت كل شي لما شفتك 😅",
+  "أستاذ {t}، الكتاب كان بالسيارة، والسيارة عند عمي 🚗",
+  "يا أستاذ {t}، المنبّه ما رن... ولا مرة رن بحياتو ⏰",
+  "أستاذ {t}، كنت بالمستشفى زرت واحد صاحبي 🏥",
+  "لك أستاذ {t}، أمي قالتلي ساعدها بالسوق 🛒",
+  "أستاذ {t}، الواي فاي كان ضعيف وما تحمّل 📶",
+  "أستاذ {t}، حفظت بس نسيت وقت الشرح 🧽",
+  "يا أستاذ {t}، الدفتر ضاع، سألت وما لقيتو 🔍",
+  "أستاذ {t}، كنت عالطريق وقررت أرجع 🚶",
+  "أستاذ {t}، الوظيفة كانت صعبة، قلت بكرا بحلّها 📅",
+  "لك أستاذ {t}، قلت بس ألعب شوي، صارت الساعة 2 🕑",
+  "أستاذ {t}، أنا عن جد عن جد نسيت 🤷",
+  "يا أستاذ {t}، لك ما شرحتها منيح 😐",
+  "أستاذ {t}، كان في مباراة وما فيني أفوت ⚽",
+  "أستاذ {t}، الدفتر عند ابن عمي، وهو مسافر ✈️",
+  "أستاذ {t}، كتبتها عالورقة وضاعت 📄",
+  "أستاذ {t}، كنت حاضر بس غايب بذهني 🧠",
+  "يا أستاذ {t}، والله ما شفت الوظيفة 🤯",
+  "أستاذ {t}، دخلنا ضيوف وما لحقت 🫂",
+  "أستاذ {t}، الدفتر انحرق... لا ما انحرق بس نسيتو 🔥",
+  "أستاذ {t}، أنا فكرت الوظيفة لليوم التاني 📆",
+  "أستاذ {t}، ما قلت عنا وظيفة 🤥",
+  "لك أستاذ {t}، كنت بمحاضرة تانية... يعني نمت 😴",
+  "أستاذ {t}، الكتاب بالمكتبة والغرفة مقفلة 🔒",
+  "أستاذ {t}، أخوي الكبير سكّر الغرفة عليّ 🚪",
+  "أستاذ {t}، قضيت الوقت عم فكر بالوظيفة 🤔",
+  "أستاذ {t}، كتبتها بمسج وما وصل 📱",
+  "يا أستاذ {t}، قلت بحلّها بالباص ونسيت 🚌",
+  "أستاذ {t}، أمي شافتني فقلتلها خلصت 😬",
+  "أستاذ {t}، الوظيفة سهلة، بس نسيت أكتبها 🖊️",
+  "يا أستاذ {t}، الله يخليك سامحني هالمرة 🙏",
+  "لك أستاذ {t}، شو بدك فيني، الدنيا صعبة 😩"
+];
+let lastExcuse = "";
+const exOut = document.getElementById('excuseOut');
+function newExcuse(){
+  const t = TEACHERS[Math.floor(Math.random()*TEACHERS.length)];
+  const e = EXCUSES[Math.floor(Math.random()*EXCUSES.length)].replace('{t}', t.name);
+  lastExcuse = e;
+  exOut.textContent = e;
+  exOut.style.transform = "scale(.95)";
+  setTimeout(()=> exOut.style.transform = "scale(1)", 150);
+}
+document.getElementById('waBtn').addEventListener('click', () => {
+  if(!lastExcuse) newExcuse();
+  window.open("https://wa.me/?text=" + encodeURIComponent(lastExcuse), "_blank");
+});
+
+/* ===== لوحة الكسولة ===== */
+const VK = 'tp_votes_v1';
+let votes = JSON.parse(localStorage.getItem(VK) || '{}');
+STUDENTS.forEach(s => { if(typeof votes[s.id] !== 'number') votes[s.id] = 0; });
+const MEDALS = ['🥇','🥈','🥉'];
+function renderBoard(){
+  const sorted = [...STUDENTS].sort((a,b)=> votes[b.id]-votes[a.id]);
+  const max = Math.max(...STUDENTS.map(s=>votes[s.id]));
+  document.getElementById('board').innerHTML = sorted.map((s,i)=>{
+    const top = votes[s.id]===max && max>0;
+    const rank = top ? (MEDALS[i]||'🎖️') : (i+1)+'.';
+    return `<div class="rank ${top?'top':''}">
+      <span class="medal">${rank}</span>
+      <div class="info">
+        <div class="nm">${s.emoji} ${s.name}</div>
+        <div class="tt">${top && i===0 ? '👑 كسول الأسبوع' : s.title}</div>
+      </div>
+      <span class="v">${votes[s.id]}</span>
+      <button class="voteBtn" data-v="${s.id}">صوّت</button>
+    </div>`;
+  }).join('');
+}
+document.getElementById('board').addEventListener('click', e=>{
+  const b = e.target.closest('[data-v]'); if(!b) return;
+  votes[b.dataset.v]++;
+  localStorage.setItem(VK, JSON.stringify(votes));
+  renderBoard();
+});
+function resetVotes(){
+  if(!confirm('لك عن جد بدك تصفّي التصويتات؟')) return;
+  Object.keys(votes).forEach(k=>votes[k]=0);
+  localStorage.setItem(VK, JSON.stringify(votes));
+  renderBoard();
+}
+renderBoard();
+
+/* ===== نصائح الغش ===== */
+const TIPS = [
+  "نصيحة يا زلمة: ادرس منيح، لأن 'نسيت' ما بتنفع مرتين ورا بعض 😂",
+  "أقوى 'غش' = تفهم الشرح أول مرة. جرّبها!",
+  "الورقة الصغيرة بتتنسى بمخباك وبتتغسّل بالغسيل 🧺",
+  "أحسن طريقة للغش = صاحبك يشرحلك قبل الامتحان (هاي حلال)",
+  "بدل ما تخربش عالطاولة، خربش الفكرة براسك ✍️",
+  "المعلّم شاف كل شي... دايماً 👀",
+  "إذا نسيت الجواب، اكتب 'الله كريم' وبس 😂",
+  "اللي بيدرس 3 دقايق قبل الامتحان = بطل. بلا غش."
+];
+function cheatTip(){
+  const d = document.createElement('div');
+  d.className = 'out'; d.style.borderRightColor = '#facc15';
+  d.textContent = TIPS[Math.floor(Math.random()*TIPS.length)];
+  const wrap = document.getElementById('cheatTips');
+  wrap.innerHTML = ''; wrap.appendChild(d);
+}
+
+/* ===== العدادات ===== */
+const CK = 'tp_counters_v1';
+const COUNTERS = [
+  {id:'c1', label:'مرات قال الأستاذ "بس هالمرة بسمحلكم"', emoji:'🙄'},
+  {id:'c2', label:'مرات رن الجرس قبل ما يخلص الشرح', emoji:'🔔'},
+  {id:'c3', label:'مرات نسيتم الوظيفة جماعياً', emoji:'📚'},
+  {id:'c4', label:'مرات انفجر الصف بالضحك بلا سبب', emoji:'🤣'},
+  {id:'c5', label:'مرات سأل حدا "بس شو الوظيفة؟"', emoji:'❓'},
+  {id:'c6', label:'مرات دخل المعلّم وطلع لأن الصف ضجّة', emoji:'🚪'},
+  {id:'c7', label:'مرات حدا قال "عن جد؟" وضل يكررها', emoji:'😮'},
+  {id:'c8', label:'مرات طلب حدا يفتح الشباك', emoji:'🪟'},
+  {id:'c9', label:'مرات طار فيها الموبايل عالأرض', emoji:'📱'},
+  {id:'c10', label:'مرات صار الأستاذ يحكي عن أيام زمان', emoji:'👴'},
+  {id:'c11', label:'مرات قال الأستاذ "اسمعو، اسمعو، اسمعو"', emoji:'📢'},
+  {id:'c12', label:'مرات صاح الأستاذ ثم ضحك بلا سبب', emoji:'😤'}
+];
+let counts = JSON.parse(localStorage.getItem(CK) || '{}');
+COUNTERS.forEach(c => { if(typeof counts[c.id] !== 'number') counts[c.id] = 0; });
+function renderCounters(){
+  document.getElementById('countersBox').innerHTML = COUNTERS.map(c=>`
+    <div class="counter">
+      <span class="lb">${c.emoji} ${c.label}</span>
+      <span class="n" id="n-${c.id}">${counts[c.id]}</span>
+      <button class="plus" data-p="${c.id}">+</button>
+    </div>`).join('');
+}
+document.getElementById('countersBox').addEventListener('click', e=>{
+  const b = e.target.closest('[data-p]'); if(!b) return;
+  const id = b.dataset.p;
+  counts[id]++;
+  localStorage.setItem(CK, JSON.stringify(counts));
+  const el = document.getElementById('n-'+id);
+  el.textContent = counts[id];
+  el.style.transform = 'scale(1.5)';
+  el.style.transition = 'transform .15s';
+  setTimeout(()=> el.style.transform = 'scale(1)', 150);
+});
+function resetCounters(){
+  if(!confirm('لك عن جد بدك تصفّي كل العدّادات؟')) return;
+  Object.keys(counts).forEach(k=>counts[k]=0);
+  localStorage.setItem(CK, JSON.stringify(counts));
+  renderCounters();
+}
+renderCounters();
+
+/* ===== حاسبة المعدل ===== */
+function calcGrade(){
+  const g = parseFloat(document.getElementById('realGrade').value);
+  const out = document.getElementById('calcOut');
+  if(isNaN(g) || g<0 || g>100){
+    out.textContent = "لك اكتب رقم من 0 لـ 100 يا نجم 🤦";
+    return;
+  }
+  let r;
+  if(g<=20)       r = "😂 هيدا مو معدل، هيدا رقم عشوائي. أنت متأكد إنك مسجّل بالمدرسة؟";
+  else if(g<=40)  r = "😭 لك شو صار؟ نمت طول السنة ولا شو؟";
+  else if(g<=55)  r = "😐 ماشي... بس بالحرف الواحد. لا تتكبّر.";
+  else if(g<=70)  r = "🙂 قبلان، بس لسا في مجال. شدّ حيلك يا معلم.";
+  else if(g<=85)  r = "😏 براڤو! من وين هالمعدل يا ترى؟";
+  else if(g<=95)  r = "🤨 ممتاز... أنت متأكد إنك من الصف العاشر؟";
+  else            r = "🕵️ مستحيل. قول الصدق، مين حلّها عنك؟";
+  out.textContent = r;
+  out.style.transform = 'scale(.95)';
+  setTimeout(()=> out.style.transform = 'scale(1)', 150);
+}
+
+/* ===== الامتحان ===== */
+const QUIZ = [
+  {q:"شو أكتر شي بيعملو الطلاب بالحصة؟",
+   a:["ينامو بعين مفتوحة","يتسلّو بالموبايل تحت الطاولة","يقلّدو صوت الأستاذ","كل ما سبق صح"], c:3},
+  {q:"لك أكتر وقت بيحس فيه الطالب بالطاقة؟",
+   a:["أول الحصة","بعد الاستراحة","آخر 5 دقايق قبل الجرس","ولا وقت، هو دايماً تعبان"], c:2},
+  {q:"شو يعني 'درست' عند الطالب؟",
+   a:["قرأ العنوان بس","فتح الكتاب وفتح تيك توك","قلل لأمه إني درست وخلص","حفظ كل شي عن ظهر قلب"], c:1},
+  {q:"الوظيفة بتنسى أكتر وقت...",
+   a:["بالويكند","بالعطلة","لما تكون في مباراة","كل الأوقات يا خيي"], c:3},
+  {q:"أحلى شي بالمدرسة؟",
+   a:["الاستراحة","الجرس","الطريق للبيت","الأصحاب (والاستراحة 😂)"], c:0},
+  {q:"لك شو بتعمل أول ما تدخل عالامتحان؟",
+   a:["تقرأ الأسئلة منيح","تدعي ربك","تدوّر على صاحبك بعينك","تكبس قلمك وتبلّش"], c:1},
+  {q:"شو أكتر جملة بتسمعها من الأستاذ؟",
+   a:["اسمعو، اسمعو، اسمعو","بس هالمرة بسمحلكم","لكن، وين الوظيفة؟","كل ما سبق، وكل يوم"], c:3}
+];
+let answers = new Array(QUIZ.length).fill(null);
+function renderQuiz(){
+  document.getElementById('quizBox').innerHTML = QUIZ.map((item,qi)=>`
+    <div class="q">
+      <p>${qi+1}. ${item.q}</p>
+      ${item.a.map((opt,oi)=>`
+        <button class="opt ${answers[qi]===oi?'sel':''}" data-q="${qi}" data-o="${oi}">${opt}</button>
+      `).join('')}
+    </div>`).join('');
+}
+document.getElementById('quizBox').addEventListener('click', e=>{
+  const b = e.target.closest('.opt'); if(!b) return;
+  answers[+b.dataset.q] = +b.dataset.o;
+  renderQuiz();
+});
+function submitQuiz(){
+  if(answers.includes(null)){ alert('لك جاوب على كل الأسئلة أول 😤'); return; }
+  let score = 0;
+  QUIZ.forEach((item,i)=>{ if(answers[i]===item.c) score++; });
+  const out = document.getElementById('quizResult');
+  out.style.display = 'flex';
+  const total = QUIZ.length;
+  let msg;
+  if(score===0)           msg = '0/'+total+' 😭 أنت رسمياً كسول الصف. مبروك!';
+  else if(score<=2)       msg = score+'/'+total+' 😅 ماشي، بس لسا بدك شغل... كثير شغل.';
+  else if(score<=4)       msg = score+'/'+total+' 🙂 نص نص. يعني أنت طالب عادي يا معلم.';
+  else if(score===5)      msg = score+'/'+total+' 😎 قوي! شكلك بتدرس... شوي.';
+  else if(score<total)    msg = score+'/'+total+' 🤨 عالي! أنت متأكد إنك من هالصف؟';
+  else                    msg = score+'/'+total+' 🕵️ مستحيل. قول الصدق، مين حلها عنك؟';
+  out.textContent = msg;
+}
+renderQuiz();
+
+/* ===== مصنع الألقاب ===== */
+const T1 = ['ملك','زعيم','سلطان','أسطورة','بطل','شبح','أسد','نمر','شيطون','أمير','خبير','محترف','عالم','عريف','قائد','ديك','فيل'];
+const T2 = ['النوم بالحصة','النسيان','الموبايل تحت الطاولة','الأعذار','الاستراحة','الضحك بلا سبب','التأخير','الشغب','التملل','الحكي','الفهامة','القهوة','الساندويش','المرح','الجُمل الطويلة','الفهلوة'];
+function newNick(){
+  const n = T1[Math.floor(Math.random()*T1.length)] + ' ' + T2[Math.floor(Math.random()*T2.length)];
+  const el = document.getElementById('nickBig');
+  el.textContent = n;
+  el.style.transform = 'scale(.9)';
+  el.style.transition = 'transform .25s';
+  setTimeout(()=> el.style.transform = 'scale(1)', 250);
+}
+
+/* ===== منشورات الصف ===== */
+const POSTS = [
+  {id:'p1', student:'awwad',  text:'اليوم نسيت شنتتي بالباص 😭 الباص راح عالضنية، وأنا ضليت واقف عالرصيف عم فكر بحياتي', time:'قبل ساعتين'},
+  {id:'p2', student:'najjar', text:'خلصت الوظيفة! ... بس الرياضيات. الباقي بكرا إن شاء الله 😴', time:'قبل 4 ساعات'},
+  {id:'p3', student:'mini',   text:'حققت أعلى سكور بهاللعبة... بالمدرسة طبعاً، مو بالبيت 😎', time:'قبل 5 ساعات'},
+  {id:'p4', student:'bilali', text:'الساندويشة اليوم طلعت أحلى من الدرس كله 😂 شو كان فيها؟ معلومة سرية', time:'قبل 6 ساعات'},
+  {id:'p5', student:'ghazi',  text:'اليوم فهمت شي بالفيزيك... عن جد. أنا خايف من حالي 👑', time:'أمس'},
+  {id:'p6', student:'najjar', text:'لك مين فهم شو قال أستاذ وسيم بآخر 10 دقايق؟ أنا كنت عم فكر بالاستراحة 😂', time:'أمس'},
+  {id:'p7', student:'awwad',  text:'أنا ما بنسى الوظيفة... أنا بس بتأخر بتذكّرها 😅', time:'قبل يومين'},
+  {id:'p8', student:'mini',   text:'اليوم أستاذ بلال شافني عم لعب بالموبايل. ردّة فعلي؟ ضحكت. ردّة فعله؟ طردني 😂', time:'قبل يومين'},
+  {id:'p9', student:'bilali', text:'لك شو هالأسبوع؟ أربع أيام دراسة بيومين. مستحيل', time:'قبل 3 أيام'},
+  {id:'p10',student:'ghazi',  text:'الجرس رن وأنا لسا عم فكر بالجواب. لك هالجواب وين راح؟ 😐', time:'قبل 3 أيام'},
+  {id:'p11',student:'najjar', text:'معلمة ندى شرحت النحو اليوم... وأنا فهمت! معجزة! 🎉', time:'قبل 4 أيام'},
+  {id:'p12',student:'awwad',  text:'أستاذ يوسف طلب مننا نجري لفة عالملعب... أنا جريت نص لفة وقعدت عالحيط 😂', time:'قبل 5 أيام'}
+];
+const LK = 'tp_likes_v1';
+let likes = JSON.parse(localStorage.getItem(LK) || '{}');
+function renderPosts(){
+  document.getElementById('postsBox').innerHTML = POSTS.map(p=>{
+    const st = STUDENTS.find(s=>s.id===p.student);
+    const liked = likes[p.id] || false;
+    const cnt = (liked ? 1 : 0) + (Math.abs(p.id.charCodeAt(1) * 7) % 30);
+    return `<div class="post">
+      <div class="ph">
+        <span class="av">${st.emoji}</span>
+        <div>
+          <div class="pn">${st.name}</div>
+          <div class="pt">${p.time}</div>
+        </div>
+      </div>
+      <div class="pc">${p.text}</div>
+      <div class="pa">
+        <button class="likeBtn ${liked?'liked':''}" data-l="${p.id}">${liked?'❤️':'🤍'} ${cnt}</button>
+        <span style="color:#64748b;font-size:.8rem">${Math.abs(p.id.charCodeAt(1)*3)%8 + 2} تعليق</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+document.getElementById('postsBox').addEventListener('click', e=>{
+  const b = e.target.closest('[data-l]'); if(!b) return;
+  const id = b.dataset.l;
+  likes[id] = !likes[id];
+  localStorage.setItem(LK, JSON.stringify(likes));
+  renderPosts();
+});
+renderPosts();
+
+/* ===== مين هو؟ ===== */
+const WHOIS = [
+  "مين أكتر واحد بينسى شنطتو بالباص؟",
+  "مين بيموت ضحك بلا سبب واضح؟",
+  "مين أكتر واحد بيسأل 'بس شو الوظيفة؟'؟",
+  "مين بيفتح الموبايل قبل ما يفتح الدفتر؟",
+  "مين ينام أول 5 دقايق حصة؟",
+  "مين أكتر واحد بيحكي عن الأكل بالحصة؟",
+  "مين يللي يحلف 'عن جد والله' وهو كذاب؟",
+  "مين أسرع واحد بيرد عالجرس؟",
+  "مين بيعرف يفصل البيسين بثلاث كلمات؟",
+  "مين يللي بيشتكي للمعلّم من الصف؟",
+  "مين أكتر واحد بيحب ياخد علامة عالية؟",
+  "مين يللي بيجي عالمدرسة بلا واجب بلا قلم بلا شي؟"
+];
+const REPLIES = [
+  "😂 لك شو بدي قول... الجواب واضح عن جد",
+  "🤣 عن جد؟ ما توقعتها!",
+  "لك والله ما كنت أعرف هيدا 😂",
+  "🫣 أنا ما قلت شي... بس هو",
+  "💀 لك هيدا الفلم معروف",
+  "😭 لك أنا بريء!",
+  "لك شو بدك فيني، هيدا واضح",
+  "🤨 الجواب ما في نقاش عليه",
+  "😂 أحلى جواب شفته بحياتي"
+];
+function newWhois(){
+  const q = WHOIS[Math.floor(Math.random()*WHOIS.length)];
+  const s = STUDENTS[Math.floor(Math.random()*STUDENTS.length)];
+  const r = REPLIES[Math.floor(Math.random()*REPLIES.length)];
+  document.getElementById('whoisBox').innerHTML = `
+    <div style="color:#94a3b8;font-size:.85rem">${q}</div>
+    <div class="big">${s.emoji}</div>
+    <div class="ans">${s.name}</div>
+    <div style="font-size:.9rem;color:#94a3b8">${r}</div>`;
+}
+
+/* ===== ترند الصف ===== */
+const TRENDS = [
+  {tag:'#لك_نسيت_الوظيفة', cnt:'2.4K'},
+  {tag:'#نوم_بالحصة', cnt:'1.9K'},
+  {tag:'#شو_الوظيفة', cnt:'1.5K'},
+  {tag:'#موبايل_تحت_الطاولة', cnt:'1.2K'},
+  {tag:'#الجرس_رن_بدري', cnt:'980'},
+  {tag:'#الساندويشة_أحلى_من_الدرس', cnt:'876'},
+  {tag:'#اسمعو_اسمعو_اسمعو', cnt:'820'},
+  {tag:'#شو_عم_بيصير', cnt:'754'},
+  {tag:'#عن_جد_والله', cnt:'652'},
+  {tag:'#بس_هالمرة_بسمحلكم', cnt:'590'},
+  {tag:'#بكرا_بدرس', cnt:'510'},
+  {tag:'#الأستاذ_شافني', cnt:'432'},
+  {tag:'#قول_الصدق_مين_حلها_عنك', cnt:'380'},
+  {tag:'#ماشي_الحال', cnt:'290'}
+];
+document.getElementById('trendsBox').innerHTML = TRENDS.map((t,i)=>`
+  <div class="hashtag">
+    <span class="c">${i+1}</span>
+    <b>${t.tag}</b>
+    <span class="c">${t.cnt} منشور</span>
+  </div>
+`).join('');
+
+/* ===== ماكينة الحكي ===== */
+const HAKI_T = [
+  "{n} اليوم نسي {x} وعمل فلم بالصف 😂",
+  "لك شو صار مبارح؟ {n} جاب {x} وضحك الصف كله",
+  "{n} قال للأساتذ إنو درست {x}... وما درست شي 😬",
+  "{n} وأصحابو قعدو {x} طول الاستراحة",
+  "لك يا خيي، {n} فتح الكتاب لأول مرة وشاف {x} 😮",
+  "{n} نسي {x} بالبيت وضل يتحجج طول الحصة 🤷",
+  "الأستاذ سأل {n} سؤال، جاوب {x}... ولا حدا فهم شي 🤡",
+  "{n} وأصحابو عملو مسابقة بأسرع {x} بالصف 🏆",
+  "{n} غاب اليوم بحجة {x}... ما حدا صدّقو 😂"
+];
+const HAKI_V = [
+  "شنتتو","قلمو","دفترو","موبايلو","الكتاب","الوظيفة","الرياضيات",
+  "علامة كاملة","حصة الفيزيك","الساندويشة","القهوة","الأعذار",
+  "الضحك بلا سبب","التملل","حصة الرياضة","الفسحة"
+];
+function newHaki(){
+  const t = HAKI_T[Math.floor(Math.random()*HAKI_T.length)];
+  const s = STUDENTS[Math.floor(Math.random()*STUDENTS.length)];
+  const v = HAKI_V[Math.floor(Math.random()*HAKI_V.length)];
+  document.getElementById('hakiOut').textContent = t.replace('{n}', s.name).replace('{x}', v);
+  document.getElementById('hakiOut').style.transform = 'scale(.96)';
+  setTimeout(()=> document.getElementById('hakiOut').style.transform = 'scale(1)', 200);
+}
+
+/* ===== جملة الأستاذ ===== */
+const TQUOTES = [
+  '"اسمعو، اسمعو، اسمعو! ...لك ما بتسمعو؟"',
+  '"بس هالمرة بسمحلكم... وهالمرة بتحلفو ما تعيدوها"',
+  '"لك يا زلمة، أنت جاي عالمدرسة تنام؟"',
+  '"وين الوظيفة؟ — لا تقلي نسيت!"',
+  '"الجرس ما رن، أنا يللي بقول متى نطلع"',
+  '"شباب، أنا عم بشرح لكم مو عم بحكي عالحيط"',
+  '"بعطيكم سؤال سهل... أوعى تفشلوني فيه"',
+  '"لك شو هالصف؟ في واحد عم يسمع، واحد عم يضحك، وتلاتة نايمين"',
+  '"بدي هدوء! ...هدوء! ...لك أنا عم بحكي مع مين؟"',
+  '"الامتحان يوم الأحد. الأحد! يعني عندكم وقت"',
+  '"لك منيح يللي جاوب... بس ناقص معلومة"',
+  '"ولا مرة؟ ولا مرة بالحياة؟"',
+  '"خلينا نكمل من وين وقفنا... وين وقفنا؟"',
+  '"شو هيدي الضجة؟ لك افتحو الكتب بس!"',
+  '"يلا افتحو الدفاتر... أنا بدي أشوف شغل"',
+  '"أنا عم قول لكم، هالمادة سهلة. بس بدها واحد يدرس"'
+];
+function newTQuote(){
+  const t = TEACHERS[Math.floor(Math.random()*TEACHERS.length)];
+  const q = TQUOTES[Math.floor(Math.random()*TQUOTES.length)];
+  document.getElementById('tquoteOut').textContent = t.emoji + ' ' + t.name + ' (' + t.sub + '): ' + q;
+  document.getElementById('tquoteOut').style.transform = 'scale(.96)';
+  setTimeout(()=> document.getElementById('tquoteOut').style.transform = 'scale(1)', 200);
+}
+</script>
+
+</body>
+</html>

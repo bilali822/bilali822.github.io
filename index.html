@@ -231,6 +231,29 @@
     .msg{max-width:92%}
   }
 
+
+  /* INSTALL_PROMPT_V1 — زر تثبيت التطبيق */
+  #installBanner{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(200px);z-index:9998;background:linear-gradient(135deg,#7c3aed,#e11d48);color:#fff;padding:14px 18px;border-radius:18px;box-shadow:0 10px 40px rgba(124,58,237,.5);display:flex;align-items:center;gap:14px;max-width:calc(100vw - 32px);width:400px;opacity:0;transition:all .4s cubic-bezier(.34,1.56,.64,1);border:2px solid rgba(255,255,255,.15)}
+  #installBanner.show{transform:translateX(-50%) translateY(0);opacity:1}
+  #installBanner .appIcon{font-size:2.2rem;flex:0 0 auto;background:rgba(0,0,0,.2);width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center}
+  #installBanner .info{flex:1;min-width:0}
+  #installBanner .info .title{font-weight:800;font-size:1rem;margin-bottom:3px}
+  #installBanner .info .sub{font-size:.78rem;opacity:.9;line-height:1.4}
+  #installBanner .installBtn{background:#fff;color:#7c3aed;border:0;padding:10px 16px;border-radius:12px;font-family:inherit;font-weight:800;font-size:.88rem;cursor:pointer;white-space:nowrap;flex:0 0 auto;transition:.15s}
+  #installBanner .installBtn:active{transform:scale(.95)}
+  #installBanner .closeBtn{position:absolute;top:-8px;right:-8px;background:#0a0a1a;color:#fff;border:2px solid #fff;width:28px;height:28px;border-radius:50%;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+  
+  /* iOS تعليمات */
+  #iosInstallModal{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:99999;display:none;align-items:center;justify-content:center;padding:20px}
+  #iosInstallModal.show{display:flex}
+  #iosInstallModal .box{background:#1a1a2e;padding:26px;border-radius:20px;max-width:380px;text-align:center;border:1px solid #2a2a4a}
+  #iosInstallModal h3{color:#f472b6;font-size:1.3rem;margin-bottom:16px}
+  #iosInstallModal p{color:#e2e8f0;font-size:.95rem;line-height:1.7;margin-bottom:14px}
+  #iosInstallModal .step{display:flex;align-items:center;gap:12px;background:#0a0a1a;padding:12px;border-radius:12px;margin-bottom:10px;text-align:right}
+  #iosInstallModal .step .n{background:#7c3aed;color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;flex:0 0 auto}
+  #iosInstallModal .step .txt{flex:1;font-size:.88rem}
+  #iosInstallModal button{margin-top:16px;background:linear-gradient(135deg,#e11d48,#7c3aed);color:#fff;border:0;padding:12px 24px;border-radius:12px;font-family:inherit;font-weight:800;cursor:pointer;width:100%}
+
 </style>
 </head>
 <body>
@@ -1361,7 +1384,135 @@ onValue(ref(db, 'liveChat'), (s) => {
 window.sendLiveMessage = (name, text) => push(ref(db, 'liveChat'), { name, text, ts: Date.now() });
 
 console.log('✅ listeners جاهزة');
+
+/* INSTALL_PROMPT_V1 — زر تثبيت التطبيق */
+(function(){
+  let deferredPrompt = null;
+  const banner = document.getElementById('installBanner');
+  const installBtn = document.getElementById('installBtn');
+  const closeBtn = document.getElementById('installClose');
+  const iosModal = document.getElementById('iosInstallModal');
+  const iosClose = document.getElementById('iosClose');
+
+  // ما نعرض إذا منصّب مسبقاً
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                       window.navigator.standalone === true;
+  
+  if(isStandalone){
+    console.log('✅ التطبيق منصّب — ما نعرض الزر');
+    return;
+  }
+
+  // ما نعرض إذا رفض المستخدم قبل (لمدة 3 أيام)
+  const dismissed = localStorage.getItem('installDismissedAt');
+  if(dismissed){
+    const daysSince = (Date.now() - parseInt(dismissed)) / (1000 * 60 * 60 * 24);
+    if(daysSince < 3){
+      console.log('ℹ️ المستخدم رفض قبل — ننتظر');
+    }
+  }
+
+  // كشف iOS
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+  // ═══ Android/Chrome — beforeinstallprompt ═══
+  window.addEventListener('beforeinstallprompt', (e) => {
+    console.log('📲 beforeinstallprompt fired');
+    e.preventDefault();
+    deferredPrompt = e;
+
+    // ما نعرض إذا رفض قبل
+    const dismissed = localStorage.getItem('installDismissedAt');
+    if(dismissed && (Date.now() - parseInt(dismissed)) < (3 * 24 * 60 * 60 * 1000)){
+      return;
+    }
+
+    // نعرض بعد 3 ثواني
+    setTimeout(() => {
+      banner.classList.add('show');
+    }, 3000);
+  });
+
+  // ═══ الزر ═══
+  installBtn.addEventListener('click', async () => {
+    if(!deferredPrompt) {
+      if(isIOS) showIOSModal();
+      return;
+    }
+
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log('User choice:', outcome);
+
+    if(outcome === 'accepted'){
+      banner.classList.remove('show');
+      localStorage.removeItem('installDismissedAt');
+    } else {
+      localStorage.setItem('installDismissedAt', Date.now().toString());
+      banner.classList.remove('show');
+    }
+    deferredPrompt = null;
+  });
+
+  // ═══ زر الإغلاق ═══
+  closeBtn.addEventListener('click', () => {
+    banner.classList.remove('show');
+    localStorage.setItem('installDismissedAt', Date.now().toString());
+  });
+
+  // ═══ iOS — بعد 5 ثواني نعرض الزر ═══
+  if(isIOS && isSafari){
+    setTimeout(() => {
+      const dismissed = localStorage.getItem('installDismissedAt');
+      if(dismissed && (Date.now() - parseInt(dismissed)) < (3 * 24 * 60 * 60 * 1000)) return;
+      banner.classList.add('show');
+    }, 5000);
+  }
+
+  // ═══ زر iOS ═══
+  function showIOSModal(){
+    iosModal.classList.add('show');
+  }
+  iosClose.addEventListener('click', () => {
+    iosModal.classList.remove('show');
+    localStorage.setItem('installDismissedAt', Date.now().toString());
+    banner.classList.remove('show');
+  });
+
+  // ═══ تطبيق مثبّت ═══
+  window.addEventListener('appinstalled', () => {
+    console.log('🎉 التطبيق انثبّت!');
+    banner.classList.remove('show');
+    localStorage.removeItem('installDismissedAt');
+  });
+
+})();
+
 </script>
+
+
+<!-- INSTALL_PROMPT_V1 -->
+<div id="installBanner">
+  <button class="closeBtn" id="installClose">×</button>
+  <div class="appIcon">😂</div>
+  <div class="info">
+    <div class="title">ثبّت التطبيق!</div>
+    <div class="sub">عشان يفتح أسرع وبدون شريط URL</div>
+  </div>
+  <button class="installBtn" id="installBtn">📲 ثبّت</button>
+</div>
+
+<div id="iosInstallModal">
+  <div class="box">
+    <h3>📲 ثبّت التطبيق</h3>
+    <p>لاستعمال التطبيق بدون شريط URL:</p>
+    <div class="step"><span class="n">1</span><span class="txt">كبس زر <b>المشاركة</b> ⬆️ أسفل الشاشة</span></div>
+    <div class="step"><span class="n">2</span><span class="txt">اختار <b>"إضافة إلى الشاشة الرئيسية"</b></span></div>
+    <div class="step"><span class="n">3</span><span class="txt">كبس <b>"إضافة"</b> ✅</span></div>
+    <button id="iosClose">تمام 👍</button>
+  </div>
+</div>
 
 </body>
 </html>

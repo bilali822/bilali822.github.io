@@ -43,9 +43,8 @@ jobs:
       - name: Install Bubblewrap
         run: npm install -g @bubblewrap/cli
 
-      - name: Configure Bubblewrap paths
+      - name: Configure Bubblewrap
         run: |
-          # نكتب ملف إعدادات مباشرة — هيك bubblewrap ما بيسأل عن JDK ولا SDK
           mkdir -p $HOME/.bubblewrap
           cat > $HOME/.bubblewrap/config.json << EOF
           {
@@ -53,11 +52,6 @@ jobs:
             "androidSdkPath": "$ANDROID_HOME"
           }
           EOF
-          echo "═══ ملف الإعدادات: ═══"
-          cat $HOME/.bubblewrap/config.json
-          echo ""
-          echo "JAVA_HOME=$JAVA_HOME"
-          echo "ANDROID_HOME=$ANDROID_HOME"
 
       - name: Decode keystore
         run: |
@@ -68,20 +62,38 @@ jobs:
           BUBBLEWRAP_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           BUBBLEWRAP_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          # نبعت n مرات لسؤال تثبيت JDK، وبعدها answers تانية
-          yes "n" | bubblewrap build --skipPwaValidation 2>&1 | head -100 || \
-          bubblewrap build --skipPwaValidation
+          # نجاوب "n" للأسئلة، والـ Yes بتعطي إجابات تلقائية
+          yes "n" | bubblewrap build --skipPwaValidation || true
+          
+          echo ""
+          echo "═══ الملفات بعد البناء: ═══"
+          ls -la
+          echo ""
+          find . -name "*.apk" -o -name "*.aab" 2>/dev/null
 
-      - name: Upload APK
+      - name: Find APK
+        id: find-apk
+        run: |
+          APK_PATH=$(find . -name "app-release-signed.apk" -type f | head -1)
+          if [ -z "$APK_PATH" ]; then
+            APK_PATH=$(find . -name "*.apk" -type f | head -1)
+          fi
+          echo "apk_path=$APK_PATH" >> $GITHUB_OUTPUT
+          echo "✅ APK found at: $APK_PATH"
+          ls -lh "$APK_PATH" || echo "❌ ما لقينا APK"
+
+      - name: Upload APK artifact
+        if: steps.find-apk.outputs.apk_path != ''
         uses: actions/upload-artifact@v4
         with:
           name: app-release-signed
-          path: app-release-signed.apk
+          path: ${{ steps.find-apk.outputs.apk_path }}
 
       - name: Create Release
+        if: steps.find-apk.outputs.apk_path != ''
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v1.0.${{ github.run_number }}
           name: "الإصدار v1.0.${{ github.run_number }}"
           body: "تطبيق الصف العاشر — بناء تلقائي"
-          files: app-release-signed.apk
+          files: ${{ steps.find-apk.outputs.apk_path }}

@@ -27,32 +27,57 @@ jobs:
 
       - name: Setup Android SDK
         run: |
-          mkdir -p $HOME/android-sdk/cmdline-tools
-          cd $HOME/android-sdk/cmdline-tools
+          SDK_DIR="$HOME/android-sdk"
+          mkdir -p "$SDK_DIR/cmdline-tools"
+          cd "$SDK_DIR/cmdline-tools"
           wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
           unzip -q cmdline-tools.zip
           mv cmdline-tools latest
           cd latest/bin
           yes | ./sdkmanager --licenses > /dev/null 2>&1 || true
           ./sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0" > /dev/null 2>&1
-          echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
-          echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
-          echo "$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
-          echo "$HOME/android-sdk/platform-tools" >> $GITHUB_PATH
+          
+          # تحقق إنو SDK موجود فعلاً
+          echo "═══ SDK محتوى: ═══"
+          ls -la "$SDK_DIR/"
+          ls -la "$SDK_DIR/platforms/" 2>&1 || echo "⚠️ platforms ناقص"
+          ls -la "$SDK_DIR/build-tools/" 2>&1 || echo "⚠️ build-tools ناقص"
+          echo "SDK_DIR=$SDK_DIR"
+          
+          echo "ANDROID_HOME=$SDK_DIR" >> $GITHUB_ENV
+          echo "ANDROID_SDK_ROOT=$SDK_DIR" >> $GITHUB_ENV
+          echo "ANDROID_SDK=$SDK_DIR" >> $GITHUB_ENV
+          echo "$SDK_DIR/cmdline-tools/latest/bin" >> $GITHUB_PATH
+          echo "$SDK_DIR/platform-tools" >> $GITHUB_PATH
 
       - name: Install Bubblewrap
         run: npm install -g @bubblewrap/cli
 
       - name: Write Bubblewrap config
         run: |
-          # ملف الإعدادات — باشي bubblewrap ما بيسأل أي سؤال
+          JAVA_PATH="$JAVA_HOME"
+          SDK_PATH="$HOME/android-sdk"
+          
+          echo "JAVA_PATH=$JAVA_PATH"
+          echo "SDK_PATH=$SDK_PATH"
+          echo ""
+          echo "═══ تحقق إنو الملفات موجودة: ═══"
+          ls -la "$JAVA_PATH/bin/java" || echo "❌ java ناقص!"
+          ls -la "$SDK_PATH/" || echo "❌ SDK ناقص!"
+          echo ""
+          
           mkdir -p $HOME/.bubblewrap
+          mkdir -p $HOME/.config/bubblewrap
+          
           cat > $HOME/.bubblewrap/config.json << EOF
           {
-            "jdkPath": "$JAVA_HOME",
-            "androidSdkPath": "$ANDROID_HOME"
+            "jdkPath": "$JAVA_PATH",
+            "androidSdkPath": "$SDK_PATH"
           }
           EOF
+          
+          cp $HOME/.bubblewrap/config.json $HOME/.config/bubblewrap/config.json
+          
           echo "═══ config.json: ═══"
           cat $HOME/.bubblewrap/config.json
 
@@ -60,44 +85,62 @@ jobs:
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android.keystore
 
+      - name: Debug environment
+        run: |
+          echo "═══ Environment: ═══"
+          echo "JAVA_HOME=$JAVA_HOME"
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+          echo ""
+          echo "═══ Bubblewrap version: ═══"
+          bubblewrap --version
+          echo ""
+          echo "═══ Bubblewrap help: ═══"
+          bubblewrap build --help 2>&1 | head -30
+
       - name: Build APK
         env:
           BUBBLEWRAP_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           BUBBLEWRAP_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          ANDROID_HOME: ${{ env.HOME }}/android-sdk
+          ANDROID_SDK_ROOT: ${{ env.HOME }}/android-sdk
         run: |
-          # --skipPwaValidation + config.json موجود = ما بيسأل شي
-          bubblewrap build --skipPwaValidation
+          # جرب مع env variables مباشرة
+          export ANDROID_HOME="$HOME/android-sdk"
+          export ANDROID_SDK_ROOT="$HOME/android-sdk"
+          
+          bubblewrap build --skipPwaValidation 2>&1 | tee /tmp/build.log
           
           echo ""
           echo "═══ الملفات: ═══"
           ls -la
-          echo ""
-          echo "═══ ندور على APK: ═══"
           find . -name "*.apk" -o -name "*.aab"
 
       - name: Find APK
         id: find-apk
+        if: always()
         run: |
-          APK_PATH=$(find . -name "app-release-signed.apk" -type f | head -1)
-          if [ -z "$APK_PATH" ]; then
-            APK_PATH=$(find . -name "*.apk" -type f | head -1)
-          fi
+          APK_PATH=$(find . -name "*.apk" -type f | head -1)
           echo "apk_path=$APK_PATH" >> $GITHUB_OUTPUT
           if [ -n "$APK_PATH" ]; then
             echo "✅ APK: $APK_PATH"
             ls -lh "$APK_PATH"
           else
-            echo "❌ ما لقينا APK"
+            echo "❌ ما في APK"
+            echo "═══ آخر 40 سطر من build.log ═══"
+            tail -40 /tmp/build.log 2>&1 || echo "ما في log"
             exit 1
           fi
 
       - name: Upload APK artifact
+        if: steps.find-apk.outputs.apk_path != ''
         uses: actions/upload-artifact@v4
         with:
           name: app-release-signed
           path: ${{ steps.find-apk.outputs.apk_path }}
 
       - name: Create Release
+        if: steps.find-apk.outputs.apk_path != ''
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v1.0.${{ github.run_number }}

@@ -783,6 +783,18 @@ window.sendLiveMessage=(name,text)=>push(ref(db,'liveChat'),{name,text,ts:Date.n
   window.__closeWhoOverlay = hide;
 })();
 
+
+/* GLOBAL_EXPOSE_FIX — تعريض دوال onclick على window */
+(function(){
+  var fns = ['submitQuiz','newExcuse','cheatTip','calcGrade','newNick','newWhois','newHaki','newTQuote','resetVotes','resetCounters','showChatUI','showWhoAmI','sendLive','enableNotifications'];
+  fns.forEach(function(n){
+    try {
+      var v = eval(n);
+      if(typeof v === 'function') window[n] = v;
+    } catch(e){}
+  });
+})();
+
 </script>
 
 </body>

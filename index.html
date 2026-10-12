@@ -1678,6 +1678,206 @@
     animation-duration:20s !important;
   }
 
+
+  /* ═══════════════════════════════════════════════════════════
+     LITE_MODE — للأجهزة الضعيفة 🚀
+     ═══════════════════════════════════════════════════════════ */
+  
+  body.lite-mode *{
+    animation:none !important;
+    transition:none !important;
+  }
+  
+  body.lite-mode{
+    background:#0a0a1a !important;
+  }
+  
+  body.lite-mode::before,
+  body.lite-mode::after{
+    display:none !important;
+  }
+  
+  /* شيل كل الـ blur */
+  body.lite-mode .card,
+  body.lite-mode .widget,
+  body.lite-mode nav,
+  body.lite-mode .chat-topbar,
+  body.lite-mode .chat-input-area,
+  body.lite-mode .msg .avatar,
+  body.lite-mode .chat-stats,
+  body.lite-mode .msg.mine .bubble,
+  body.lite-mode .msg.other .bubble,
+  body.lite-mode input,
+  body.lite-mode textarea{
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+  }
+  
+  /* خلفيات بسيطة */
+  body.lite-mode .card{
+    background:rgba(22,22,43,.9) !important;
+    border:1px solid rgba(255,255,255,.1) !important;
+    box-shadow:0 2px 8px rgba(0,0,0,.3) !important;
+  }
+  body.lite-mode .card::before{
+    display:none !important;
+  }
+  
+  body.lite-mode .widget{
+    background:rgba(30,30,58,.9) !important;
+    box-shadow:none !important;
+    border:1px solid rgba(255,255,255,.1) !important;
+  }
+  body.lite-mode .widget::before{
+    display:none !important;
+  }
+  
+  /* أزرار بسيطة */
+  body.lite-mode .btn{
+    background:linear-gradient(135deg,#e11d48,#7c3aed) !important;
+    box-shadow:0 2px 8px rgba(0,0,0,.3) !important;
+  }
+  body.lite-mode .btn::after{
+    display:none !important;
+  }
+  
+  body.lite-mode nav button{
+    background:#1a1a2e !important;
+    border:1px solid #2a2a4a !important;
+  }
+  body.lite-mode nav button.active{
+    background:linear-gradient(135deg,#e11d48,#7c3aed) !important;
+    box-shadow:none !important;
+  }
+  
+  /* الرسايل */
+  body.lite-mode .msg.mine .bubble{
+    background:linear-gradient(135deg,#e11d48,#7c3aed) !important;
+    box-shadow:none !important;
+  }
+  body.lite-mode .msg.other .bubble{
+    background:#1a1a2e !important;
+    border:1px solid #2a2a4a !important;
+    box-shadow:none !important;
+  }
+  
+  /* الشات */
+  body.lite-mode .chat-topbar{
+    background:linear-gradient(135deg,#7c3aed,#e11d48) !important;
+    box-shadow:none !important;
+  }
+  
+  body.lite-mode .chat-input-area{
+    background:#0a0a1a !important;
+    box-shadow:none !important;
+  }
+  
+  /* header مبسط */
+  body.lite-mode header{
+    background:linear-gradient(135deg,#e11d48,#7c3aed) !important;
+  }
+  body.lite-mode header::before{
+    display:none !important;
+  }
+  body.lite-mode header h1{
+    background:none !important;
+    -webkit-text-fill-color:#fff !important;
+    color:#fff !important;
+    filter:none !important;
+  }
+  
+  /* marquee */
+  body.lite-mode .marquee::before,
+  body.lite-mode .marquee::after{
+    display:none !important;
+  }
+  
+  /* أنيميشنز خفيفة فقط */
+  body.lite-mode section.active{
+    animation:fadeIn .15s ease !important;
+  }
+  @keyframes fadeIn{
+    from{opacity:0}
+    to{opacity:1}
+  }
+  
+  /* شيل كل الحركات */
+  body.lite-mode .widget:hover,
+  body.lite-mode .card:hover,
+  body.lite-mode .teacher:hover,
+  body.lite-mode .lead:hover,
+  body.lite-mode .event:hover,
+  body.lite-mode .memory:hover,
+  body.lite-mode .secret-item:hover,
+  body.lite-mode .sound-btn:hover,
+  body.lite-mode .msg:hover .avatar,
+  body.lite-mode .avatar-picker button:hover{
+    transform:none !important;
+    box-shadow:none !important;
+  }
+  
+  /* قلّل الظلال */
+  body.lite-mode .msg .bubble,
+  body.lite-mode .msg .avatar{
+    box-shadow:none !important;
+  }
+  
+  /* شيل الـ confetti والقلوب */
+  body.lite-mode .confetti,
+  body.lite-mode .float-heart{
+    display:none !important;
+  }
+  
+  /* شريط الثيمات مخفي */
+  body.lite-mode .theme-switcher{
+    background:#1a1a2e !important;
+    backdrop-filter:none !important;
+    box-shadow:none !important;
+  }
+  body.lite-mode .theme-switcher:hover{
+    transform:none !important;
+  }
+  
+  /* أنيميشنز fade-in خفيفة */
+  body.lite-mode .msg{
+    animation:fadeIn .15s ease !important;
+  }
+  
+  body.lite-mode .challenge-box,
+  body.lite-mode .radio-box,
+  body.lite-mode .student-card,
+  body.lite-mode .countdown-display{
+    animation:none !important;
+  }
+  body.lite-mode .challenge-box::before,
+  body.lite-mode .student-card::after{
+    display:none !important;
+  }
+  
+  /* شيل الأنيميشنز من الأرقام */
+  body.lite-mode .chat-stats .stat .num,
+  body.lite-mode .countdown-display .num,
+  body.lite-mode .lead.top{
+    animation:none !important;
+  }
+  
+  /* banner بسيط */
+  body.lite-mode .in-app-notification{
+    animation:fadeIn .2s ease !important;
+    box-shadow:0 4px 15px rgba(0,0,0,.5) !important;
+  }
+  body.lite-mode .in-app-notification .in-emoji{
+    animation:none !important;
+  }
+  body.lite-mode .in-app-notification.show{
+    animation:fadeIn .2s ease !important;
+  }
+  
+  /* Toast */
+  body.lite-mode .toast.show{
+    animation:fadeIn .2s ease !important;
+  }
+
 </style>
 </head>
 <body>
@@ -3332,6 +3532,123 @@ console.log('✅ أنيميشنز تفاعلية جاهزة! 🎨');
   });
   
   console.log('✅ DESIGN_PACK_V1 جاهز!');
+})();
+
+
+/* LITE_MODE — تفعيل تلقائي للأجهزة الضعيفة */
+(function(){
+  console.log('🚀 LITE_MODE يفحص الجهاز...');
+  
+  // 1. فحص إذا المستخدم فعّلو يدوياً
+  const savedLite = localStorage.getItem('liteMode');
+  if(savedLite === 'on'){
+    document.body.classList.add('lite-mode');
+    console.log('✅ LITE_MODE: مفعّل من المستخدم');
+    return;
+  }
+  
+  // 2. كشف الجهاز الضعيف
+  let score = 0;
+  
+  // فحص المعالج
+  const cores = navigator.hardwareConcurrency || 1;
+  if(cores <= 2) score += 2;
+  else if(cores <= 4) score += 1;
+  
+  // فحص الذاكرة (إذا مدعوم)
+  if(navigator.deviceMemory){
+    if(navigator.deviceMemory <= 2) score += 3;
+    else if(navigator.deviceMemory <= 4) score += 1;
+  }
+  
+  // فحص UA للهواتف القديمة
+  const ua = navigator.userAgent;
+  if(/Android [1-7]\./.test(ua)) score += 3;
+  if(/Android 8\./.test(ua)) score += 1;
+  if(/iPhone OS [1-9]_/.test(ua)) score += 3;
+  if(/iPhone OS 1[0-2]_/.test(ua)) score += 1;
+  
+  // فحص اتصال الشبكة
+  if(navigator.connection){
+    const effectiveType = navigator.connection.effectiveType;
+    if(effectiveType === 'slow-2g' || effectiveType === '2g') score += 2;
+    if(navigator.connection.saveData) score += 2;
+  }
+  
+  // فحص دقة الشاشة (إذا ضعيفة = جهاز قديم)
+  if(window.screen){
+    const px = window.screen.width * window.screen.height;
+    if(px < 400000) score += 1;
+  }
+  
+  console.log('📊 النتيجة:', score, 'نوى:', cores, 'ذاكرة:', navigator.deviceMemory || '؟');
+  
+  // 3. فعّل الوضع الخفيف إذا النتيجة عالية
+  if(score >= 4){
+    document.body.classList.add('lite-mode');
+    console.log('⚠️ جهاز ضعيف — تفعّل LITE_MODE');
+  } else {
+    console.log('✅ جهاز قوي — الوضع الكامل');
+  }
+  
+  // 4. اختبر الـ FPS — إذا بطيء، فعّل الوضع الخفيف
+  let frames = 0;
+  const start = performance.now();
+  
+  function checkFPS(){
+    frames++;
+    const elapsed = performance.now() - start;
+    if(elapsed < 1000){
+      requestAnimationFrame(checkFPS);
+    } else {
+      const fps = frames;
+      console.log('📈 FPS:', fps);
+      if(fps < 30 && !document.body.classList.contains('lite-mode')){
+        document.body.classList.add('lite-mode');
+        console.log('⚠️ FPS ضعيف — تفعّل LITE_MODE');
+      }
+    }
+  }
+  
+  // بس على الأجهزة يللي فيها شك
+  if(score >= 2){
+    setTimeout(() => {
+      requestAnimationFrame(checkFPS);
+    }, 2000);
+  }
+  
+  // 5. زر يدوي للتبديل
+  window.toggleLiteMode = function(){
+    const current = document.body.classList.contains('lite-mode');
+    if(current){
+      document.body.classList.remove('lite-mode');
+      localStorage.setItem('liteMode', 'off');
+      console.log('✅ الوضع الكامل مفعّل');
+    } else {
+      document.body.classList.add('lite-mode');
+      localStorage.setItem('liteMode', 'on');
+      console.log('🚀 LITE_MODE مفعّل');
+    }
+    location.reload();
+  };
+  
+  // 6. اختصار: كبس 3 مرات على الـ logo
+  let clickCount = 0;
+  let clickTimer;
+  const header = document.querySelector('header h1');
+  if(header){
+    header.addEventListener('click', () => {
+      clickCount++;
+      clearTimeout(clickTimer);
+      clickTimer = setTimeout(() => { clickCount = 0; }, 800);
+      if(clickCount === 3){
+        window.toggleLiteMode();
+        clickCount = 0;
+      }
+    });
+  }
+  
+  console.log('✅ LITE_MODE جاهز — كبس 3 مرات على العنوان للتبديل');
 })();
 
 </script>

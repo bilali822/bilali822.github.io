@@ -1411,6 +1411,311 @@
     }
   }
 
+
+  /* ═══════════════════════════════════════════════════════════
+     CHAT_FEATURES_PACK — 10 مميزات شات متطورة 💬
+     ═══════════════════════════════════════════════════════════ */
+  
+  /* ═══ 1. Reactions على الرسايل ═══ */
+  .msg .reactions{
+    display:flex;gap:3px;margin-top:4px;flex-wrap:wrap;
+  }
+  .msg .reactions .rx{
+    background:rgba(124,58,237,.2);
+    border:1px solid rgba(124,58,237,.4);
+    padding:2px 7px;border-radius:12px;font-size:.75rem;
+    display:flex;align-items:center;gap:3px;
+    cursor:pointer;transition:.2s;
+  }
+  .msg .reactions .rx:hover{
+    background:rgba(124,58,237,.4);
+    transform:scale(1.05);
+  }
+  .msg .reactions .rx.mine{
+    background:linear-gradient(135deg,#7c3aed,#e11d48);
+    border-color:transparent;
+  }
+  
+  /* Reaction picker */
+  .reaction-picker{
+    position:absolute;top:-45px;
+    background:#1a1a2e;border:1px solid #2a2a4a;
+    border-radius:24px;padding:6px;display:flex;gap:4px;
+    box-shadow:0 8px 24px rgba(0,0,0,.6);
+    opacity:0;pointer-events:none;transition:.2s;
+    z-index:20;
+  }
+  .msg.other .reaction-picker{left:0}
+  .msg.mine .reaction-picker{right:0}
+  .msg:hover .reaction-picker{opacity:1;pointer-events:auto}
+  .reaction-picker button{
+    background:transparent;border:0;font-size:1.4rem;
+    cursor:pointer;padding:4px;border-radius:50%;
+    transition:.15s;
+  }
+  .reaction-picker button:hover{
+    transform:scale(1.3);
+    background:rgba(124,58,237,.3);
+  }
+  
+  /* ═══ 2. Reply على رسالة ═══ */
+  .msg .reply-context{
+    background:rgba(124,58,237,.15);
+    border-right:3px solid #7c3aed;
+    padding:6px 10px;border-radius:8px;
+    margin-bottom:6px;font-size:.78rem;
+    color:#94a3b8;
+    max-width:100%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .msg .reply-context b{color:#f472b6}
+  
+  .reply-bar{
+    background:rgba(124,58,237,.2);
+    border-right:3px solid #7c3aed;
+    padding:8px 14px;
+    display:none;align-items:center;gap:10px;
+    font-size:.82rem;
+    border-radius:12px;margin-bottom:8px;
+  }
+  .reply-bar.show{display:flex}
+  .reply-bar .txt{flex:1;color:#94a3b8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .reply-bar .txt b{color:#f472b6}
+  .reply-bar button{
+    background:transparent;border:0;color:#94a3b8;
+    font-size:1.2rem;cursor:pointer;padding:4px 8px;
+  }
+  
+  /* ═══ 3. زر الرد السريع ═══ */
+  .msg .reply-btn{
+    position:absolute;top:50%;transform:translateY(-50%);
+    opacity:0;pointer-events:none;
+    background:rgba(124,58,237,.9);color:#fff;
+    border:0;width:26px;height:26px;border-radius:50%;
+    font-size:.75rem;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:.2s;z-index:5;
+  }
+  .msg.other .reply-btn{left:-60px}
+  .msg.mine .reply-btn{right:-60px}
+  .msg:hover .reply-btn{opacity:1;pointer-events:auto}
+  
+  /* ═══ 4. رسالة مثبتة ═══ */
+  .pinned-bar{
+    background:linear-gradient(135deg,rgba(250,204,21,.2),rgba(225,29,72,.15));
+    border-bottom:2px solid #facc15;
+    padding:10px 14px;
+    display:none;align-items:center;gap:10px;
+    font-size:.82rem;
+    flex:0 0 auto;
+  }
+  .pinned-bar.show{display:flex}
+  .pinned-bar .em{font-size:1.2rem}
+  .pinned-bar .txt{flex:1;color:#facc15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pinned-bar .txt b{color:#fff}
+  .pinned-bar button{
+    background:transparent;border:0;color:#facc15;
+    font-size:1rem;cursor:pointer;padding:4px 8px;
+  }
+  .msg .pin-btn{
+    position:absolute;top:50%;transform:translateY(-50%);
+    opacity:0;pointer-events:none;
+    background:rgba(250,204,21,.9);color:#000;
+    border:0;width:26px;height:26px;border-radius:50%;
+    font-size:.75rem;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:.2s;z-index:5;
+  }
+  .msg.other .pin-btn{left:-90px}
+  .msg.mine .pin-btn{right:-90px}
+  .msg:hover .pin-btn{opacity:1;pointer-events:auto}
+  
+  /* ═══ 5. بحث بالرسايل ═══ */
+  .chat-search{
+    position:absolute;top:0;left:0;right:0;bottom:0;
+    background:rgba(10,10,26,.98);
+    z-index:100;
+    display:none;flex-direction:column;
+    padding:14px;
+  }
+  .chat-search.show{display:flex}
+  .chat-search .search-top{
+    display:flex;gap:8px;margin-bottom:12px;
+  }
+  .chat-search input{
+    flex:1;padding:10px 16px;border-radius:20px;
+    border:1.5px solid #2a2a4a;background:#1a1a2e;color:#fff;
+    font-family:inherit;font-size:.92rem;margin:0;
+  }
+  .chat-search input:focus{border-color:#7c3aed;outline:0}
+  .chat-search .close-search{
+    background:rgba(239,68,68,.9);border:0;color:#fff;
+    width:40px;height:40px;border-radius:50%;
+    font-size:1.1rem;cursor:pointer;
+  }
+  .chat-search .results{
+    flex:1;overflow-y:auto;
+  }
+  .chat-search .result{
+    background:#1a1a2e;border-radius:10px;padding:10px;margin-bottom:8px;
+    border-right:3px solid #7c3aed;
+  }
+  .chat-search .result .nm{
+    font-size:.75rem;color:#94a3b8;margin-bottom:4px;
+  }
+  .chat-search .result .tx{
+    font-size:.9rem;
+  }
+  .chat-search .result .tx mark{
+    background:rgba(250,204,21,.4);color:#fff;
+    border-radius:3px;padding:0 2px;
+  }
+  .chat-search .no-results{
+    text-align:center;color:#64748b;padding:30px;font-size:.9rem;
+  }
+  
+  /* ═══ 6. Stickers ═══ */
+  .sticker-panel{
+    position:absolute;bottom:100%;right:0;
+    background:#1a1a2e;border:1px solid #2a2a4a;
+    border-radius:16px;padding:10px;
+    box-shadow:0 8px 30px rgba(0,0,0,.6);
+    display:none;grid-template-columns:repeat(4,1fr);gap:6px;
+    max-height:220px;overflow-y:auto;
+    margin-bottom:8px;
+  }
+  .sticker-panel.show{display:grid}
+  .sticker-panel button{
+    background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);
+    border-radius:10px;padding:8px;font-size:1.8rem;
+    cursor:pointer;transition:.2s;line-height:1;
+  }
+  .sticker-panel button:hover{
+    transform:scale(1.15);
+    background:rgba(124,58,237,.4);
+  }
+  
+  /* ═══ 7. Sticker message ═══ */
+  .msg .bubble.sticker-bubble{
+    background:transparent !important;
+    padding:0 !important;
+    font-size:4rem;
+    line-height:1;
+    animation:stickerPop .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes stickerPop{
+    0%{transform:scale(.5) rotate(-20deg);opacity:0}
+    60%{transform:scale(1.15) rotate(8deg);opacity:1}
+    100%{transform:scale(1) rotate(0)}
+  }
+  
+  /* ═══ 8. Mentions @ ═══ */
+  .msg .bubble .mention{
+    color:#facc15;font-weight:800;
+    background:rgba(250,204,21,.15);
+    padding:1px 6px;border-radius:6px;
+    border:1px solid rgba(250,204,21,.3);
+  }
+  .msg.mine .bubble .mention{
+    color:#fff;
+    background:rgba(255,255,255,.25);
+    border-color:rgba(255,255,255,.4);
+  }
+  
+  .mention-suggest{
+    position:absolute;bottom:100%;left:12px;right:12px;
+    background:#1a1a2e;border:1px solid #2a2a4a;
+    border-radius:12px;
+    max-height:150px;overflow-y:auto;
+    display:none;z-index:30;
+    margin-bottom:8px;
+    box-shadow:0 8px 24px rgba(0,0,0,.6);
+  }
+  .mention-suggest.show{display:block}
+  .mention-suggest button{
+    width:100%;background:transparent;border:0;
+    color:#fff;padding:10px 14px;text-align:right;
+    font-family:inherit;font-size:.9rem;
+    cursor:pointer;display:flex;align-items:center;gap:10px;
+    border-bottom:1px solid rgba(255,255,255,.05);
+  }
+  .mention-suggest button:hover{
+    background:rgba(124,58,237,.3);
+  }
+  .mention-suggest button:last-child{border-bottom:0}
+  
+  /* ═══ 9. إحصائيات الشات ═══ */
+  .chat-stats-popup{
+    position:absolute;top:100%;left:12px;right:12px;
+    background:#1a1a2e;border:1px solid #2a2a4a;
+    border-radius:16px;
+    padding:16px;
+    box-shadow:0 12px 40px rgba(0,0,0,.6);
+    display:none;z-index:50;
+    margin-top:8px;
+  }
+  .chat-stats-popup.show{display:block}
+  .chat-stats-popup h3{
+    font-size:1rem;color:#f472b6;margin-bottom:12px;
+  }
+  .chat-stats-popup .row{
+    display:flex;justify-content:space-between;
+    padding:8px 0;
+    border-bottom:1px solid rgba(255,255,255,.05);
+    font-size:.85rem;
+  }
+  .chat-stats-popup .row:last-child{border-bottom:0}
+  .chat-stats-popup .row b{color:#facc15}
+  
+  /* ═══ 10. Block user ═══ */
+  .msg .block-btn{
+    position:absolute;top:50%;transform:translateY(-50%);
+    opacity:0;pointer-events:none;
+    background:rgba(239,68,68,.9);color:#fff;
+    border:0;width:26px;height:26px;border-radius:50%;
+    font-size:.75rem;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:.2s;z-index:5;
+  }
+  .msg.other .block-btn{left:-120px}
+  .msg:hover .block-btn{opacity:1;pointer-events:auto}
+  
+  .blocked-indicator{
+    background:rgba(239,68,68,.2);
+    border:1px solid rgba(239,68,68,.4);
+    padding:8px 12px;border-radius:10px;
+    font-size:.8rem;color:#fca5a5;
+    text-align:center;
+    margin:8px 0;
+  }
+  .blocked-indicator button{
+    background:transparent;border:0;color:#fca5a5;
+    text-decoration:underline;cursor:pointer;
+    font-family:inherit;font-size:.8rem;
+  }
+  
+  /* ═══ 11. شريط أدوات الشات ═══ */
+  .chat-toolbar{
+    display:flex;gap:6px;padding:0 0 8px;overflow-x:auto;scrollbar-width:none;
+  }
+  .chat-toolbar::-webkit-scrollbar{display:none}
+  .chat-toolbar button{
+    flex:0 0 auto;background:rgba(30,30,58,.8);
+    border:1px solid rgba(255,255,255,.08);
+    color:#94a3b8;padding:6px 11px;border-radius:10px;
+    font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;
+    transition:.15s;
+  }
+  .chat-toolbar button:hover{
+    background:rgba(124,58,237,.3);color:#fff;border-color:#7c3aed;
+  }
+  .chat-toolbar button.active{
+    background:linear-gradient(135deg,#7c3aed,#e11d48);
+    color:#fff;border-color:transparent;
+  }
+
 </style>
 </head>
 <body>
@@ -1533,14 +1838,44 @@
         <div class="stat"><div class="num" id="totalMsgs">0</div><div class="lbl">حكي</div></div>
         <div class="stat"><div class="num" id="msgsToday">0</div><div class="lbl">اليوم</div></div>
       </div>
+      
+      <div class="pinned-bar" id="pinnedBar">
+        <span class="em">📌</span>
+        <div class="txt" id="pinnedText">—</div>
+        <button onclick="unpinMessage()">✕</button>
+      </div>
+      
       <div class="chat-window" id="liveChatWindow">
         <button class="scroll-down" id="scrollDownBtn">⬇️</button>
       </div>
+      
+      <!-- Chat Search -->
+      <div class="chat-search" id="chatSearch">
+        <div class="search-top">
+          <input type="text" id="searchInput" placeholder="لك دوّر على رسالة..." autocomplete="off">
+          <button class="close-search" onclick="closeSearch()">✕</button>
+        </div>
+        <div class="results" id="searchResults"></div>
+      </div>
+
       <div class="chat-input-area">
+        <div class="chat-toolbar">
+          <button id="stickersBtn">😀 ستيكرز</button>
+          <button id="searchBtn">🔍 بحث</button>
+          <button id="statsBtn">📊 إحصائيات</button>
+          <button id="unblockBtn" style="display:none">🔓 فك الحظر</button>
+        </div>
         <div class="media-bar">
           <button id="imgBtn">📷 صورة</button>
           <button id="voiceBtn">🎤 فويس</button>
         </div>
+        <div class="reply-bar" id="replyBar">
+          <span class="txt" id="replyText">—</span>
+          <button onclick="cancelReply()">✕</button>
+        </div>
+        <div class="sticker-panel" id="stickerPanel"></div>
+        <div class="mention-suggest" id="mentionSuggest"></div>
+        <div class="chat-stats-popup" id="chatStatsPopup"></div>
         <div class="emoji-bar">
           <button data-emoji="😂">😂</button>
           <button data-emoji="🤣">🤣</button>
@@ -3363,6 +3698,481 @@ console.log('✅ أنيميشنز تفاعلية جاهزة! 🎨');
   };
   
   console.log('✅ ANIMATION_SYSTEM_V2 جاهز');
+})();
+
+
+/* ═══════════════════════════════════════════════════════════
+   CHAT_FEATURES_PACK — 10 مميزات متطورة
+   ═══════════════════════════════════════════════════════════ */
+
+(function(){
+  console.log('💬 CHAT_FEATURES_PACK يبدأ...');
+  
+  // ═══════════ 1. Reactions ═══════════
+  const REACTIONS = ['❤️','😂','🔥','👏','😮','😢'];
+  
+  window.toggleReaction = function(msgId, emoji){
+    const myName = localStorage.getItem('liveChatUser');
+    if(!myName) return;
+    
+    const key = msgId + '/' + emoji;
+    const ref = window.__fb.ref(window.__db, 'reactions/' + key + '/' + myName.replace(/\s+/g,'_'));
+    
+    window.__fb.onValue(ref, snap => {
+      if(snap.val()){
+        window.__fb.set(ref, null);
+      } else {
+        window.__fb.set(ref, true);
+      }
+    }, { onlyOnce: true });
+  };
+  
+  // استمع للـ reactions
+  window.__reactionsCache = {};
+  if(window.__fb){
+    window.__fb.onValue(window.__fb.ref(window.__db, 'reactions'), snap => {
+      window.__reactionsCache = snap.val() || {};
+      if(window.__liveChatCache) window.renderChat(window.__liveChatCache);
+    });
+  }
+  
+  // ═══════════ 2. Replies ═══════════
+  let replyingTo = null;
+  
+  window.replyTo = function(msgId){
+    const list = window.__liveChatCache || [];
+    const msg = list.find(m => m.id === msgId);
+    if(!msg) return;
+    
+    replyingTo = { id: msgId, name: msg.name, text: (msg.text || '').substring(0, 60) };
+    
+    const bar = document.getElementById('replyBar');
+    const txt = document.getElementById('replyText');
+    txt.innerHTML = `رد على <b>${msg.name}</b>: ${replyingTo.text}`;
+    bar.classList.add('show');
+    document.getElementById('liveInput').focus();
+  };
+  
+  window.cancelReply = function(){
+    replyingTo = null;
+    document.getElementById('replyBar').classList.remove('show');
+  };
+  
+  // ═══════════ 3. Pinned ═══════════
+  window.pinMessage = function(msgId){
+    const list = window.__liveChatCache || [];
+    const msg = list.find(m => m.id === msgId);
+    if(!msg) return;
+    
+    window.__fb.set(window.__fb.ref(window.__db, 'pinned'), {
+      id: msgId,
+      name: msg.name,
+      text: msg.text,
+      ts: Date.now()
+    });
+    
+    if(typeof showToast === 'function') showToast('📌 تثبّتت الرسالة');
+  };
+  
+  window.unpinMessage = function(){
+    window.__fb.set(window.__fb.ref(window.__db, 'pinned'), null);
+    document.getElementById('pinnedBar').classList.remove('show');
+  };
+  
+  // استمع للـ pinned
+  if(window.__fb){
+    window.__fb.onValue(window.__fb.ref(window.__db, 'pinned'), snap => {
+      const pinned = snap.val();
+      const bar = document.getElementById('pinnedBar');
+      const txt = document.getElementById('pinnedText');
+      
+      if(pinned){
+        txt.innerHTML = `<b>${pinned.name}</b>: ${pinned.text || ''}`;
+        bar.classList.add('show');
+      } else {
+        bar.classList.remove('show');
+      }
+    });
+  }
+  
+  // ═══════════ 4. Search ═══════════
+  window.openSearch = function(){
+    document.getElementById('chatSearch').classList.add('show');
+    document.getElementById('searchInput').focus();
+  };
+  
+  window.closeSearch = function(){
+    document.getElementById('chatSearch').classList.remove('show');
+    document.getElementById('searchInput').value = '';
+    document.getElementById('searchResults').innerHTML = '';
+  };
+  
+  document.getElementById('searchInput')?.addEventListener('input', (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const results = document.getElementById('searchResults');
+    
+    if(!q){
+      results.innerHTML = '';
+      return;
+    }
+    
+    const list = (window.__liveChatCache || []).filter(m => 
+      (m.text || '').toLowerCase().includes(q) || 
+      (m.name || '').toLowerCase().includes(q)
+    ).slice(-50).reverse();
+    
+    if(list.length === 0){
+      results.innerHTML = '<div class="no-results">لك ما لقينا شي 🤷</div>';
+      return;
+    }
+    
+    results.innerHTML = list.map(m => {
+      const text = String(m.text || '').replace(
+        new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'),
+        '<mark>$1</mark>'
+      );
+      return `<div class="result">
+        <div class="nm">${escapeHtml(m.name)} — ${new Date(m.ts).toLocaleString('ar')}</div>
+        <div class="tx">${text}</div>
+      </div>`;
+    }).join('');
+  });
+  
+  // ═══════════ 5. Stickers ═══════════
+  const STICKERS = ['😂','🤣','😭','😴','🔥','💀','👑','❤️','😎','🤡','🙄','🍔','🎮','📚','👽','🐱','🦁','💯','✨','🎉','💪','🙏','👋','🤝'];
+  
+  function renderStickers(){
+    const panel = document.getElementById('stickerPanel');
+    if(!panel) return;
+    panel.innerHTML = STICKERS.map(s => `<button data-sticker="${s}">${s}</button>`).join('');
+  }
+  
+  document.getElementById('stickersBtn')?.addEventListener('click', () => {
+    const panel = document.getElementById('stickerPanel');
+    panel.classList.toggle('show');
+  });
+  
+  document.getElementById('stickerPanel')?.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-sticker]');
+    if(!btn) return;
+    
+    const myName = localStorage.getItem('liveChatUser');
+    if(!myName) return;
+    
+    // ابعت ستيكر كرسالة
+    window.__fb.push(window.__fb.ref(window.__db, 'liveChat'), {
+      name: myName,
+      type: 'sticker',
+      sticker: btn.dataset.sticker,
+      text: btn.dataset.sticker,
+      ts: Date.now()
+    });
+    
+    document.getElementById('stickerPanel').classList.remove('show');
+  });
+  
+  renderStickers();
+  
+  // ═══════════ 6. Mentions ═══════════
+  const input = document.getElementById('liveInput');
+  const suggest = document.getElementById('mentionSuggest');
+  
+  input?.addEventListener('input', (e) => {
+    const val = e.target.value;
+    const lastAt = val.lastIndexOf('@');
+    
+    if(lastAt >= 0 && (val.length - lastAt) <= 15 && !val.substring(lastAt).includes(' ')){
+      const query = val.substring(lastAt + 1).toLowerCase();
+      const matches = window.STUDENTS.filter(s => 
+        s.name.toLowerCase().includes(query) || s.name.startsWith(query)
+      );
+      
+      if(matches.length > 0){
+        suggest.innerHTML = matches.map(s => 
+          `<button data-mention="${s.name}">${s.emoji} ${s.name}</button>`
+        ).join('');
+        suggest.classList.add('show');
+      } else {
+        suggest.classList.remove('show');
+      }
+    } else {
+      suggest.classList.remove('show');
+    }
+  });
+  
+  suggest?.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-mention]');
+    if(!btn) return;
+    
+    const val = input.value;
+    const lastAt = val.lastIndexOf('@');
+    input.value = val.substring(0, lastAt) + '@' + btn.dataset.mention + ' ';
+    suggest.classList.remove('show');
+    input.focus();
+  });
+  
+  // ═══════════ 7. Stats ═══════════
+  document.getElementById('statsBtn')?.addEventListener('click', () => {
+    const popup = document.getElementById('chatStatsPopup');
+    
+    if(popup.classList.contains('show')){
+      popup.classList.remove('show');
+      return;
+    }
+    
+    const list = window.__liveChatCache || [];
+    const today = new Date().toDateString();
+    const todayMsgs = list.filter(m => m.ts && new Date(m.ts).toDateString() === today);
+    
+    const counts = {};
+    list.forEach(m => {
+      if(m.name) counts[m.name] = (counts[m.name] || 0) + 1;
+    });
+    
+    const topUsers = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0, 5);
+    
+    // أكثر كلمة
+    const words = {};
+    list.forEach(m => {
+      if(m.text){
+        m.text.split(/\s+/).forEach(w => {
+          if(w.length > 3 && !w.startsWith('@')){
+            words[w] = (words[w] || 0) + 1;
+          }
+        });
+      }
+    });
+    const topWord = Object.entries(words).sort((a,b) => b[1]-a[1])[0];
+    
+    popup.innerHTML = `
+      <h3>📊 إحصائيات القعدة</h3>
+      <div class="row"><span>💬 مجموع الرسايل</span><b>${list.length}</b></div>
+      <div class="row"><span>📅 رسايل اليوم</span><b>${todayMsgs.length}</b></div>
+      <div class="row"><span>👥 عدد المشاركين</span><b>${Object.keys(counts).length}</b></div>
+      <div class="row"><span>🔤 أكثر كلمة</span><b>${topWord ? topWord[0] + ' (' + topWord[1] + ')' : '—'}</b></div>
+      <div style="margin-top:10px;font-size:.82rem;color:#94a3b8">
+        <b style="color:#f472b6">🏆 أكثر واحد بيحكي:</b>
+        ${topUsers.map((u, i) => `<div style="margin-top:5px">${i+1}. ${u[0]} — <b style="color:#facc15">${u[1]} رسالة</b></div>`).join('')}
+      </div>
+    `;
+    
+    popup.classList.add('show');
+  });
+  
+  // ═══════════ 8. Block ═══════════
+  window.blockUser = function(name){
+    if(!confirm(`لك بدك تحظر ${name}؟ (رح تختفي كل رسايلو عندك)`)) return;
+    
+    const blocked = JSON.parse(localStorage.getItem('blockedUsers') || '[]');
+    if(!blocked.includes(name)) blocked.push(name);
+    localStorage.setItem('blockedUsers', JSON.stringify(blocked));
+    
+    if(typeof showToast === 'function') showToast('🚫 انحظر ' + name);
+    updateBlockUI();
+    if(window.__liveChatCache) window.renderChat(window.__liveChatCache);
+  };
+  
+  window.unblockAll = function(){
+    if(!confirm('لك بدك تفك الحظر عن الكل؟')) return;
+    localStorage.removeItem('blockedUsers');
+    updateBlockUI();
+    if(window.__liveChatCache) window.renderChat(window.__liveChatCache);
+  };
+  
+  function updateBlockUI(){
+    const blocked = JSON.parse(localStorage.getItem('blockedUsers') || '[]');
+    const btn = document.getElementById('unblockBtn');
+    if(btn) btn.style.display = blocked.length > 0 ? 'inline-block' : 'none';
+  }
+  
+  document.getElementById('unblockBtn')?.addEventListener('click', window.unblockAll);
+  
+  // ═══════════ 9. ربط الأزرار ═══════════
+  document.getElementById('searchBtn')?.addEventListener('click', window.openSearch);
+  
+  // ═══════════ 10. Emoji bar → نضيف ستيكرز ═══════════
+  document.querySelectorAll('.emoji-bar button').forEach(b => {
+    b.addEventListener('click', () => {
+      const inp = document.getElementById('liveInput');
+      if(inp){
+        inp.value += b.dataset.emoji;
+        inp.focus();
+      }
+    });
+  });
+  
+  // ═══════════ 11. عدّل sendLiveMessage باشي يدعم reply ═══════════
+  const originalSend = window.sendLiveMessage;
+  if(originalSend){
+    window.sendLiveMessage = function(name, text){
+      if(replyingTo){
+        window.__fb.push(window.__fb.ref(window.__db, 'liveChat'), {
+          name,
+          text,
+          replyTo: {
+            id: replyingTo.id,
+            name: replyingTo.name,
+            text: replyingTo.text
+          },
+          ts: Date.now()
+        });
+        cancelReply();
+        if(window.addXp) window.addXp(name, 2);
+      } else {
+        originalSend(name, text);
+      }
+    };
+  }
+  
+  // ═══════════ 12. عدّل renderChat ═══════════
+  const originalRender = window.renderChat;
+  if(originalRender){
+    window.renderChat = function(list){
+      const myName = localStorage.getItem('liveChatUser');
+      const hidden = JSON.parse(localStorage.getItem('hiddenMsgs') || '[]');
+      const blocked = JSON.parse(localStorage.getItem('blockedUsers') || '[]');
+      const reactions = window.__reactionsCache || {};
+      
+      // فلتر
+      const filtered = list.filter(m => 
+        !hidden.includes(m.id) && !blocked.includes(m.name)
+      );
+      
+      if(filtered.length === 0){
+        document.getElementById('liveChatWindow').innerHTML = 
+          '<div class="msg sys"><div class="bubble">لك ما في حكي بعد... كون أول واحد يحكي 😎</div></div>';
+        return;
+      }
+      
+      // الإحصائيات
+      const totalEl = document.getElementById('totalMsgs');
+      const todayEl = document.getElementById('msgsToday');
+      const onlineEl = document.getElementById('onlineCount');
+      if(totalEl) totalEl.textContent = filtered.length;
+      const today = new Date().toDateString();
+      if(todayEl) todayEl.textContent = filtered.filter(m => m.ts && new Date(m.ts).toDateString() === today).length;
+      const cutoff = Date.now() - 5 * 60 * 1000;
+      if(onlineEl) onlineEl.textContent = new Set(filtered.filter(m => m.ts > cutoff).map(m => m.name)).size;
+      
+      // الرسايل
+      const html = filtered.map(m => {
+        const mine = m.name === myName;
+        const av = getAvatar(m.name);
+        const time = relTime(m.ts);
+        
+        // ═══ Sticker ═══
+        if(m.type === 'sticker' && m.sticker){
+          return `<div class="msg ${mine?'mine':'other'}">
+            <div class="avatar">${av}</div>
+            <div class="body">
+              <div class="top"><span class="name">${escapeHtml(m.name)}</span><span class="time">${time}</span></div>
+              <div class="bubble sticker-bubble">${m.sticker}</div>
+            </div>
+            <button class="delete-btn" onclick="deleteMsg('${m.id}')">🗑️</button>
+          </div>`;
+        }
+        
+        // ═══ Reply context ═══
+        let replyHtml = '';
+        if(m.replyTo){
+          replyHtml = `<div class="reply-context">↩️ <b>${escapeHtml(m.replyTo.name)}</b>: ${escapeHtml(m.replyTo.text)}</div>`;
+        }
+        
+        // ═══ Reactions ═══
+        let reactionsHtml = '';
+        const msgReactions = {};
+        Object.keys(reactions).forEach(key => {
+          const [id, emoji] = key.split('/');
+          if(id === m.id){
+            const users = Object.keys(reactions[key] || {});
+            msgReactions[emoji] = users;
+          }
+        });
+        
+        if(Object.keys(msgReactions).length > 0){
+          reactionsHtml = '<div class="reactions">' + 
+            Object.entries(msgReactions).map(([emoji, users]) => {
+              const isMine = users.includes(myName?.replace(/\s+/g,'_'));
+              return `<span class="rx ${isMine?'mine':''}" onclick="toggleReaction('${m.id}','${emoji}')">${emoji} ${users.length}</span>`;
+            }).join('') + 
+          '</div>';
+        }
+        
+        // ═══ Reaction Picker ═══
+        const picker = `<div class="reaction-picker">${
+          REACTIONS.map(e => `<button onclick="event.stopPropagation();toggleReaction('${m.id}','${e}')">${e}</button>`).join('')
+        }</div>`;
+        
+        // ═══ Mentions في النص ═══
+        let textContent = escapeHtml(m.text || '');
+        textContent = textContent.replace(/@(محمد نجار|محمد عوض|آدم ميني|محمد بيلالي|غازي نشابة)/g, 
+          '<span class="mention">@$1</span>');
+        
+        // ═══ Bubble content ═══
+        let bubbleContent = '';
+        if(m.type === 'image' && m.mediaUrl){
+          bubbleContent = `<div class="bubble image-bubble" onclick="window.open('${m.mediaUrl}','_blank')">
+            <img src="${m.mediaUrl}" loading="lazy">
+          </div>`;
+        } else if(m.type === 'voice' && m.mediaUrl){
+          bubbleContent = `<div class="bubble voice-bubble">
+            <span>🎤</span>
+            <audio controls preload="none" src="${m.mediaUrl}"></audio>
+          </div>`;
+        } else {
+          bubbleContent = `<div class="bubble">${textContent}</div>`;
+        }
+        
+        // ═══ Action buttons ═══
+        const actionBtns = `
+          <button class="reply-btn" onclick="replyTo('${m.id}')" title="رد">↩️</button>
+          <button class="pin-btn" onclick="pinMessage('${m.id}')" title="ثبّت">📌</button>
+          ${!mine ? `<button class="block-btn" onclick="blockUser('${escapeHtml(m.name)}')" title="حظر">🚫</button>` : ''}
+          <button class="delete-btn" onclick="deleteMsg('${m.id}')" title="احذف">🗑️</button>
+        `;
+        
+        return `<div class="msg ${mine?'mine':'other'}">
+          <div class="avatar">${av}</div>
+          <div class="body">
+            <div class="top"><span class="name">${escapeHtml(m.name)}</span><span class="time">${time}</span></div>
+            ${replyHtml}
+            ${bubbleContent}
+            ${reactionsHtml}
+          </div>
+          ${picker}
+          ${actionBtns}
+        </div>`;
+      }).join('');
+      
+      const win = document.getElementById('liveChatWindow');
+      win.innerHTML = html + '<button class="scroll-down" id="scrollDownBtn">⬇️</button>';
+      
+      const sdBtn = document.getElementById('scrollDownBtn');
+      const isFar = win.scrollHeight - win.scrollTop - win.clientHeight > 200;
+      if(isFar) sdBtn.classList.add('show');
+      sdBtn.addEventListener('click', () => {
+        win.scrollTo({top: win.scrollHeight, behavior:'smooth'});
+        sdBtn.classList.remove('show');
+      });
+      
+      if(!isFar) win.scrollTop = win.scrollHeight;
+    };
+  }
+  
+  updateBlockUI();
+  
+  // اضغط ESC لإغلاق البحث
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape'){
+      closeSearch();
+      document.getElementById('stickerPanel')?.classList.remove('show');
+      document.getElementById('chatStatsPopup')?.classList.remove('show');
+      suggest?.classList.remove('show');
+    }
+  });
+  
+  console.log('✅ CHAT_FEATURES_PACK جاهز');
+  console.log('📋 10 مميزات: Reactions, Replies, Pinned, Search, Stickers, Mentions, Stats, Block, Toolbar, Animations');
 })();
 
 </script>

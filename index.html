@@ -764,6 +764,88 @@
     display:flex;align-items:center;justify-content:center;
   }
 
+
+  /* CHAT_HEIGHT_FIX — إصلاح ثبات مربع الكتابة */
+  
+  /* القعدة كصفحة كاملة — ثابتة */
+  #livechat{
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+    width:100vw !important;
+    height:100vh !important;
+    height:100dvh !important;
+    overflow:hidden !important;
+    z-index:200;
+    padding:0 !important;
+    margin:0 !important;
+  }
+  #livechat.active{display:block !important}
+  
+  /* منع الصفحة من التمدد */
+  body.chat-open{
+    overflow:hidden !important;
+    position:fixed !important;
+    width:100% !important;
+    height:100% !important;
+    top:0 !important;
+    left:0 !important;
+  }
+  
+  #livechat .card{
+    padding:0 !important;
+    margin:0 !important;
+    background:transparent !important;
+    border:0 !important;
+    border-radius:0 !important;
+    width:100% !important;
+    height:100% !important;
+    overflow:hidden !important;
+  }
+  
+  #livechat .chat-page{
+    display:flex !important;
+    flex-direction:column !important;
+    width:100% !important;
+    height:100% !important;
+    overflow:hidden !important;
+    max-width:900px;
+    margin:0 auto;
+  }
+  
+  /* الشريط العلوي والإحصائيات ثابتين فوق */
+  #livechat .chat-topbar,
+  #livechat .chat-stats{
+    flex:0 0 auto !important;
+  }
+  
+  /* ⚠️ أهم جزء: منطقة الرسائل */
+  #livechat .chat-window{
+    flex:1 1 0 !important;
+    min-height:0 !important;
+    max-height:100% !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    -webkit-overflow-scrolling:touch !important;
+    overscroll-behavior:contain !important;
+  }
+  
+  /* مؤشر الكتابة ثابت */
+  #livechat .typing-inline{
+    flex:0 0 auto !important;
+  }
+  
+  /* ⚠️ أهم جزء: منطقة الإدخال ثابتة تحت */
+  #livechat .chat-input-area{
+    flex:0 0 auto !important;
+    position:relative !important;
+    bottom:auto !important;
+    top:auto !important;
+    padding-bottom:calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
 </style>
 </head>
 <body>
@@ -2446,6 +2528,79 @@ window.addEventListener('userNameChanged', updateMyInfo);
 setTimeout(updateMyInfo, 1000);
 
 console.log('✅ MODERN_CHAT_V1 جاهز');
+
+
+/* CHAT_HEIGHT_FIX — ضبط الارتفاع على WebAPK */
+(function(){
+  console.log('📐 CHAT_HEIGHT_FIX يبدأ');
+  
+  function setChatHeight(){
+    const livechat = document.getElementById('livechat');
+    const chatPage = livechat ? livechat.querySelector('.chat-page') : null;
+    if(!livechat || !chatPage) return;
+    
+    // استعمل visualViewport إذا موجود (يدعم الكيبورد)
+    let h;
+    if(window.visualViewport){
+      h = window.visualViewport.height;
+    } else {
+      h = window.innerHeight;
+    }
+    
+    livechat.style.height = h + 'px';
+    chatPage.style.height = h + 'px';
+  }
+  
+  // اضبط أول ما يفتح الموقع
+  window.addEventListener('load', setChatHeight);
+  window.addEventListener('resize', setChatHeight);
+  window.addEventListener('orientationchange', () => {
+    setTimeout(setChatHeight, 200);
+    setTimeout(setChatHeight, 500);
+  });
+  
+  // visualViewport — للكيبورد
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize', setChatHeight);
+    window.visualViewport.addEventListener('scroll', setChatHeight);
+  }
+  
+  // كل ما يفتح القعدة
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-tab="livechat"]');
+    if(btn){
+      setTimeout(setChatHeight, 50);
+      setTimeout(setChatHeight, 200);
+      setTimeout(setChatHeight, 500);
+    }
+  });
+  
+  // كل ما يكتب المستخدم
+  document.addEventListener('focusin', (e) => {
+    if(e.target && e.target.id === 'liveInput'){
+      setTimeout(setChatHeight, 300);
+      setTimeout(setChatHeight, 600);
+    }
+  });
+  
+  // كل ما تزيد رسائل — اضبط الارتفاع
+  const chatWindow = document.getElementById('liveChatWindow');
+  if(chatWindow){
+    const observer = new MutationObserver(() => {
+      setChatHeight();
+    });
+    observer.observe(chatWindow, { childList: true, subtree: true });
+  }
+  
+  // كل 2 ثانية (احتياطي)
+  setInterval(() => {
+    if(document.querySelector('#livechat.active')){
+      setChatHeight();
+    }
+  }, 2000);
+  
+  console.log('✅ CHAT_HEIGHT_FIX جاهز');
+})();
 
 </script>
 

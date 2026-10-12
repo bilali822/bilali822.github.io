@@ -212,6 +212,40 @@
     .input-row button{width:50px;height:50px;font-size:1.3rem}
   }
 
+
+  /* NOTIF_FIX_V2 */
+  .in-app-notification{
+    position:fixed;top:10px;left:50%;
+    transform:translateX(-50%) translateY(-150px);
+    background:linear-gradient(135deg,#7c3aed,#e11d48);
+    color:#fff;padding:14px 18px;border-radius:18px;
+    box-shadow:0 10px 40px rgba(124,58,237,.7);
+    z-index:2147483647;
+    max-width:calc(100vw - 20px);width:420px;
+    display:flex;align-items:center;gap:12px;
+    transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+    border:2px solid rgba(255,255,255,.3);
+    cursor:pointer;
+  }
+  .in-app-notification.show{transform:translateX(-50%) translateY(0)}
+  .in-app-notification .in-emoji{
+    font-size:1.8rem;width:44px;height:44px;
+    background:rgba(0,0,0,.25);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .in-app-notification .in-body{flex:1;min-width:0}
+  .in-app-notification .in-name{font-weight:800;font-size:.95rem;margin-bottom:3px}
+  .in-app-notification .in-text{
+    font-size:.85rem;opacity:.95;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .in-app-notification .in-close{
+    background:rgba(0,0,0,.3);border:0;color:#fff;
+    width:28px;height:28px;border-radius:50%;font-size:1rem;
+    cursor:pointer;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+  }
+
 </style>
 </head>
 <body>
@@ -1531,6 +1565,226 @@ console.log('✅ listeners جاهزة');
     
     console.log('✅ OneSignal جاهز');
   });
+
+/* NOTIF_FIX_V2 — إشعارات مرئية + صوت + إشعار النظام */
+(function(){
+  console.log('🔔 NOTIF_FIX_V2 يبدأ...');
+  
+  const AVATARS = {
+    'محمد نجار':'🧠','محمد عوض':'😴','آدم ميني':'🎮',
+    'محمد بيلالي':'🍔','غازي نشابة':'👑'
+  };
+  
+  // ═══ 1. صوت ═══
+  function playSound(){
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = 880;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0.15, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.4);
+      console.log('🔊 صوت شغّال');
+    } catch(e) {
+      console.warn('⚠️ الصوت ما اشتغل:', e);
+    }
+  }
+  
+  // ═══ 2. إشعار النظام (يظهر حتى لو التطبيق مسكّر) ═══
+  async function systemNotify(name, text){
+    console.log('📢 محاولة إشعار النظام...');
+    
+    if(!('Notification' in window)){
+      console.warn('⚠️ Notification غير مدعوم');
+      return;
+    }
+    
+    if(Notification.permission !== 'granted'){
+      console.warn('⚠️ الإذن مو granted:', Notification.permission);
+      return;
+    }
+    
+    const emoji = AVATARS[name] || '💬';
+    const title = emoji + ' ' + name;
+    const body = String(text || '').substring(0, 100);
+    
+    try {
+      // جرّب Service Worker أول
+      if(navigator.serviceWorker && navigator.serviceWorker.controller){
+        const reg = await navigator.serviceWorker.ready;
+        console.log('✅ SW جاهز — بنبعث إشعار');
+        await reg.showNotification(title, {
+          body: body,
+          icon: './icons/icon-192x192.png',
+          badge: './icons/icon-96x96.png',
+          dir: 'rtl',
+          lang: 'ar',
+          vibrate: [300, 100, 300, 100, 300],
+          tag: 'msg-' + Date.now(),
+          renotify: true,
+          requireInteraction: true,
+          data: { url: './#livechat' }
+        });
+        console.log('✅✅ إشعار النظام انبعت');
+      } else {
+        // fallback
+        console.log('⚠️ SW مو controller — نستعمل Notification عادي');
+        new Notification(title, {
+          body: body,
+          icon: './icons/icon-192x192.png',
+          dir: 'rtl',
+          lang: 'ar',
+          vibrate: [300, 100, 300]
+        });
+        console.log('✅ إشعار عادي انبعت');
+      }
+    } catch(e) {
+      console.error('❌ فشل إشعار النظام:', e);
+    }
+  }
+  
+  // ═══ 3. Banner داخل التطبيق ═══
+  function showBanner(name, text){
+    console.log('🎨 عم نعرض banner:', name);
+    
+    const old = document.getElementById('inAppNotif');
+    if(old) old.remove();
+    
+    const banner = document.createElement('div');
+    banner.id = 'inAppNotif';
+    banner.className = 'in-app-notification';
+    
+    const emoji = AVATARS[name] || '💬';
+    const safeName = String(name || '').replace(/</g, '&lt;');
+    const safeText = String(text || '').replace(/</g, '&lt;').substring(0, 80);
+    
+    banner.innerHTML = 
+      '<div class="in-emoji">' + emoji + '</div>' +
+      '<div class="in-body">' +
+        '<div class="in-name">💬 ' + safeName + '</div>' +
+        '<div class="in-text">' + safeText + '</div>' +
+      '</div>' +
+      '<button class="in-close">×</button>';
+    
+    banner.addEventListener('click', function(e){
+      if(e.target.classList.contains('in-close')) return;
+      const chatBtn = document.querySelector('nav button[data-tab="livechat"]');
+      if(chatBtn) chatBtn.click();
+      banner.remove();
+    });
+    
+    banner.querySelector('.in-close').addEventListener('click', function(e){
+      e.stopPropagation();
+      banner.remove();
+    });
+    
+    document.body.appendChild(banner);
+    setTimeout(() => banner.classList.add('show'), 30);
+    setTimeout(() => {
+      if(banner.parentNode){
+        banner.classList.remove('show');
+        setTimeout(() => banner.remove(), 400);
+      }
+    }, 6000);
+    
+    if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
+    console.log('✅ banner ظهر');
+  }
+  
+  // ═══ 4. ربط Firebase ═══
+  let lastSeenTs = parseInt(localStorage.getItem('notifLastSeenTs') || '0');
+  let lastNotifiedId = localStorage.getItem('notifLastId') || '';
+  let firstLoad = true;
+  let notifStarted = false;
+  
+  function startWatching(){
+    if(notifStarted) return;
+    
+    if(!window.__db || !window.__fb){
+      console.log('⏳ ننتظر Firebase...');
+      return setTimeout(startWatching, 1000);
+    }
+    
+    notifStarted = true;
+    console.log('✅ بدأنا نراقب الرسائل');
+    
+    const { ref, onValue } = window.__fb;
+    
+    onValue(ref(window.__db, 'liveChat'), function(snap){
+      const data = snap.val() || {};
+      const list = Object.entries(data)
+        .map(function(e){ return Object.assign({id: e[0]}, e[1]); })
+        .sort(function(a,b){ return (a.ts||0) - (b.ts||0); });
+      
+      if(list.length === 0) return;
+      
+      const newest = list[list.length - 1];
+      const myName = localStorage.getItem('liveChatUser');
+      
+      // تجاهل رسايلي
+      if(newest.name === myName){
+        lastSeenTs = newest.ts;
+        lastNotifiedId = newest.id;
+        localStorage.setItem('notifLastId', newest.id);
+        return;
+      }
+      
+      // أول تحميل — تجاهل
+      if(firstLoad){
+        firstLoad = false;
+        lastSeenTs = newest.ts;
+        lastNotifiedId = newest.id;
+        localStorage.setItem('notifLastSeenTs', String(lastSeenTs));
+        localStorage.setItem('notifLastId', newest.id);
+        console.log('📌 أول تحميل — تجاهلنا الرسائل القديمة');
+        return;
+      }
+      
+      if(newest.id === lastNotifiedId) return;
+      
+      if(newest.ts > lastSeenTs){
+        lastSeenTs = newest.ts;
+        lastNotifiedId = newest.id;
+        localStorage.setItem('notifLastSeenTs', String(lastSeenTs));
+        localStorage.setItem('notifLastId', newest.id);
+        
+        // حدد نوع الرسالة
+        let displayText = '';
+        if(newest.type === 'image') displayText = '📷 صورة';
+        else if(newest.type === 'voice') displayText = '🎤 فويس';
+        else displayText = String(newest.text || '');
+        
+        console.log('🔔 رسالة جديدة:', newest.name, '-', displayText);
+        
+        // شغّل كله
+        playSound();
+        showBanner(newest.name, displayText);
+        systemNotify(newest.name, displayText);
+      }
+    });
+  }
+  
+  // ابدأ المراقبة بعد 2 ثانية
+  setTimeout(startWatching, 2000);
+  setTimeout(startWatching, 5000);
+  setTimeout(startWatching, 10000);
+  
+  // ═══ زر تجريبي ═══
+  window.testNotification = function(){
+    console.log('🧪 إشعار تجريبي');
+    playSound();
+    showBanner('محمد عوض', 'لك هيدا إشعار تجريبي!');
+    systemNotify('محمد عوض', 'لك هيدا إشعار تجريبي!');
+  };
+  
+  console.log('✅ NOTIF_FIX_V2 جاهز — لاختبار: testNotification()');
+})();
+
 </script>
 
 </body>

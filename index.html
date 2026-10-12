@@ -503,6 +503,702 @@
   .voice-modal .btn-stop{background:linear-gradient(135deg,#ef4444,#991b1b);color:#fff}
   .voice-modal .btn-send{background:linear-gradient(135deg,#22c55e,#15803d);color:#fff}
   .voice-modal audio{width:100%;margin:14px 0;border-radius:12px}
+
+  /* ═══════════════════════════════════════════════════════════
+     ANIMATIONS_PACK_V1 — أنيميشنز حلوة كتير 🎨
+     ═══════════════════════════════════════════════════════════ */
+  
+  /* ═══ 1. Starfield في الخلفية ═══ */
+  body::after{
+    content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background-image:
+      radial-gradient(2px 2px at 20% 30%,rgba(255,255,255,.4),transparent),
+      radial-gradient(2px 2px at 60% 70%,rgba(255,255,255,.3),transparent),
+      radial-gradient(1px 1px at 50% 50%,rgba(255,255,255,.5),transparent),
+      radial-gradient(1px 1px at 80% 10%,rgba(255,255,255,.4),transparent),
+      radial-gradient(2px 2px at 90% 60%,rgba(255,255,255,.3),transparent),
+      radial-gradient(1px 1px at 33% 80%,rgba(255,255,255,.4),transparent),
+      radial-gradient(1px 1px at 15% 90%,rgba(255,255,255,.3),transparent),
+      radial-gradient(2px 2px at 75% 45%,rgba(255,255,255,.4),transparent);
+    background-size:200% 200%;
+    animation:starDrift 60s linear infinite;
+    opacity:.6;
+  }
+  @keyframes starDrift{
+    0%{background-position:0% 0%}
+    100%{background-position:100% 100%}
+  }
+  
+  /* ═══ 2. Header عائم ═══ */
+  header h1{
+    animation:titleFloat 3s ease-in-out infinite;
+    background:linear-gradient(90deg,#fff,#facc15,#fff);
+    background-size:200% 100%;
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    filter:drop-shadow(0 2px 8px rgba(0,0,0,.5));
+  }
+  @keyframes titleFloat{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-6px)}
+  }
+  @keyframes gradientShift{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+  }
+  
+  /* ═══ 3. Card entry animation ═══ */
+  section.active .card{
+    animation:cardSlide .5s cubic-bezier(.34,1.56,.64,1) backwards;
+  }
+  section.active .card:nth-child(1){animation-delay:.05s}
+  section.active .card:nth-child(2){animation-delay:.1s}
+  section.active .card:nth-child(3){animation-delay:.15s}
+  section.active .card:nth-child(4){animation-delay:.2s}
+  @keyframes cardSlide{
+    from{opacity:0;transform:translateY(30px) scale(.95)}
+    to{opacity:1;transform:none}
+  }
+  
+  /* ═══ 4. Widgets — hover magic ═══ */
+  .widget{
+    position:relative;
+    overflow:hidden;
+    transition:transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s;
+  }
+  .widget::before{
+    content:"";position:absolute;top:50%;left:50%;
+    width:0;height:0;border-radius:50%;
+    background:radial-gradient(circle,rgba(124,58,237,.4),transparent 70%);
+    transform:translate(-50%,-50%);
+    transition:width .5s,height .5s;
+    pointer-events:none;
+  }
+  .widget:hover::before{width:300px;height:300px}
+  .widget:hover{
+    transform:translateY(-6px) scale(1.03);
+    box-shadow:0 12px 30px rgba(124,58,237,.4);
+    border-color:#7c3aed;
+  }
+  .widget .ic{
+    display:inline-block;
+    transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  .widget:hover .ic{
+    transform:scale(1.3) rotate(10deg);
+  }
+  .widget:active{transform:translateY(-2px) scale(.98)}
+  
+  /* ═══ 5. Nav button bounce ═══ */
+  nav button{
+    transition:all .25s cubic-bezier(.34,1.56,.64,1);
+    position:relative;
+  }
+  nav button:hover{
+    transform:translateY(-3px);
+    background:rgba(124,58,237,.3);
+  }
+  nav button:active{transform:translateY(-1px) scale(.95)}
+  nav button.active{
+    animation:navPop .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes navPop{
+    0%{transform:scale(.9)}
+    50%{transform:scale(1.1)}
+    100%{transform:scale(1)}
+  }
+  
+  /* ═══ 6. Buttons pulse + shine ═══ */
+  .btn{
+    position:relative;
+    overflow:hidden;
+    transition:transform .2s, box-shadow .2s;
+  }
+  .btn::after{
+    content:"";position:absolute;top:0;left:-100%;
+    width:100%;height:100%;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);
+    transition:left .5s;
+  }
+  .btn:hover::after{left:100%}
+  .btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 25px rgba(225,29,72,.5);
+  }
+  .btn:active{transform:scale(.96)}
+  
+  /* ═══ 7. Avatar rotation ═══ */
+  .msg .avatar{
+    transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  }
+  .msg:hover .avatar{
+    transform:scale(1.15) rotate(-8deg);
+  }
+  .msg.mine:hover .avatar{transform:scale(1.15) rotate(8deg)}
+  
+  /* ═══ 8. Message entrance ═══ */
+  .msg{
+    animation:msgEnter .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes msgEnter{
+    0%{opacity:0;transform:translateY(20px) scale(.9)}
+    60%{opacity:1;transform:translateY(-3px) scale(1.02)}
+    100%{transform:none}
+  }
+  
+  /* ═══ 9. Bubble glow on hover ═══ */
+  .msg .bubble{
+    transition:all .3s;
+  }
+  .msg:hover .bubble{
+    box-shadow:0 6px 20px rgba(124,58,237,.4);
+  }
+  .msg.mine:hover .bubble{
+    box-shadow:0 6px 25px rgba(225,29,72,.6);
+    transform:scale(1.02);
+  }
+  
+  /* ═══ 10. Marquee glow ═══ */
+  .marquee{
+    position:relative;
+  }
+  .marquee::after{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(90deg,#000,rgba(250,204,21,.15),#000);
+    opacity:.6;
+  }
+  
+  /* ═══ 11. Card h2 shine ═══ */
+  .card h2{
+    display:inline-block;
+    position:relative;
+  }
+  .card h2::after{
+    content:"";position:absolute;bottom:-4px;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,transparent,#f472b6,transparent);
+    transform:scaleX(0);
+    transition:transform .4s;
+    transform-origin:right;
+  }
+  .card:hover h2::after{transform:scaleX(1);transform-origin:left}
+  
+  /* ═══ 12. Teacher card hover ═══ */
+  .teacher{
+    transition:all .3s cubic-bezier(.34,1.56,.64,1);
+    position:relative;
+    overflow:hidden;
+  }
+  .teacher::before{
+    content:"";position:absolute;top:0;right:-100%;
+    width:100%;height:100%;
+    background:linear-gradient(90deg,transparent,rgba(250,204,21,.15),transparent);
+    transition:right .6s;
+  }
+  .teacher:hover::before{right:100%}
+  .teacher:hover{
+    transform:translateX(-6px) scale(1.01);
+    border-right-color:#f472b6;
+    box-shadow:-6px 0 25px rgba(244,114,182,.3);
+  }
+  .teacher .tav{
+    transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+    display:inline-block;
+  }
+  .teacher:hover .tav{
+    transform:scale(1.2) rotate(-10deg);
+  }
+  
+  /* ═══ 13. Leaderboard bounce ═══ */
+  .lead{
+    transition:all .3s cubic-bezier(.34,1.56,.64,1);
+    position:relative;
+    overflow:hidden;
+  }
+  .lead:hover{
+    transform:translateX(-5px);
+    background:linear-gradient(90deg,#0a0a1a,#1a1a3e);
+  }
+  .lead.top{
+    animation:winnerGlow 2s ease-in-out infinite;
+  }
+  @keyframes winnerGlow{
+    0%,100%{box-shadow:0 0 0 rgba(250,204,21,0)}
+    50%{box-shadow:0 0 25px rgba(250,204,21,.5)}
+  }
+  .lead .rank{
+    transition:transform .3s;
+    display:inline-block;
+  }
+  .lead:hover .rank{transform:scale(1.3) rotate(-10deg)}
+  
+  /* ═══ 14. Challenge pulse ═══ */
+  .challenge-box{
+    animation:boxPulse 3s ease-in-out infinite;
+    position:relative;
+    overflow:hidden;
+  }
+  @keyframes boxPulse{
+    0%,100%{box-shadow:0 0 30px rgba(250,204,21,.3)}
+    50%{box-shadow:0 0 50px rgba(250,204,21,.6)}
+  }
+  .challenge-box::before{
+    content:"";position:absolute;top:-50%;left:-50%;
+    width:200%;height:200%;
+    background:conic-gradient(from 0deg,transparent,rgba(250,204,21,.15),transparent,rgba(124,58,237,.15),transparent);
+    animation:rotate 8s linear infinite;
+    pointer-events:none;
+  }
+  @keyframes rotate{
+    to{transform:rotate(360deg)}
+  }
+  .challenge-box .q,
+  .challenge-box .a{position:relative;z-index:1}
+  
+  .challenge-box .a button{
+    transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  }
+  .challenge-box .a button:hover{
+    transform:translateY(-3px);
+    border-color:#facc15;
+    background:rgba(124,58,237,.4);
+    box-shadow:0 6px 20px rgba(250,204,21,.3);
+  }
+  .challenge-box .a button:active{transform:scale(.95)}
+  .challenge-box .a button.sel{
+    animation:correctAnswer .6s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes correctAnswer{
+    0%{transform:scale(1)}
+    30%{transform:scale(1.15) rotate(-3deg)}
+    60%{transform:scale(1.05) rotate(3deg)}
+    100%{transform:scale(1)}
+  }
+  
+  /* ═══ 15. Sound button bounce ═══ */
+  .sound-btn{
+    transition:all .25s cubic-bezier(.34,1.56,.64,1);
+    position:relative;
+  }
+  .sound-btn:hover{
+    transform:translateY(-5px) rotate(-3deg);
+    border-color:#e11d48;
+    box-shadow:0 8px 25px rgba(225,29,72,.4);
+  }
+  .sound-btn:active{
+    transform:scale(.9);
+    animation:soundPulse .3s;
+  }
+  @keyframes soundPulse{
+    0%{transform:scale(.9)}
+    50%{transform:scale(1.15)}
+    100%{transform:scale(1)}
+  }
+  .sound-btn .em{
+    transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+    display:inline-block;
+  }
+  .sound-btn:hover .em{
+    transform:scale(1.4) rotate(15deg);
+    animation:emWobble .6s ease-in-out infinite;
+  }
+  @keyframes emWobble{
+    0%,100%{transform:scale(1.4) rotate(-15deg)}
+    50%{transform:scale(1.4) rotate(15deg)}
+  }
+  
+  /* ═══ 16. Avatar preview float ═══ */
+  .avatar-preview .big{
+    animation:avatarFloat 2.5s ease-in-out infinite;
+  }
+  @keyframes avatarFloat{
+    0%,100%{transform:translateY(0) rotate(-5deg)}
+    50%{transform:translateY(-15px) rotate(5deg)}
+  }
+  
+  /* ═══ 17. Student card shine ═══ */
+  .student-card{
+    position:relative;
+    overflow:hidden;
+    animation:cardEntry .6s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes cardEntry{
+    from{opacity:0;transform:scale(.9) rotate(-2deg)}
+    to{opacity:1;transform:none}
+  }
+  .student-card::after{
+    content:"";position:absolute;top:-50%;left:-50%;
+    width:100%;height:200%;
+    background:linear-gradient(45deg,transparent,rgba(255,255,255,.1),transparent);
+    animation:shine 4s linear infinite;
+    pointer-events:none;
+  }
+  @keyframes shine{
+    0%{transform:translateX(-100%) rotate(45deg)}
+    100%{transform:translateX(200%) rotate(45deg)}
+  }
+  
+  /* ═══ 18. Calendar event hover ═══ */
+  .event{
+    transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  }
+  .event:hover{
+    transform:translateX(-5px);
+    box-shadow:-5px 0 20px rgba(6,182,212,.3);
+    border-right-color:#7c3aed;
+  }
+  .event .date{
+    transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  }
+  .event:hover .date{
+    transform:scale(1.1) rotate(-3deg);
+  }
+  
+  /* ═══ 19. Countdown pulse ═══ */
+  .countdown-display .num{
+    animation:countdownPulse 2s ease-in-out infinite;
+  }
+  @keyframes countdownPulse{
+    0%,100%{text-shadow:0 0 30px rgba(250,204,21,.5);transform:scale(1)}
+    50%{text-shadow:0 0 60px rgba(250,204,21,.9);transform:scale(1.05)}
+  }
+  
+  /* ═══ 20. Secret item glow ═══ */
+  .secret-item{
+    transition:all .3s;
+    position:relative;
+    overflow:hidden;
+  }
+  .secret-item::before{
+    content:"";position:absolute;top:50%;right:-100%;
+    width:100%;height:2px;
+    background:linear-gradient(90deg,transparent,#a78bfa,transparent);
+    transition:right .5s;
+  }
+  .secret-item:hover::before{right:100%}
+  .secret-item:hover{
+    transform:translateX(-5px);
+    box-shadow:-5px 0 20px rgba(167,139,250,.3);
+  }
+  
+  /* ═══ 21. Memory item entry ═══ */
+  .memory{
+    animation:memoryIn .5s cubic-bezier(.34,1.56,.64,1) backwards;
+    transition:all .3s;
+  }
+  .memory:nth-child(1){animation-delay:.05s}
+  .memory:nth-child(2){animation-delay:.1s}
+  .memory:nth-child(3){animation-delay:.15s}
+  @keyframes memoryIn{
+    from{opacity:0;transform:scale(.9) translateX(-20px)}
+    to{opacity:1;transform:none}
+  }
+  .memory:hover{
+    transform:translateX(-5px);
+    box-shadow:-5px 0 20px rgba(34,197,94,.3);
+  }
+  
+  /* ═══ 22. Radio player glow ═══ */
+  .radio-box{
+    animation:radioGlow 3s ease-in-out infinite;
+  }
+  @keyframes radioGlow{
+    0%,100%{box-shadow:0 0 30px rgba(124,58,237,.3)}
+    50%{box-shadow:0 0 60px rgba(124,58,237,.6)}
+  }
+  .radio-box .controls button{
+    transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  }
+  .radio-box .controls button:hover{
+    transform:scale(1.15) rotate(5deg);
+    box-shadow:0 8px 30px rgba(225,29,72,.7);
+  }
+  
+  /* ═══ 23. Notification banner magic ═══ */
+  .in-app-notification.show{
+    animation:bannerMagic .6s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes bannerMagic{
+    0%{transform:translateX(-50%) translateY(-150px) scale(.8);opacity:0}
+    60%{transform:translateX(-50%) translateY(10px) scale(1.05);opacity:1}
+    100%{transform:translateX(-50%) translateY(0) scale(1)}
+  }
+  .in-app-notification .in-emoji{
+    animation:emBounce 1.5s ease-in-out infinite;
+  }
+  @keyframes emBounce{
+    0%,100%{transform:scale(1)}
+    50%{transform:scale(1.2) rotate(-10deg)}
+  }
+  
+  /* ═══ 24. Toast slide ═══ */
+  .toast.show{
+    animation:toastPop .5s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes toastPop{
+    0%{transform:translateX(-50%) translateY(100px) scale(.7);opacity:0}
+    60%{transform:translateX(-50%) translateY(-10px) scale(1.05);opacity:1}
+    100%{transform:translateX(-50%) translateY(0) scale(1)}
+  }
+  
+  /* ═══ 25. Loading shimmer ═══ */
+  .loading-shimmer{
+    background:linear-gradient(90deg,#1a1a2e 25%,#252542 50%,#1a1a2e 75%);
+    background-size:200% 100%;
+    animation:shimmer 1.5s infinite;
+    border-radius:8px;
+  }
+  @keyframes shimmer{
+    0%{background-position:200% 0}
+    100%{background-position:-200% 0}
+  }
+  
+  /* ═══ 26. Scroll down button bounce ═══ */
+  .scroll-down.show{
+    animation:scrollBounce 1.5s ease-in-out infinite;
+  }
+  @keyframes scrollBounce{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(8px)}
+  }
+  
+  /* ═══ 27. Rotator button ═══ */
+  .rotator{
+    transition:all .3s cubic-bezier(.34,1.56,.64,1);
+    cursor:pointer;
+  }
+  .rotator:hover{
+    transform:translateY(-2px) scale(1.05);
+    background:rgba(0,0,0,.5);
+    box-shadow:0 6px 20px rgba(255,255,255,.2);
+  }
+  .rotator:active{transform:scale(.95)}
+  
+  /* ═══ 28. Input focus magic ═══ */
+  .input-row input:focus{
+    animation:inputFocus .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes inputFocus{
+    0%{transform:scale(1)}
+    50%{transform:scale(1.02)}
+    100%{transform:scale(1)}
+  }
+  
+  /* ═══ 29. Emoji hover bounce ═══ */
+  .emoji-bar button{
+    transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+  }
+  .emoji-bar button:hover{
+    animation:emojibounce .5s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes emojibounce{
+    0%{transform:scale(1)}
+    40%{transform:scale(1.5) rotate(-15deg)}
+    70%{transform:scale(1.2) rotate(10deg)}
+    100%{transform:scale(1.15) rotate(0)}
+  }
+  
+  /* ═══ 30. Media bar buttons ═══ */
+  .media-bar button{
+    transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  }
+  .media-bar button:hover{
+    transform:translateY(-3px);
+    box-shadow:0 6px 15px rgba(124,58,237,.5);
+  }
+  
+  /* ═══ 31. Section transition ═══ */
+  section.active{
+    animation:sectionIn .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes sectionIn{
+    0%{opacity:0;transform:translateY(20px)}
+    60%{opacity:1;transform:translateY(-3px)}
+    100%{transform:none}
+  }
+  
+  /* ═══ 32. Card hover subtle ═══ */
+  .card{
+    transition:all .3s cubic-bezier(.34,1.56,.64,1);
+  }
+  .card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 8px 30px rgba(124,58,237,.2);
+    border-color:rgba(124,58,237,.3);
+  }
+  
+  /* ═══ 33. Who overlay buttons ═══ */
+  #whoOverlay .who-btn{
+    transition:all .3s cubic-bezier(.34,1.56,.64,1);
+    position:relative;
+    overflow:hidden;
+  }
+  #whoOverlay .who-btn::before{
+    content:"";position:absolute;top:0;left:-100%;
+    width:100%;height:100%;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);
+    transition:left .6s;
+  }
+  #whoOverlay .who-btn:hover::before{left:100%}
+  #whoOverlay .who-btn:hover{
+    transform:translateY(-3px) scale(1.02);
+    box-shadow:0 8px 25px rgba(225,29,72,.4);
+  }
+  #whoOverlay .who-btn .em{
+    transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+    display:inline-block;
+  }
+  #whoOverlay .who-btn:hover .em{
+    transform:scale(1.4) rotate(15deg);
+  }
+  
+  /* ═══ 34. Winner confetti ═══ */
+  @keyframes confetti{
+    0%{transform:translateY(0) rotate(0);opacity:1}
+    100%{transform:translateY(200px) rotate(720deg);opacity:0}
+  }
+  .confetti{
+    position:fixed;width:10px;height:10px;
+    z-index:99999;pointer-events:none;
+    animation:confetti 2s ease-out forwards;
+  }
+  
+  /* ═══ 35. Avatar picker hover ═══ */
+  .avatar-picker button{
+    transition:all .3s cubic-bezier(.34,1.56,.64,1);
+  }
+  .avatar-picker button:hover{
+    transform:scale(1.25) rotate(-10deg);
+    z-index:10;
+    box-shadow:0 8px 20px rgba(124,58,237,.5);
+  }
+  .avatar-picker button.sel{
+    animation:avatarSelect .5s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes avatarSelect{
+    0%{transform:scale(1)}
+    50%{transform:scale(1.3) rotate(-15deg)}
+    100%{transform:scale(1)}
+  }
+  
+  /* ═══ 36. Live badge pulse ═══ */
+  .live-badge{
+    animation:livePulse 1.5s ease-in-out infinite;
+  }
+  @keyframes livePulse{
+    0%,100%{opacity:1;transform:scale(1)}
+    50%{opacity:.7;transform:scale(1.05)}
+  }
+  
+  /* ═══ 37. Stats counters ═══ */
+  .chat-stats .stat .num{
+    animation:numberPop 2s ease-in-out infinite;
+  }
+  @keyframes numberPop{
+    0%,100%{transform:scale(1)}
+    50%{transform:scale(1.05)}
+  }
+  
+  /* ═══ 38. Delete button shake ═══ */
+  .msg:hover .delete-btn{
+    animation:deleteShake .4s ease-out;
+  }
+  @keyframes deleteShake{
+    0%,100%{transform:translateY(-50%) rotate(0)}
+    25%{transform:translateY(-50%) rotate(-15deg)}
+    75%{transform:translateY(-50%) rotate(15deg)}
+  }
+  
+  /* ═══ 39. Pulse ring ═══ */
+  .pulse-ring{
+    position:relative;
+  }
+  .pulse-ring::before,
+  .pulse-ring::after{
+    content:"";position:absolute;
+    top:50%;left:50%;transform:translate(-50%,-50%);
+    width:100%;height:100%;
+    border:2px solid #22c55e;
+    border-radius:50%;
+    animation:ringPulse 2s ease-out infinite;
+    pointer-events:none;
+  }
+  .pulse-ring::after{animation-delay:1s}
+  @keyframes ringPulse{
+    0%{transform:translate(-50%,-50%) scale(1);opacity:1}
+    100%{transform:translate(-50%,-50%) scale(2.5);opacity:0}
+  }
+  
+  /* ═══ 40. Floating hearts ═══ */
+  @keyframes floatHeart{
+    0%{transform:translateY(0) scale(1);opacity:1}
+    100%{transform:translateY(-100px) scale(1.5);opacity:0}
+  }
+  .float-heart{
+    position:fixed;font-size:2rem;
+    z-index:99999;pointer-events:none;
+    animation:floatHeart 1.5s ease-out forwards;
+  }
+  
+  /* ═══ 41. Marquee sparkle ═══ */
+  .marquee::before{
+    content:"✨";position:absolute;left:0;top:50%;transform:translateY(-50%);
+    font-size:1rem;animation:sparkle 2s ease-in-out infinite;
+    pointer-events:none;
+  }
+  @keyframes sparkle{
+    0%,100%{opacity:.3;transform:translateY(-50%) scale(1)}
+    50%{opacity:1;transform:translateY(-50%) scale(1.3)}
+  }
+  
+  /* ═══ 42. Rotator arrow animation ═══ */
+  .rotator::after{
+    content:"👆";display:inline-block;margin-right:6px;
+    animation:arrowBounce 1s ease-in-out infinite;
+  }
+  @keyframes arrowBounce{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-8px)}
+  }
+  
+  /* ═══ 43. Error shake ═══ */
+  @keyframes shake{
+    0%,100%{transform:translateX(0)}
+    25%{transform:translateX(-8px)}
+    75%{transform:translateX(8px)}
+  }
+  .shake{animation:shake .4s ease-in-out}
+  
+  /* ═══ 44. Success glow ═══ */
+  @keyframes successGlow{
+    0%,100%{box-shadow:0 0 0 rgba(34,197,94,0)}
+    50%{box-shadow:0 0 30px rgba(34,197,94,.7)}
+  }
+  .success-glow{animation:successGlow 1.5s ease-in-out}
+  
+  /* ═══ 45. Gradient border animated ═══ */
+  .gradient-border{
+    position:relative;
+    background:linear-gradient(#0a0a1a,#0a0a1a) padding-box,
+               linear-gradient(90deg,#7c3aed,#e11d48,#06b6d4,#7c3aed) border-box;
+    background-size:100% 100%, 200% 100%;
+    border:2px solid transparent;
+    animation:borderRotate 3s linear infinite;
+  }
+  @keyframes borderRotate{
+    to{background-position:0 0,200% 0}
+  }
+  
+  /* ═══ 46. Number count up ═══ */
+  .count-up{
+    animation:countUp .8s ease-out;
+  }
+  @keyframes countUp{
+    from{opacity:0;transform:translateY(20px)}
+    to{opacity:1;transform:none}
+  }
+
 </style>
 </head>
 <body>
@@ -1839,6 +2535,234 @@ document.addEventListener('keydown', e => {
 });
 
 console.log('✅ التطبيق كامل جاهز! 🎉');
+
+/* ═══════════════════════════════════════════════════════════
+   ANIMATIONS_PACK_V1 — تحسينات تفاعلية
+   ═══════════════════════════════════════════════════════════ */
+
+// ═══ 1. Confetti عند النجاح ═══
+window.throwConfetti = function(x, y){
+  const colors = ['#e11d48','#7c3aed','#22c55e','#facc15','#06b6d4','#f472b6'];
+  for(let i = 0; i < 20; i++){
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = (x || window.innerWidth/2) + 'px';
+    c.style.top = (y || window.innerHeight/2) + 'px';
+    c.style.background = colors[Math.floor(Math.random()*colors.length)];
+    c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    c.style.animationDelay = (Math.random() * 0.3) + 's';
+    c.style.animationDuration = (1.5 + Math.random()) + 's';
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 2500);
+  }
+};
+
+// ═══ 2. Floating hearts ═══
+window.throwHearts = function(x, y){
+  const hearts = ['❤️','💖','💕','💗','💝'];
+  for(let i = 0; i < 8; i++){
+    const h = document.createElement('div');
+    h.className = 'float-heart';
+    h.textContent = hearts[Math.floor(Math.random()*hearts.length)];
+    h.style.left = (x + (Math.random()-0.5)*80) + 'px';
+    h.style.top = y + 'px';
+    h.style.animationDelay = (Math.random()*0.3) + 's';
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 2000);
+  }
+};
+
+// ═══ 3. Button click ripple ═══
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('button, .btn, .widget, .sound-btn, .who-btn');
+  if(!btn) return;
+  
+  const rect = btn.getBoundingClientRect();
+  const ripple = document.createElement('span');
+  ripple.style.cssText = `
+    position:absolute;
+    border-radius:50%;
+    background:rgba(255,255,255,.4);
+    pointer-events:none;
+    transform:scale(0);
+    animation:rippleAnim .6s ease-out;
+    width:100px;height:100px;
+    left:${e.clientX - rect.left - 50}px;
+    top:${e.clientY - rect.top - 50}px;
+  `;
+  
+  if(getComputedStyle(btn).position === 'static'){
+    btn.style.position = 'relative';
+  }
+  if(getComputedStyle(btn).overflow !== 'hidden'){
+    btn.style.overflow = 'hidden';
+  }
+  
+  btn.appendChild(ripple);
+  setTimeout(() => ripple.remove(), 600);
+});
+
+// أضف animation الـ ripple
+const rippleStyle = document.createElement('style');
+rippleStyle.textContent = `
+  @keyframes rippleAnim{
+    to{transform:scale(4);opacity:0}
+  }
+`;
+document.head.appendChild(rippleStyle);
+
+// ═══ 4. Sound button confetti ═══
+document.addEventListener('click', (e) => {
+  const snd = e.target.closest('.sound-btn');
+  if(snd){
+    const rect = snd.getBoundingClientRect();
+    window.throwConfetti(rect.left + rect.width/2, rect.top + rect.height/2);
+  }
+});
+
+// ═══ 5. Success animation على صح ═══
+window.addEventListener('load', () => {
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach(m => {
+      m.addedNodes.forEach(node => {
+        if(node.nodeType === 1){
+          // لما يطلع إشعار success
+          if(node.classList && node.classList.contains('toast')){
+            if(node.textContent && (node.textContent.includes('✅') || node.textContent.includes('🎉') || node.textContent.includes('🎁'))){
+              node.classList.add('success-glow');
+            }
+          }
+        }
+      });
+    });
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+
+// ═══ 6. Message reactions — قلوب عند كبسة على الرسالة ═══
+document.addEventListener('dblclick', (e) => {
+  const msg = e.target.closest('.msg');
+  if(!msg) return;
+  const rect = msg.getBoundingClientRect();
+  window.throwHearts(rect.left + rect.width/2, rect.top);
+});
+
+// ═══ 7. Haptic feedback على الموبايل ═══
+document.addEventListener('click', (e) => {
+  if(navigator.vibrate && e.target.closest('button, .btn, .widget')){
+    navigator.vibrate(10);
+  }
+});
+
+// ═══ 8. Trophy celebration لما الطالب يجيب صح ═══
+window.celebrateWin = function(){
+  const x = window.innerWidth / 2;
+  const y = window.innerHeight / 2;
+  window.throwConfetti(x, y);
+  setTimeout(() => window.throwConfetti(x - 100, y - 100), 200);
+  setTimeout(() => window.throwConfetti(x + 100, y + 50), 400);
+  if(navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
+};
+
+// ═══ 9. Intercept correct challenge answers ═══
+window.addEventListener('load', () => {
+  const challengeBox = document.getElementById('challengeA');
+  if(challengeBox){
+    challengeBox.addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if(!btn) return;
+      setTimeout(() => {
+        if(btn.classList.contains('sel')){
+          // إجابة صح
+          const result = document.getElementById('challengeResult');
+          if(result && result.textContent.includes('✅')){
+            window.celebrateWin();
+          }
+        }
+      }, 100);
+    });
+  }
+});
+
+// ═══ 10. Avatar select celebration ═══
+document.addEventListener('click', (e) => {
+  if(e.target.closest('#saveAvatarBtn')){
+    const x = window.innerWidth / 2;
+    window.throwHearts(x, window.innerHeight * 0.6);
+  }
+});
+
+// ═══ 11. Marquee scroll effect ═══
+window.addEventListener('load', () => {
+  const marquee = document.querySelector('.marquee');
+  if(marquee){
+    // يعكس الاتجاه مع scroll
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY;
+      marquee.style.transform = `skewY(${y * 0.02}deg)`;
+    });
+  }
+});
+
+// ═══ 12. Typewriter effect for rotator (مرة وحدة عند التحميل) ═══
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const rot = document.getElementById('rotator');
+    if(!rot) return;
+    const text = rot.textContent;
+    rot.textContent = '';
+    let i = 0;
+    const type = setInterval(() => {
+      if(i < text.length){
+        rot.textContent += text[i];
+        i++;
+      } else {
+        clearInterval(type);
+      }
+    }, 50);
+  }, 800);
+});
+
+// ═══ 13. Number pulse عند تغيير الإحصائيات ═══
+window.addEventListener('load', () => {
+  ['onlineCount','totalMsgs','msgsToday'].forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    const obs = new MutationObserver(() => {
+      el.style.animation = 'none';
+      setTimeout(() => {
+        el.style.animation = 'numberPop .5s ease-out';
+      }, 10);
+    });
+    obs.observe(el, { childList: true, characterData: true, subtree: true });
+  });
+});
+
+// ═══ 14. Smooth scroll indicators ═══
+window.addEventListener('load', () => {
+  const nav = document.querySelector('nav');
+  if(nav){
+    nav.addEventListener('scroll', () => {
+      const left = nav.scrollLeft;
+      nav.style.setProperty('--scroll-x', left + 'px');
+    });
+  }
+});
+
+// ═══ 15. Welcome animation عند أول زيارة ═══
+window.addEventListener('load', () => {
+  const isFirstVisit = !localStorage.getItem('visitedAt');
+  if(isFirstVisit){
+    localStorage.setItem('visitedAt', Date.now().toString());
+    setTimeout(() => {
+      window.throwConfetti(window.innerWidth/2, window.innerHeight/3);
+      if(navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
+    }, 1500);
+  }
+});
+
+console.log('✅ أنيميشنز تفاعلية جاهزة! 🎨');
+
 </script>
 
 </body>

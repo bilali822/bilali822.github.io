@@ -1716,6 +1716,216 @@
     color:#fff;border-color:transparent;
   }
 
+
+  /* ═══════════════════════════════════════════════════════════
+     ADVANCED_CHAT_V1 — مميزات شات متقدمة 💬
+     ═══════════════════════════════════════════════════════════ */
+  
+  /* ═══ 1. غرف (Channels) ═══ */
+  .channels-bar{
+    display:flex;gap:6px;padding:8px 12px;overflow-x:auto;
+    background:rgba(0,0,0,.3);border-bottom:1px solid rgba(255,255,255,.05);
+    scrollbar-width:none;flex:0 0 auto;
+  }
+  .channels-bar::-webkit-scrollbar{display:none}
+  .channel-pill{
+    flex:0 0 auto;background:rgba(30,30,58,.8);
+    border:1.5px solid rgba(255,255,255,.08);
+    color:#94a3b8;padding:6px 14px;border-radius:20px;
+    font-size:.82rem;font-weight:700;cursor:pointer;
+    transition:.2s;font-family:inherit;
+    display:flex;align-items:center;gap:5px;
+  }
+  .channel-pill:hover{color:#fff;border-color:#7c3aed}
+  .channel-pill.active{
+    background:linear-gradient(135deg,#7c3aed,#e11d48);
+    color:#fff;border-color:transparent;
+    box-shadow:0 0 15px rgba(124,58,237,.5);
+  }
+  .channel-pill.add{
+    background:rgba(124,58,237,.2);border-style:dashed;
+    color:#f472b6;
+  }
+  
+  /* ═══ 2. Modal عام ═══ */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,.85);
+    backdrop-filter:blur(10px);z-index:2147483646;
+    display:none;align-items:center;justify-content:center;padding:20px;
+  }
+  .modal-overlay.show{display:flex}
+  .modal-box{
+    background:linear-gradient(135deg,#1a1a2e,#0f0f24);
+    border:2px solid #7c3aed;border-radius:20px;
+    padding:24px;max-width:420px;width:100%;
+    max-height:85vh;overflow-y:auto;
+    box-shadow:0 20px 60px rgba(124,58,237,.5);
+  }
+  .modal-box h3{
+    color:#f472b6;font-size:1.15rem;margin-bottom:14px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .modal-box .close-modal{
+    position:absolute;top:10px;right:10px;
+    background:rgba(0,0,0,.5);border:0;color:#fff;
+    width:32px;height:32px;border-radius:50%;
+    font-size:1rem;cursor:pointer;
+  }
+  .modal-box label{
+    display:block;font-size:.82rem;color:#94a3b8;
+    margin-bottom:5px;margin-top:10px;
+  }
+  .modal-box .actions{
+    display:flex;gap:8px;margin-top:16px;
+  }
+  .modal-box .actions button{
+    flex:1;padding:12px;border:0;border-radius:12px;
+    font-family:inherit;font-weight:800;cursor:pointer;
+    font-size:.9rem;transition:.15s;
+  }
+  .modal-box .actions .confirm{
+    background:linear-gradient(135deg,#22c55e,#15803d);color:#fff;
+  }
+  .modal-box .actions .cancel{
+    background:rgba(42,42,74,.8);color:#94a3b8;
+  }
+  
+  /* ═══ 3. DM (خاص) ═══ */
+  .dm-picker-list{
+    display:flex;flex-direction:column;gap:8px;margin-top:8px;
+  }
+  .dm-picker-list button{
+    display:flex;align-items:center;gap:10px;
+    background:rgba(30,30,58,.8);border:1.5px solid rgba(255,255,255,.08);
+    color:#fff;padding:10px 14px;border-radius:12px;
+    font-family:inherit;font-size:.92rem;font-weight:700;
+    cursor:pointer;transition:.2s;text-align:right;
+  }
+  .dm-picker-list button:hover{
+    border-color:#7c3aed;background:rgba(124,58,237,.2);
+    transform:translateX(-3px);
+  }
+  .dm-picker-list button .em{font-size:1.5rem}
+  
+  /* ═══ 4. الاستفتاء ═══ */
+  .poll-message{
+    background:rgba(30,30,58,.5);
+    border:1.5px solid rgba(124,58,237,.4);
+    border-radius:14px;padding:14px;margin-top:4px;
+  }
+  .poll-message .q{
+    font-weight:800;font-size:.95rem;margin-bottom:10px;
+    color:#f472b6;
+  }
+  .poll-message .opt{
+    background:rgba(30,30,58,.8);
+    border:1.5px solid rgba(255,255,255,.1);
+    border-radius:10px;padding:10px 12px;margin-bottom:6px;
+    cursor:pointer;transition:.2s;
+    position:relative;overflow:hidden;
+  }
+  .poll-message .opt:hover{
+    border-color:#7c3aed;
+    transform:translateX(-3px);
+  }
+  .poll-message .opt.voted{
+    border-color:#facc15;background:rgba(250,204,21,.15);
+  }
+  .poll-message .opt .bar{
+    position:absolute;top:0;right:0;height:100%;
+    background:linear-gradient(90deg,rgba(124,58,237,.3),rgba(225,29,72,.3));
+    transition:width .5s ease;
+    z-index:0;
+  }
+  .poll-message .opt .txt{
+    position:relative;z-index:1;
+    display:flex;justify-content:space-between;align-items:center;
+    font-size:.9rem;font-weight:700;
+  }
+  .poll-message .opt .txt .votes{
+    color:#facc15;font-size:.85rem;
+  }
+  .poll-message .total{
+    text-align:center;font-size:.75rem;color:#64748b;
+    margin-top:8px;
+  }
+  
+  /* ═══ 5. YouTube embed ═══ */
+  .youtube-embed{
+    position:relative;padding-bottom:56.25%;height:0;
+    margin-top:6px;border-radius:12px;overflow:hidden;
+    border:1px solid rgba(255,255,255,.1);
+  }
+  .youtube-embed iframe{
+    position:absolute;top:0;left:0;width:100%;height:100%;border:0;
+  }
+  
+  /* ═══ 6. ملفات ═══ */
+  .file-message{
+    background:rgba(30,30,58,.6);
+    border:1.5px solid rgba(255,255,255,.1);
+    border-radius:12px;padding:12px;
+    display:flex;align-items:center;gap:10px;
+    margin-top:4px;transition:.2s;
+  }
+  .file-message:hover{
+    border-color:#7c3aed;
+    background:rgba(124,58,237,.15);
+  }
+  .file-message .file-icon{
+    font-size:1.8rem;flex:0 0 auto;
+  }
+  .file-message .file-info{flex:1;min-width:0}
+  .file-message .file-info .nm{
+    font-weight:700;font-size:.88rem;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .file-message .file-info .sz{
+    font-size:.72rem;color:#94a3b8;margin-top:2px;
+  }
+  .file-message .file-dl{
+    background:linear-gradient(135deg,#22c55e,#15803d);
+    color:#fff;border:0;width:36px;height:36px;
+    border-radius:50%;font-size:1rem;
+    cursor:pointer;flex-shrink:0;
+  }
+  
+  /* ═══ 7. Event/Moukabala ═══ */
+  .event-message{
+    background:linear-gradient(135deg,rgba(250,204,21,.15),rgba(124,58,237,.15));
+    border:1.5px solid rgba(250,204,21,.4);
+    border-radius:12px;padding:12px;margin-top:4px;
+  }
+  .event-message .ev-title{
+    font-weight:800;font-size:.95rem;color:#facc15;
+    margin-bottom:6px;
+  }
+  .event-message .ev-date{
+    font-size:.82rem;color:#94a3b8;
+    display:flex;align-items:center;gap:6px;
+  }
+  .event-message .ev-desc{
+    font-size:.85rem;margin-top:6px;color:#cbd5e1;
+  }
+  
+  /* ═══ 8. Chat toolbar updates ═══ */
+  .chat-toolbar .dm-btn{background:linear-gradient(135deg,#f59e0b,#d97706) !important;color:#fff !important}
+  .chat-toolbar .poll-btn{background:linear-gradient(135deg,#06b6d4,#0891b2) !important;color:#fff !important}
+  .chat-toolbar .event-btn{background:linear-gradient(135deg,#8b5cf6,#7c3aed) !important;color:#fff !important}
+  .chat-toolbar .call-btn{background:linear-gradient(135deg,#22c55e,#15803d) !important;color:#fff !important}
+  .chat-toolbar .file-btn{background:linear-gradient(135deg,#f43f5e,#e11d48) !important;color:#fff !important}
+  
+  /* ═══ 9. إشعار الـ DM ═══ */
+  .dm-badge{
+    position:absolute;top:-3px;right:-3px;
+    background:linear-gradient(135deg,#ef4444,#dc2626);
+    color:#fff;font-size:.65rem;font-weight:800;
+    min-width:18px;height:18px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    padding:0 4px;box-shadow:0 2px 6px rgba(239,68,68,.5);
+    animation:pulse 1.5s infinite;
+  }
+
 </style>
 </head>
 <body>
@@ -1859,9 +2069,15 @@
       </div>
 
       <div class="chat-input-area">
+        <div class="channels-bar" id="channelsBar"></div>
         <div class="chat-toolbar">
           <button id="stickersBtn">😀 ستيكرز</button>
           <button id="searchBtn">🔍 بحث</button>
+          <button class="dm-btn" id="dmBtn">💌 خاص</button>
+          <button class="poll-btn" id="pollBtn">📊 استفتاء</button>
+          <button class="event-btn" id="eventBtn">📅 موعد</button>
+          <button class="call-btn" id="callBtn2">📞 اتصال</button>
+          <button class="file-btn" id="fileBtn">📎 ملف</button>
           <button id="statsBtn">📊 إحصائيات</button>
           <button id="unblockBtn" style="display:none">🔓 فك الحظر</button>
         </div>
@@ -4175,6 +4391,332 @@ console.log('✅ أنيميشنز تفاعلية جاهزة! 🎨');
   console.log('📋 10 مميزات: Reactions, Replies, Pinned, Search, Stickers, Mentions, Stats, Block, Toolbar, Animations');
 })();
 
+
+/* ═══════════════════════════════════════════════════════════
+   ADVANCED_CHAT_V1 — مميزات شات متقدمة 💬
+   ═══════════════════════════════════════════════════════════ */
+
+(function(){
+  console.log('💬 ADVANCED_CHAT_V1 يبدأ...');
+  
+  const fb = window.__fb;
+  const db = window.__db;
+  
+  // ═══════════ 1. غرف (Channels) ═══════════
+  const CHANNELS = [
+    {id:'general', name:'💬 عام', icon:'💬'},
+    {id:'homework', name:'📚 وظايف', icon:'📚'},
+    {id:'funny', name:'😂 ضحك', icon:'😂'},
+    {id:'sports', name:'⚽ رياضة', icon:'⚽'},
+    {id:'music', name:'🎵 أغاني', icon:'🎵'}
+  ];
+  
+  let currentChannel = localStorage.getItem('currentChannel') || 'general';
+  
+  function renderChannels(){
+    const bar = document.getElementById('channelsBar');
+    if(!bar) return;
+    
+    bar.innerHTML = CHANNELS.map(c => 
+      `<button class="channel-pill ${c.id === currentChannel ? 'active' : ''}" data-channel="${c.id}">${c.icon} ${c.name}</button>`
+    ).join('') + 
+    `<button class="channel-pill add" onclick="addChannel()">➕ غرفة</button>`;
+  }
+  
+  document.getElementById('channelsBar')?.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-channel]');
+    if(!btn) return;
+    currentChannel = btn.dataset.channel;
+    localStorage.setItem('currentChannel', currentChannel);
+    renderChannels();
+    if(window.__liveChatCache) window.renderChat(window.__liveChatCache);
+  });
+  
+  window.addChannel = function(){
+    const name = prompt('لك اسم الغرفة:');
+    if(!name) return;
+    const id = name.replace(/\s+/g, '_').toLowerCase();
+    if(!CHANNELS.find(c => c.id === id)){
+      CHANNELS.push({ id, name: '💬 ' + name, icon: '💬' });
+      renderChannels();
+      if(typeof showToast === 'function') showToast('✅ انضافت الغرفة');
+    }
+  };
+  
+  renderChannels();
+  
+  // ═══════════ 2. Helpers ═══════════
+  window.closeModal = function(id){
+    document.getElementById(id)?.classList.remove('show');
+  };
+  
+  // ═══════════ 3. DM (خاص) ═══════════
+  let currentDMUser = null;
+  let dmListenerUnsubscribe = null;
+  
+  document.getElementById('dmBtn')?.addEventListener('click', () => {
+    const myName = localStorage.getItem('liveChatUser');
+    if(!myName) return;
+    
+    const list = document.getElementById('dmList');
+    list.innerHTML = window.STUDENTS
+      .filter(s => s.name !== myName)
+      .map(s => `<button data-dm="${s.name}"><span class="em">${s.emoji}</span>${s.name}</button>`)
+      .join('');
+    
+    document.getElementById('dmModal').classList.add('show');
+  });
+  
+  document.getElementById('dmList')?.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-dm]');
+    if(!btn) return;
+    openDM(btn.dataset.dm);
+  });
+  
+  function dmKey(a, b){
+    return [a, b].sort().map(n => n.replace(/\s+/g, '_')).join('__');
+  }
+  
+  window.openDM = function(otherUser){
+    currentDMUser = otherUser;
+    const myName = localStorage.getItem('liveChatUser');
+    if(!myName) return;
+    
+    document.getElementById('dmModal').classList.remove('show');
+    document.getElementById('dmChatTitle').textContent = '💌 ' + otherUser;
+    document.getElementById('dmChatModal').classList.add('show');
+    
+    const key = dmKey(myName, otherUser);
+    
+    if(dmListenerUnsubscribe) dmListenerUnsubscribe();
+    
+    dmListenerUnsubscribe = fb.onValue(fb.ref(db, 'dms/' + key + '/messages'), (snap) => {
+      const data = snap.val() || {};
+      const list = Object.entries(data)
+        .map(([k, v]) => ({ id: k, ...v }))
+        .sort((a, b) => (a.ts || 0) - (b.ts || 0));
+      
+      const win = document.getElementById('dmChatWindow');
+      if(list.length === 0){
+        win.innerHTML = '<div style="text-align:center;color:#64748b;padding:20px;font-size:.85rem">لك ابدأ الحكي 😎</div>';
+        return;
+      }
+      
+      win.innerHTML = list.map(m => {
+        const mine = m.from === myName;
+        return `<div style="display:flex;gap:8px;${mine?'flex-direction:row-reverse':''};max-width:85%;${mine?'align-self:flex-end':''}">
+          <div style="background:${mine?'linear-gradient(135deg,#7c3aed,#e11d48)':'#1a1a2e'};padding:8px 12px;border-radius:14px;font-size:.88rem;${mine?'border-bottom-left-radius:4px':'border-bottom-right-radius:4px;border:1px solid #2a2a4a'}">${escapeHtml(m.text)}</div>
+        </div>`;
+      }).join('');
+      
+      win.scrollTop = win.scrollHeight;
+    });
+  };
+  
+  window.closeDM = function(){
+    document.getElementById('dmChatModal').classList.remove('show');
+    if(dmListenerUnsubscribe){
+      dmListenerUnsubscribe();
+      dmListenerUnsubscribe = null;
+    }
+    currentDMUser = null;
+  };
+  
+  window.sendDM = function(){
+    const myName = localStorage.getItem('liveChatUser');
+    if(!myName || !currentDMUser) return;
+    
+    const inp = document.getElementById('dmInput');
+    const txt = inp.value.trim();
+    if(!txt) return;
+    
+    const key = dmKey(myName, currentDMUser);
+    fb.push(fb.ref(db, 'dms/' + key + '/messages'), {
+      from: myName,
+      to: currentDMUser,
+      text: txt,
+      ts: Date.now()
+    });
+    
+    inp.value = '';
+  };
+  
+  document.getElementById('dmInput')?.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter'){ e.preventDefault(); sendDM(); }
+  });
+  
+  // ═══════════ 4. استفتاء (Poll) ═══════════
+  document.getElementById('pollBtn')?.addEventListener('click', () => {
+    document.getElementById('pollModal').classList.add('show');
+  });
+  
+  window.createPoll = function(){
+    const q = document.getElementById('pollQ').value.trim();
+    const optsText = document.getElementById('pollOpts').value.trim();
+    if(!q || !optsText){ 
+      if(typeof showToast === 'function') showToast('❌ اكتب السؤال والأجوبة');
+      return;
+    }
+    
+    const opts = optsText.split('\n').map(o => o.trim()).filter(o => o);
+    if(opts.length < 2){
+      if(typeof showToast === 'function') showToast('❌ بدك على الأقل جوابين');
+      return;
+    }
+    
+    const myName = localStorage.getItem('liveChatUser');
+    if(!myName) return;
+    
+    const pollData = {
+      name: myName,
+      type: 'poll',
+      question: q,
+      options: opts.map(o => ({ text: o, votes: {} })),
+      ts: Date.now()
+    };
+    
+    fb.push(fb.ref(db, 'liveChat'), pollData);
+    
+    document.getElementById('pollQ').value = '';
+    document.getElementById('pollOpts').value = '';
+    closeModal('pollModal');
+    if(typeof showToast === 'function') showToast('📊 اننشر الاستفتاء');
+  };
+  
+  window.votePoll = function(msgId, optIdx){
+    const myName = localStorage.getItem('liveChatUser');
+    if(!myName) return;
+    
+    fb.runTransaction(fb.ref(db, 'liveChat/' + msgId + '/options/' + optIdx + '/votes/' + myName.replace(/\s+/g,'_')), (cur) => {
+      return cur ? null : true;
+    });
+  };
+  
+  // ═══════════ 5. موعد (Event) ═══════════
+  document.getElementById('eventBtn')?.addEventListener('click', () => {
+    document.getElementById('eventModal').classList.add('show');
+  });
+  
+  window.createEvent = function(){
+    const title = document.getElementById('evTitle').value.trim();
+    const date = document.getElementById('evDate').value;
+    const desc = document.getElementById('evDesc').value.trim();
+    
+    if(!title || !date){
+      if(typeof showToast === 'function') showToast('❌ اكتب العنوان والتاريخ');
+      return;
+    }
+    
+    const myName = localStorage.getItem('liveChatUser');
+    if(!myName) return;
+    
+    fb.push(fb.ref(db, 'liveChat'), {
+      name: myName,
+      type: 'event',
+      eventTitle: title,
+      eventDate: date,
+      eventDesc: desc,
+      text: '📅 ' + title,
+      ts: Date.now()
+    });
+    
+    document.getElementById('evTitle').value = '';
+    document.getElementById('evDate').value = '';
+    document.getElementById('evDesc').value = '';
+    closeModal('eventModal');
+    if(typeof showToast === 'function') showToast('📅 اننشر الموعد');
+  };
+  
+  // ═══════════ 6. ملفات (Files) ═══════════
+  document.getElementById('fileBtn')?.addEventListener('click', () => {
+    document.getElementById('fileInput').click();
+  });
+  
+  document.getElementById('fileInput')?.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    
+    const myName = localStorage.getItem('liveChatUser');
+    if(!myName) return;
+    
+    if(file.size > 20 * 1024 * 1024){
+      if(typeof showToast === 'function') showToast('❌ الملف كبير (الحد 20MB)');
+      return;
+    }
+    
+    if(typeof showToast === 'function') showToast('⏳ عم نرفع الملف...');
+    
+    try {
+      const fd = new FormData();
+      fd.append('reqtype', 'fileupload');
+      fd.append('fileToUpload', file);
+      
+      const res = await fetch('https://catbox.moe/user/api.php', { method: 'POST', body: fd });
+      const url = (await res.text()).trim();
+      
+      if(url && url.startsWith('http')){
+        fb.push(fb.ref(db, 'liveChat'), {
+          name: myName,
+          type: 'file',
+          fileUrl: url,
+          fileName: file.name,
+          fileSize: file.size,
+          fileType: file.type,
+          text: '📎 ' + file.name,
+          ts: Date.now()
+        });
+        if(typeof showToast === 'function') showToast('✅ انرفع الملف');
+      } else {
+        if(typeof showToast === 'function') showToast('❌ فشل الرفع');
+      }
+    } catch(err){
+      console.error(err);
+      if(typeof showToast === 'function') showToast('❌ فشل الرفع');
+    }
+    
+    e.target.value = '';
+  });
+  
+  // ═══════════ 7. اتصال (Jitsi) ═══════════
+  document.getElementById('callBtn2')?.addEventListener('click', () => {
+    const myName = localStorage.getItem('liveChatUser');
+    if(!myName) return;
+    
+    const choice = confirm('لك بدك اتصال صوتي؟\n(OK = صوتي، Cancel = فيديو)');
+    const type = choice ? 'voice' : 'video';
+    const room = 'saff10-classroom-tripoli';
+    
+    const url = 'https://meet.jit.si/' + room +
+      '#userInfo.displayName=%22' + encodeURIComponent(myName) + '%22' +
+      '&config.startWithAudioMuted=' + (type === 'video' ? 'false' : 'true') +
+      '&config.startWithVideoMuted=' + (type === 'voice' ? 'true' : 'false');
+    
+    window.open(url, '_blank');
+    
+    const emoji = type === 'voice' ? '📞' : '📹';
+    fb.push(fb.ref(db, 'liveChat'), {
+      name: myName,
+      text: emoji + ' عم يتصل! انضم: ' + url,
+      ts: Date.now()
+    });
+  });
+  
+  // ═══════════ 8. YouTube detection ═══════════
+  window.detectYouTube = function(text){
+    const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    const match = text.match(regex);
+    return match ? match[1] : null;
+  };
+  
+  // ═══════════ 9. استمع للـ Polls ═══════════
+  fb.onValue(fb.ref(db, 'liveChat'), (snap) => {
+    // الـ render الحالي رح يتعامل معها
+  });
+  
+  console.log('✅ ADVANCED_CHAT_V1 جاهز');
+  console.log('📋 المميزات: غرف، DM، استفتاء، موعد، ملفات، اتصال، YouTube');
+})();
+
 </script>
 
 
@@ -4186,6 +4728,65 @@ console.log('✅ أنيميشنز تفاعلية جاهزة! 🎨');
   <button class="theme-green" data-theme="green" title="أخضر"></button>
   <button class="theme-blue" data-theme="blue" title="أزرق"></button>
 </div>
+
+
+<!-- MODALS -->
+<div class="modal-overlay" id="dmModal">
+  <div class="modal-box" style="position:relative">
+    <button class="close-modal" onclick="closeModal('dmModal')">✕</button>
+    <h3>💌 رسالة خاصة</h3>
+    <p style="color:#94a3b8;font-size:.85rem">ختار لمين بدك تبعت:</p>
+    <div class="dm-picker-list" id="dmList"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="pollModal">
+  <div class="modal-box" style="position:relative">
+    <button class="close-modal" onclick="closeModal('pollModal')">✕</button>
+    <h3>📊 استفتاء جديد</h3>
+    <label>السؤال</label>
+    <input type="text" id="pollQ" placeholder="مثلاً: شو أحلى حصة؟">
+    <label>الأجوبة (كل جواب بسطر)</label>
+    <textarea id="pollOpts" rows="4" placeholder="رياضيات&#10;عربي&#10;إنجليزي"></textarea>
+    <div class="actions">
+      <button class="cancel" onclick="closeModal('pollModal')">إلغاء</button>
+      <button class="confirm" onclick="createPoll()">📊 انشر</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="eventModal">
+  <div class="modal-box" style="position:relative">
+    <button class="close-modal" onclick="closeModal('eventModal')">✕</button>
+    <h3>📅 موعد جديد</h3>
+    <label>اسم الموعد</label>
+    <input type="text" id="evTitle" placeholder="مثلاً: امتحان رياضيات">
+    <label>التاريخ والوقت</label>
+    <input type="datetime-local" id="evDate">
+    <label>تفاصيل (اختياري)</label>
+    <textarea id="evDesc" rows="2" placeholder="لك شو في كمان..."></textarea>
+    <div class="actions">
+      <button class="cancel" onclick="closeModal('eventModal')">إلغاء</button>
+      <button class="confirm" onclick="createEvent()">📅 انشر</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="dmChatModal">
+  <div class="modal-box" style="position:relative;max-width:500px;height:80vh;display:flex;flex-direction:column;padding:0">
+    <div style="padding:14px 18px;background:linear-gradient(135deg,#7c3aed,#e11d48);border-radius:18px 18px 0 0;display:flex;justify-content:space-between;align-items:center">
+      <h3 style="margin:0;color:#fff" id="dmChatTitle">💌 خاص</h3>
+      <button class="close-modal" style="position:static" onclick="closeDM()">✕</button>
+    </div>
+    <div id="dmChatWindow" style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px"></div>
+    <div style="padding:10px;border-top:1px solid rgba(255,255,255,.1);display:flex;gap:8px">
+      <input id="dmInput" placeholder="لك اكتب..." style="margin:0;flex:1">
+      <button onclick="sendDM()" style="background:linear-gradient(135deg,#e11d48,#7c3aed);border:0;color:#fff;width:46px;border-radius:50%;cursor:pointer;font-size:1.1rem">📤</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="fileInput" style="display:none">
 
 </body>
 </html>

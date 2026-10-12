@@ -4717,6 +4717,346 @@ console.log('✅ أنيميشنز تفاعلية جاهزة! 🎨');
   console.log('📋 المميزات: غرف، DM، استفتاء، موعد، ملفات، اتصال، YouTube');
 })();
 
+
+/* ═══════════════════════════════════════════════════════════
+   ADVANCED_CHAT_V2 — مميزات شات متقدمة (ينتظر Firebase)
+   ═══════════════════════════════════════════════════════════ */
+
+function initAdvancedChat(){
+  if(!window.__fb || !window.__db){
+    console.log('⏳ ADVANCED_CHAT: ننتظر Firebase...');
+    setTimeout(initAdvancedChat, 500);
+    return;
+  }
+  
+  console.log('💬 ADVANCED_CHAT_V2 يبدأ...');
+  
+  const fb = window.__fb;
+  const db = window.__db;
+  
+  // ═══════════ 1. غرف ═══════════
+  const CHANNELS = [
+    {id:'general', name:'💬 عام', icon:'💬'},
+    {id:'homework', name:'📚 وظايف', icon:'📚'},
+    {id:'funny', name:'😂 ضحك', icon:'😂'},
+    {id:'sports', name:'⚽ رياضة', icon:'⚽'},
+    {id:'music', name:'🎵 أغاني', icon:'🎵'}
+  ];
+  
+  let currentChannel = localStorage.getItem('currentChannel') || 'general';
+  
+  function renderChannels(){
+    const bar = document.getElementById('channelsBar');
+    if(!bar) return;
+    bar.innerHTML = CHANNELS.map(c => 
+      `<button class="channel-pill ${c.id === currentChannel ? 'active' : ''}" data-channel="${c.id}">${c.icon} ${c.name}</button>`
+    ).join('') + 
+    `<button class="channel-pill add" onclick="addChannel()">➕ غرفة</button>`;
+  }
+  
+  document.getElementById('channelsBar')?.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-channel]');
+    if(!btn) return;
+    currentChannel = btn.dataset.channel;
+    localStorage.setItem('currentChannel', currentChannel);
+    renderChannels();
+    if(window.__liveChatCache) window.renderChat(window.__liveChatCache);
+  });
+  
+  window.addChannel = function(){
+    const name = prompt('لك اسم الغرفة:');
+    if(!name) return;
+    const id = name.replace(/\s+/g, '_').toLowerCase();
+    if(!CHANNELS.find(c => c.id === id)){
+      CHANNELS.push({ id, name: '💬 ' + name, icon: '💬' });
+      renderChannels();
+      if(typeof showToast === 'function') showToast('✅ انضافت الغرفة');
+    }
+  };
+  
+  renderChannels();
+  
+  // ═══════════ 2. Modal helpers ═══════════
+  window.closeModal = function(id){
+    document.getElementById(id)?.classList.remove('show');
+  };
+  
+  // ═══════════ 3. DM (خاص) ═══════════
+  let currentDMUser = null;
+  let dmListenerUnsubscribe = null;
+  
+  document.getElementById('dmBtn')?.addEventListener('click', () => {
+    const myName = localStorage.getItem('liveChatUser');
+    if(!myName){ if(window.__openWhoOverlay) window.__openWhoOverlay(); return; }
+    
+    const list = document.getElementById('dmList');
+    if(!list) return;
+    
+    list.innerHTML = window.STUDENTS
+      .filter(s => s.name !== myName)
+      .map(s => `<button data-dm="${s.name}"><span class="em">${s.emoji}</span>${s.name}</button>`)
+      .join('');
+    
+    document.getElementById('dmModal')?.classList.add('show');
+  });
+  
+  document.getElementById('dmList')?.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-dm]');
+    if(!btn) return;
+    openDM(btn.dataset.dm);
+  });
+  
+  function dmKey(a, b){
+    return [a, b].sort().map(n => n.replace(/\s+/g, '_')).join('__');
+  }
+  
+  window.openDM = function(otherUser){
+    currentDMUser = otherUser;
+    const myName = localStorage.getItem('liveChatUser');
+    if(!myName) return;
+    
+    document.getElementById('dmModal')?.classList.remove('show');
+    document.getElementById('dmChatTitle').textContent = '💌 ' + otherUser;
+    document.getElementById('dmChatModal')?.classList.add('show');
+    
+    const key = dmKey(myName, otherUser);
+    
+    if(dmListenerUnsubscribe) dmListenerUnsubscribe();
+    
+    dmListenerUnsubscribe = fb.onValue(fb.ref(db, 'dms/' + key + '/messages'), (snap) => {
+      const data = snap.val() || {};
+      const list = Object.entries(data)
+        .map(([k, v]) => ({ id: k, ...v }))
+        .sort((a, b) => (a.ts || 0) - (b.ts || 0));
+      
+      const win = document.getElementById('dmChatWindow');
+      if(!win) return;
+      
+      if(list.length === 0){
+        win.innerHTML = '<div style="text-align:center;color:#64748b;padding:20px;font-size:.85rem">لك ابدأ الحكي 😎</div>';
+        return;
+      }
+      
+      win.innerHTML = list.map(m => {
+        const mine = m.from === myName;
+        return `<div style="display:flex;${mine?'flex-direction:row-reverse':''};max-width:85%;${mine?'align-self:flex-end':''}">
+          <div style="background:${mine?'linear-gradient(135deg,#7c3aed,#e11d48)':'#1a1a2e'};padding:8px 12px;border-radius:14px;font-size:.88rem;color:#fff;${mine?'border-bottom-left-radius:4px':'border-bottom-right-radius:4px;border:1px solid #2a2a4a'}">${String(m.text||'').replace(/</g,'&lt;')}</div>
+        </div>`;
+      }).join('');
+      
+      win.scrollTop = win.scrollHeight;
+    });
+  };
+  
+  window.closeDM = function(){
+    document.getElementById('dmChatModal')?.classList.remove('show');
+    if(dmListenerUnsubscribe){ dmListenerUnsubscribe(); dmListenerUnsubscribe = null; }
+    currentDMUser = null;
+  };
+  
+  window.sendDM = function(){
+    const myName = localStorage.getItem('liveChatUser');
+    if(!myName || !currentDMUser) return;
+    
+    const inp = document.getElementById('dmInput');
+    const txt = inp.value.trim();
+    if(!txt) return;
+    
+    const key = dmKey(myName, currentDMUser);
+    fb.push(fb.ref(db, 'dms/' + key + '/messages'), {
+      from: myName,
+      to: currentDMUser,
+      text: txt,
+      ts: Date.now()
+    });
+    
+    inp.value = '';
+  };
+  
+  document.getElementById('dmInput')?.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter'){ e.preventDefault(); sendDM(); }
+  });
+  
+  // ═══════════ 4. استفتاء ═══════════
+  document.getElementById('pollBtn')?.addEventListener('click', () => {
+    const myName = localStorage.getItem('liveChatUser');
+    if(!myName){ if(window.__openWhoOverlay) window.__openWhoOverlay(); return; }
+    document.getElementById('pollModal')?.classList.add('show');
+  });
+  
+  window.createPoll = function(){
+    const q = document.getElementById('pollQ').value.trim();
+    const optsText = document.getElementById('pollOpts').value.trim();
+    
+    if(!q || !optsText){ 
+      if(typeof showToast === 'function') showToast('لك اكتب السؤال والأجوبة');
+      return;
+    }
+    
+    const opts = optsText.split('\n').map(o => o.trim()).filter(o => o);
+    if(opts.length < 2){
+      if(typeof showToast === 'function') showToast('لك بدك على الأقل جوابين');
+      return;
+    }
+    
+    const myName = localStorage.getItem('liveChatUser');
+    if(!myName) return;
+    
+    const pollData = {
+      name: myName,
+      channel: currentChannel,
+      type: 'poll',
+      question: q,
+      options: opts.map(o => ({ text: o, votes: {} })),
+      text: '📊 ' + q,
+      ts: Date.now()
+    };
+    
+    fb.push(fb.ref(db, 'liveChat'), pollData);
+    
+    document.getElementById('pollQ').value = '';
+    document.getElementById('pollOpts').value = '';
+    closeModal('pollModal');
+    if(typeof showToast === 'function') showToast('📊 اننشر الاستفتاء');
+  };
+  
+  window.votePoll = function(msgId, optIdx){
+    const myName = localStorage.getItem('liveChatUser');
+    if(!myName) return;
+    
+    const userKey = myName.replace(/\s+/g,'_');
+    const voteRef = fb.ref(db, 'liveChat/' + msgId + '/options/' + optIdx + '/votes/' + userKey);
+    
+    fb.onValue(voteRef, (snap) => {
+      if(snap.val()){
+        fb.set(voteRef, null);
+      } else {
+        fb.set(voteRef, true);
+      }
+    }, { onlyOnce: true });
+  };
+  
+  // ═══════════ 5. موعد ═══════════
+  document.getElementById('eventBtn')?.addEventListener('click', () => {
+    const myName = localStorage.getItem('liveChatUser');
+    if(!myName){ if(window.__openWhoOverlay) window.__openWhoOverlay(); return; }
+    document.getElementById('eventModal')?.classList.add('show');
+  });
+  
+  window.createEvent = function(){
+    const title = document.getElementById('evTitle').value.trim();
+    const date = document.getElementById('evDate').value;
+    const desc = document.getElementById('evDesc').value.trim();
+    
+    if(!title || !date){
+      if(typeof showToast === 'function') showToast('لك اكتب العنوان والتاريخ');
+      return;
+    }
+    
+    const myName = localStorage.getItem('liveChatUser');
+    if(!myName) return;
+    
+    fb.push(fb.ref(db, 'liveChat'), {
+      name: myName,
+      channel: currentChannel,
+      type: 'event',
+      eventTitle: title,
+      eventDate: date,
+      eventDesc: desc,
+      text: '📅 ' + title,
+      ts: Date.now()
+    });
+    
+    document.getElementById('evTitle').value = '';
+    document.getElementById('evDate').value = '';
+    document.getElementById('evDesc').value = '';
+    closeModal('eventModal');
+    if(typeof showToast === 'function') showToast('📅 اننشر الموعد');
+  };
+  
+  // ═══════════ 6. ملفات ═══════════
+  document.getElementById('fileBtn')?.addEventListener('click', () => {
+    document.getElementById('fileInput').click();
+  });
+  
+  document.getElementById('fileInput')?.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    
+    const myName = localStorage.getItem('liveChatUser');
+    if(!myName) return;
+    
+    if(file.size > 20 * 1024 * 1024){
+      if(typeof showToast === 'function') showToast('❌ الملف كبير (الحد 20MB)');
+      return;
+    }
+    
+    if(typeof showToast === 'function') showToast('⏳ عم نرفع الملف...');
+    
+    try {
+      const fd = new FormData();
+      fd.append('reqtype', 'fileupload');
+      fd.append('fileToUpload', file);
+      
+      const res = await fetch('https://catbox.moe/user/api.php', { method: 'POST', body: fd });
+      const url = (await res.text()).trim();
+      
+      if(url && url.startsWith('http')){
+        fb.push(fb.ref(db, 'liveChat'), {
+          name: myName,
+          channel: currentChannel,
+          type: 'file',
+          fileUrl: url,
+          fileName: file.name,
+          fileSize: file.size,
+          fileType: file.type,
+          text: '📎 ' + file.name,
+          ts: Date.now()
+        });
+        if(typeof showToast === 'function') showToast('✅ انرفع الملف');
+      } else {
+        if(typeof showToast === 'function') showToast('❌ فشل الرفع');
+      }
+    } catch(err){
+      console.error(err);
+      if(typeof showToast === 'function') showToast('❌ فشل الرفع');
+    }
+    
+    e.target.value = '';
+  });
+  
+  // ═══════════ 7. اتصال ═══════════
+  document.getElementById('callBtn2')?.addEventListener('click', () => {
+    const myName = localStorage.getItem('liveChatUser');
+    if(!myName){ if(window.__openWhoOverlay) window.__openWhoOverlay(); return; }
+    
+    const choice = confirm('لك بدك اتصال صوتي؟\n\n(OK = صوتي)\n(Cancel = فيديو)');
+    const type = choice ? 'voice' : 'video';
+    const room = 'saff10-classroom-tripoli';
+    
+    const url = 'https://meet.jit.si/' + room +
+      '#userInfo.displayName=%22' + encodeURIComponent(myName) + '%22' +
+      '&config.startWithAudioMuted=' + (type === 'video' ? 'false' : 'true') +
+      '&config.startWithVideoMuted=' + (type === 'voice' ? 'true' : 'false');
+    
+    window.open(url, '_blank');
+    
+    const emoji = type === 'voice' ? '📞' : '📹';
+    fb.push(fb.ref(db, 'liveChat'), {
+      name: myName,
+      channel: currentChannel,
+      text: emoji + ' عم يتصل! انضم: ' + url,
+      ts: Date.now()
+    });
+  });
+  
+  console.log('✅ ADVANCED_CHAT_V2 جاهز');
+}
+
+// ابدأ بعد Firebase ready
+window.addEventListener('firebase-ready', initAdvancedChat);
+setTimeout(initAdvancedChat, 2000);
+
 </script>
 
 

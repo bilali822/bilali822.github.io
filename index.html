@@ -508,27 +508,6 @@
      ANIMATIONS_PACK_V1 — أنيميشنز حلوة كتير 🎨
      ═══════════════════════════════════════════════════════════ */
   
-  /* ═══ 1. Starfield في الخلفية ═══ */
-  body::after{
-    content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
-    background-image:
-      radial-gradient(2px 2px at 20% 30%,rgba(255,255,255,.4),transparent),
-      radial-gradient(2px 2px at 60% 70%,rgba(255,255,255,.3),transparent),
-      radial-gradient(1px 1px at 50% 50%,rgba(255,255,255,.5),transparent),
-      radial-gradient(1px 1px at 80% 10%,rgba(255,255,255,.4),transparent),
-      radial-gradient(2px 2px at 90% 60%,rgba(255,255,255,.3),transparent),
-      radial-gradient(1px 1px at 33% 80%,rgba(255,255,255,.4),transparent),
-      radial-gradient(1px 1px at 15% 90%,rgba(255,255,255,.3),transparent),
-      radial-gradient(2px 2px at 75% 45%,rgba(255,255,255,.4),transparent);
-    background-size:200% 200%;
-    animation:starDrift 60s linear infinite;
-    opacity:.6;
-  }
-  @keyframes starDrift{
-    0%{background-position:0% 0%}
-    100%{background-position:100% 100%}
-  }
-  
   /* ═══ 2. Header عائم ═══ */
   header h1{
     animation:titleFloat 3s ease-in-out infinite;
@@ -942,18 +921,6 @@
     100%{transform:translateX(-50%) translateY(0) scale(1)}
   }
   
-  /* ═══ 25. Loading shimmer ═══ */
-  .loading-shimmer{
-    background:linear-gradient(90deg,#1a1a2e 25%,#252542 50%,#1a1a2e 75%);
-    background-size:200% 100%;
-    animation:shimmer 1.5s infinite;
-    border-radius:8px;
-  }
-  @keyframes shimmer{
-    0%{background-position:200% 0}
-    100%{background-position:-200% 0}
-  }
-  
   /* ═══ 26. Scroll down button bounce ═══ */
   .scroll-down.show{
     animation:scrollBounce 1.5s ease-in-out infinite;
@@ -1054,15 +1021,10 @@
   }
   
   /* ═══ 34. Winner confetti ═══ */
-  @keyframes confetti{
-    0%{transform:translateY(0) rotate(0);opacity:1}
+  
     100%{transform:translateY(200px) rotate(720deg);opacity:0}
   }
-  .confetti{
-    position:fixed;width:10px;height:10px;
-    z-index:99999;pointer-events:none;
-    animation:confetti 2s ease-out forwards;
-  }
+  .confetti{display:none}
   
   /* ═══ 35. Avatar picker hover ═══ */
   .avatar-picker button{
@@ -1131,15 +1093,10 @@
   }
   
   /* ═══ 40. Floating hearts ═══ */
-  @keyframes floatHeart{
-    0%{transform:translateY(0) scale(1);opacity:1}
+  
     100%{transform:translateY(-100px) scale(1.5);opacity:0}
   }
-  .float-heart{
-    position:fixed;font-size:2rem;
-    z-index:99999;pointer-events:none;
-    animation:floatHeart 1.5s ease-out forwards;
-  }
+  .float-heart{display:none}
   
   /* ═══ 41. Marquee sparkle ═══ */
   .marquee::before{
@@ -1294,7 +1251,7 @@
   }
   .card:hover::before{left:100%}
   .card:hover{
-    transform:translateY(-4px);
+    transform:translateY(-2px);
     box-shadow:
       0 16px 48px rgba(0,0,0,.4),
       0 0 40px var(--glow-1),
@@ -1670,6 +1627,55 @@
       padding:6px;
     }
     .theme-switcher button{width:32px;height:32px;font-size:.9rem}
+  }
+
+
+  /* PERFORMANCE_FIX — تقليل استهلاك الموارد */
+  
+  /* استعمل GPU acceleration */
+  .card, .widget, .btn, .msg, .teacher{
+    transform:translateZ(0);
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+  }
+  
+  /* @media prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{
+      animation-duration:0.01ms !important;
+      animation-iteration-count:1 !important;
+      transition-duration:0.01ms !important;
+    }
+  }
+  
+  /* خفّف الـ backdrop-filter (ثقيل على الموبايل) */
+  @media (max-width: 500px){
+    .card{
+      backdrop-filter:blur(8px) !important;
+      -webkit-backdrop-filter:blur(8px) !important;
+    }
+    .widget{
+      backdrop-filter:blur(6px) !important;
+      -webkit-backdrop-filter:blur(6px) !important;
+    }
+  }
+  
+  /* خفّف الأنيميشنز */
+  .msg{
+    animation-duration:.2s !important;
+  }
+  section.active{
+    animation-duration:.25s !important;
+  }
+  
+  /* أوقف animations ثابتة على عناصر كتير */
+  .card::before{
+    animation:none !important;
+  }
+  
+  /* قلّل حدود متحركة */
+  .card{
+    animation-duration:20s !important;
   }
 
 </style>
@@ -3323,19 +3329,6 @@ console.log('✅ أنيميشنز تفاعلية جاهزة! 🎨');
       });
       ticking = true;
     }
-  });
-  
-  // ═══ Magnetic buttons ═══
-  document.querySelectorAll('.btn').forEach(btn => {
-    btn.addEventListener('mousemove', (e) => {
-      const rect = btn.getBoundingClientRect();
-      const x = e.clientX - rect.left - rect.width / 2;
-      const y = e.clientY - rect.top - rect.height / 2;
-      btn.style.transform = `translate(${x * 0.1}px, ${y * 0.1}px) translateY(-2px)`;
-    });
-    btn.addEventListener('mouseleave', () => {
-      btn.style.transform = '';
-    });
   });
   
   console.log('✅ DESIGN_PACK_V1 جاهز!');
